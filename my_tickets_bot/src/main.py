@@ -23,10 +23,6 @@ async def main():
         dsn=config.get_dsn(),
     )
 
-    async with poll.acquire() as connection:
-        async with connection.transaction():
-            print(await connection.fetchval('SELECT TRUE'))
-
     bot = Bot(config.bot_token)
     logger.debug('Запуск бота')
     await dp.start_polling(bot)
