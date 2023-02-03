@@ -5,6 +5,7 @@ import logging
 import asyncpg
 from aiogram import Dispatcher, Bot
 
+from bot.middlewares import DbMiddleware
 from services.config import load_config
 
 config = load_config()
@@ -14,8 +15,6 @@ logging.basicConfig(level=logging.getLevelName(config.logging_level))
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-dp = Dispatcher()
-
 
 async def main():
     """Запуск бота"""
@@ -23,8 +22,14 @@ async def main():
         dsn=config.get_dsn(),
     )
 
-    bot = Bot(config.bot_token)
+    db_middleware = DbMiddleware(poll)
+
+    dp = Dispatcher()
+
+    dp.update.outer_middleware.register(db_middleware)
+
     logger.debug('Запуск бота')
+    bot = Bot(config.bot_token)
     await dp.start_polling(bot)
 
 
