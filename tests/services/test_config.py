@@ -9,6 +9,7 @@ def setup():
     os.environ.update({
         EnvName.BOT_TOKEN: 'bot_token',
         EnvName.ADMIN_ID: '111555',
+        EnvName.PG_HOST: 'localhost',
         EnvName.PG_PORT: '5554',
         EnvName.PG_USER: 'postgres',
         EnvName.PG_PASSWORD: 'password',
@@ -24,8 +25,11 @@ def test_load_config():
 
     assert config.bot_token == 'bot_token'
     assert config.admin_id == 111555
+    assert config.pg_host == 'localhost'
     assert config.pg_port == 5554
     assert config.pg_user == 'postgres'
     assert config.pg_password == 'password'
     assert config.pg_db == 'db'
     assert config.logging_level == 'DEBUG'
+
+    assert config.get_dsn() == 'postgres://postgres:password@localhost:5554/db'

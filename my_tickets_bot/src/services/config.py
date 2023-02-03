@@ -10,18 +10,21 @@ class EnvName(StrEnum):
     ADMIN_ID = 'ADMIN_ID'
     LOGGING_LEVEL = 'LOGGING_LEVEL'
 
+    PG_HOST = 'PG_HOST'
     PG_PORT = 'PG_PORT'
     PG_USER = 'PG_USER'
     PG_PASSWORD = 'PG_PASSWORD'
     PG_DB = 'PG_DB'
 
 
+# pylint: disable=too-many-instance-attributes
 @dataclasses.dataclass
 class Config:
     """Конфигурация приложения"""
     bot_token: str
     admin_id: int
 
+    pg_host: str
     pg_port: int
     pg_user: str
     pg_password: str
@@ -29,12 +32,17 @@ class Config:
 
     logging_level: str
 
+    def get_dsn(self) -> str:
+        """Формирование DSN строки для postgres"""
+        return f'postgres://{self.pg_user}:{self.pg_password}@{self.pg_host}:{self.pg_port}/{self.pg_db}'
+
 
 def load_config() -> Config:
     """Загрузка конфигурации"""
     return Config(
         bot_token=os.environ.get(EnvName.BOT_TOKEN),
         admin_id=int(os.environ.get(EnvName.ADMIN_ID)),
+        pg_host=os.environ.get(EnvName.PG_HOST),
         pg_port=int(os.environ.get(EnvName.PG_PORT)),
         pg_user=os.environ.get(EnvName.PG_USER),
         pg_password=os.environ.get(EnvName.PG_PASSWORD),
