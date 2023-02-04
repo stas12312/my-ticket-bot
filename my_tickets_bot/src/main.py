@@ -5,7 +5,7 @@ import logging
 import asyncpg
 from aiogram import Dispatcher, Bot
 
-from bot import handlers
+from bot.handlers import main_router
 from bot.middlewares import DbMiddleware
 from services.config import load_config
 
@@ -26,7 +26,7 @@ async def main():
     db_middleware = DbMiddleware(poll)
 
     dp = Dispatcher()
-    dp.include_router(handlers.common_handlers)
+    dp.include_router(main_router)
 
     dp.update.outer_middleware.register(db_middleware)
 
