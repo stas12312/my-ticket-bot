@@ -19,7 +19,7 @@ def upgrade() -> None:
     op.create_table(
         'user',
         sa.Column('id', sa.BIGINT, primary_key=True),
-        sa.Column('created_at', sa.TIMESTAMP, server_default=sa.func.now()),
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column('username', sa.String, nullable=True),
     )
 
@@ -48,8 +48,8 @@ def upgrade() -> None:
     op.create_table(
         'ticket',
         sa.Column('id', sa.BIGINT, primary_key=True),
-        sa.Column('created_at', sa.TIMESTAMP, server_default=sa.func.now()),
-        sa.Column('event_time', sa.TIMESTAMP),
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column('event_time', sa.DateTime(timezone=True)),
         sa.Column('user_id', sa.BIGINT, sa.ForeignKey('user.id')),
         sa.Column('place_id', sa.BIGINT, sa.ForeignKey('place.id')),
         sa.Column('event_link', sa.String, nullable=True),
