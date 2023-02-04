@@ -30,7 +30,7 @@ async def main():
 
     dp.update.outer_middleware.register(db_middleware)
 
-    logger.debug('Запуск бота')
+    logger.info('Запуск бота')
     bot = Bot(config.bot_token)
     await dp.start_polling(bot)
 
