@@ -13,6 +13,11 @@ class EntityAction(StrEnum):
     show = 'show'
 
 
+class SettingsCallback(CallbackData, prefix='settings'):
+    """CallbackData для работы с натройками"""
+    action: EntityAction
+
+
 class CityCallback(CallbackData, prefix='cities'):
     """CallbackData для работы с городами"""
     action: EntityAction
@@ -23,3 +28,7 @@ class PlaceCallback(CallbackData, prefix='places'):
     """CallbackData для работы с местами"""
     action: EntityAction
     place_id: int | None
+
+
+class CloseCallback(CallbackData, prefix='close'):
+    """CallbackData для закрытия меню"""
