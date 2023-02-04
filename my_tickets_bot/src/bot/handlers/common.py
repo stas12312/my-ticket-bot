@@ -3,6 +3,7 @@ from aiogram import Router, types
 from aiogram.filters import Command
 
 from services.repository import Repo
+from ..callbacks import CloseCallback
 from ..keybaords import get_menu_keyboard
 
 
@@ -24,6 +25,14 @@ async def start_handler(
     )
 
 
+async def close_menu(
+        query: types.CallbackQuery,
+):
+    """Закрытие меню"""
+    await query.message.delete()
+
+
 common_handlers = Router()
 
 common_handlers.message.register(start_handler, Command(commands='start'))
+common_handlers.callback_query.register(close_menu, CloseCallback.filter())
