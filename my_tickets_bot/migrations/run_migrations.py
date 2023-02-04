@@ -22,4 +22,4 @@ def get_connection_url() -> str:
 
 
 if __name__ == '__main__':
-    run_migrations('./alembic', get_connection_url())
+    run_migrations('./my-tickets-bot', get_connection_url())
