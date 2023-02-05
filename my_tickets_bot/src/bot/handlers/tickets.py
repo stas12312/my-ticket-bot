@@ -1,4 +1,5 @@
 """Обработчики для работы с билетами"""
+import validators
 from aiogram import Router, F, Bot
 from aiogram import types
 from aiogram.filters import Text
@@ -10,6 +11,7 @@ from services.repositories import Repo
 from ..buttons import MainMenu
 from ..forms import TicketForm
 from ..keybaords import get_keyboard_by_values, get_menu_keyboard
+from ..messages import make_ticket_message
 
 
 async def add_ticket_handler(
@@ -81,6 +83,10 @@ async def processing_link_handler(
         state: FSMContext,
 ):
     """Обработка введения ссылки на мероприятие"""
+    if not validators.url(message.text):
+        await message.answer('Некорректная ссылка, попробуйте еще раз')
+        return
+
     await state.update_data(event_link=message.text)
     await message.answer('Введите дату и время проведения мероприятия')
     await state.set_state(TicketForm.event_time)
@@ -141,9 +147,11 @@ async def my_tickets_handler(
     """Отображения билетов"""
     tickets = await repo.ticket.list(message.from_user.id)
 
-    msg = '\n'.join(ticket.event_name for ticket in tickets)
+    ticket_messages = [make_ticket_message(ticket, with_command=True) for ticket in tickets]
 
-    await message.answer(msg)
+    tickets_messages = '\n\n'.join(ticket_messages)
+
+    await message.answer(f'Ваши билеты\n\n{tickets_messages}', disable_web_page_preview=True)
 
 
 tickets_handler = Router()
