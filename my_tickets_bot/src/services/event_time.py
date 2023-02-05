@@ -20,11 +20,11 @@ def parse_datetime(
     if (parsed_datetime := convert(raw_datetime)) is None:
         return None
 
-    # Если ввели год из двух цифр
-    if parsed_datetime.year < 2000:
-        parsed_datetime = parsed_datetime.replace(year=parsed_datetime.year + 2000)
+    timezone = pytz.timezone(timezone_name)
 
-    return parsed_datetime.replace(tzinfo=pytz.timezone(timezone_name))
+    parsed_datetime = timezone.localize(parsed_datetime)
+
+    return parsed_datetime
 
 
 def convert(

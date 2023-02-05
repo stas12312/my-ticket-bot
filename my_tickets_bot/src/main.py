@@ -31,7 +31,7 @@ async def main():
     dp.update.outer_middleware.register(db_middleware)
 
     logger.info('Запуск бота')
-    bot = Bot(config.bot_token)
+    bot = Bot(config.bot_token, parse_mode='MarkdownV2')
     await dp.start_polling(bot)
 
 
