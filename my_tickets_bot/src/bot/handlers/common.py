@@ -2,7 +2,7 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 
-from services.repository import Repo
+from services.repositories import Repo
 from ..callbacks import CloseCallback
 from ..keybaords import get_menu_keyboard
 
@@ -17,7 +17,7 @@ async def start_handler(
 
     user = message.from_user
 
-    await repo.save_user(user.id, user.username)
+    await repo.user.save(user.id, user.username)
 
     await message.answer(
         text='Приветствуем в "Мои билеты"',

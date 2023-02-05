@@ -5,7 +5,7 @@ from typing import Awaitable, Any, Callable
 from aiogram.types import Message
 from asyncpg import Pool, Connection
 
-from services.repository import Repo
+from services.repositories import Repo
 
 logger = logging.getLogger(__name__)
 
