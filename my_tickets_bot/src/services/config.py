@@ -17,7 +17,6 @@ class EnvName(StrEnum):
     PG_DB = 'PG_DB'
 
 
-# pylint: disable=too-many-instance-attributes
 @dataclasses.dataclass
 class Config:
     """Конфигурация приложения"""

@@ -3,7 +3,6 @@ import os
 
 from services.config import EnvName, load_config
 
-
 def setup():
     """Загрузка переменных в окружение"""
     os.environ.update({
