@@ -4,7 +4,7 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 
 from services.city import get_timezone_name
-from services.repository import Repo
+from services.repositories import Repo
 from ..callbacks import CityCallback, EntityAction
 from ..forms import CityForm
 from ..keybaords import get_cities_menu, get_actions_for_city
@@ -16,7 +16,7 @@ async def show_cities_handler(
 ):
     """Отображение списка городов в inline-клавиатуре"""
 
-    cities = await repo.get_cities(query.from_user.id)
+    cities = await repo.city.list(query.from_user.id)
     menu = get_cities_menu(cities)
     await query.message.edit_text('Ваши города', reply_markup=menu)
 
@@ -29,7 +29,7 @@ async def show_city_handler(
     """Отображение города"""
 
     city_id = callback_data.city_id
-    city = await repo.get_city(query.from_user.id, city_id)
+    city = await repo.city.get(query.from_user.id, city_id)
 
     text = f'Город: {city.name}\n' \
            f'Временная зона: {city.timezone}'
@@ -47,7 +47,7 @@ async def delete_city(
     """Удаление города"""
 
     city_id = callback_data.city_id
-    await repo.delete_city(query.from_user.id, city_id)
+    await repo.city.delete(query.from_user.id, city_id)
     await query.message.edit_text('Город удалён')
 
 
@@ -78,7 +78,7 @@ async def processing_name_handler(
         return
 
     await state.clear()
-    added_city = await repo.create_city(message.from_user.id, name, timezone_name)
+    added_city = await repo.city.create(message.from_user.id, name, timezone_name)
 
     await message.answer(f'Город {added_city.name} с временной зоной {added_city.timezone} успешно добавлен')
 
