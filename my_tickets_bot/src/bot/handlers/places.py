@@ -80,8 +80,7 @@ async def processing_city_handler(
     """Обработка введенного города"""
     city_name = message.text
 
-    city = await repo.city.get_by_name(message.from_user.id, city_name)
-    if city is None:
+    if (city := await repo.city.get_by_name(message.from_user.id, city_name)) is None:
         await message.answer('Не удалось определить города, выберите город из предложенных')
         return
 

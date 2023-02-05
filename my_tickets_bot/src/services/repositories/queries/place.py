@@ -13,7 +13,9 @@ GET_PLACES = """
         -- Опциональный фильтр по городу
         AND CASE
                 WHEN $2::bigint IS NOT NULL THEN P.city_id = $2::bigint
+                ELSE TRUE
             END 
+            
 """
 
 GET_PLACE = """
