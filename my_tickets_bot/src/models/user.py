@@ -7,6 +7,6 @@ from datetime import datetime
 class User:
     """Модель пользователя"""
     user_id: int
-    username: str
-    created_at: datetime
-    phone: str
+    username: str | None = None
+    created_at: datetime | None = None
+    phone: str | None = None

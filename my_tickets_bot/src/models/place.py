@@ -8,9 +8,9 @@ from .city import City
 class Place:
     """Модель места проведения"""
     place_id: int
-    name: str
-    address: str
-    city: City | None
+    name: str | None = None
+    address: str | None = None
+    city: City | None = None
 
     def get_show_text(self) -> str:
         """Формирования строки для отображения"""
