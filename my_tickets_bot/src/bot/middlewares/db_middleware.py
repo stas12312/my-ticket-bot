@@ -1,6 +1,7 @@
 """Middleware для создания подключения и сессии к бд"""
 import logging
-from typing import Awaitable, Any, Callable
+from collections.abc import Callable, Awaitable
+from typing import Any
 
 from aiogram.types import Message
 from asyncpg import Pool, Connection
