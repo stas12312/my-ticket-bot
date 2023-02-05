@@ -4,7 +4,7 @@ from typing import Optional, List
 
 from asyncpg import Connection, Record
 
-from models import City
+from models import City, Place
 from . import sql
 
 logger = logging.getLogger(__name__)
@@ -76,6 +76,21 @@ class Repo:
             timezone=raw_city['timezone'],
         )
 
+    async def get_city_by_name(
+            self,
+            user_id: int,
+            name: str,
+    ) -> City:
+        """Получение города по названию"""
+        logger.info(f'Получение города {user_id} {name}')
+
+        raw_city = await self._conn.fetchrow(sql.GET_CITY_BY_NAME, user_id, name)
+        return City(
+            city_id=raw_city['id'],
+            name=raw_city['name'],
+            timezone=raw_city['timezone'],
+        )
+
     async def delete_city(
             self,
             user_id: int,
@@ -84,3 +99,72 @@ class Repo:
         logger.info(f'Удаление города {city_id} для {user_id}')
 
         await self._conn.fetch(sql.DELETE_CITY, user_id, city_id)
+
+    async def get_places(
+            self,
+            user_id: int,
+    ) -> list[Place]:
+        logger.info(f'Получение мест для {user_id}')
+        raw_places = await self._conn.fetch(sql.GET_PLACES, user_id)
+
+        places: list[Place] = []
+
+        for place in raw_places:
+            places.append(Place(
+                place_id=place['id'],
+                name=place['name'],
+                address=place['address'],
+                city=City(
+                    city_id=place['city_id'],
+                    name=place['city_name'],
+                    timezone=None,
+                ),
+            ))
+        return places
+
+    async def save_place(
+            self,
+            city_id: int,
+            name: str,
+            address: str,
+    ) -> Place:
+        """Сохранение места"""
+        logger.info(f'Добавление места {name} для {city_id}')
+
+        raw_place = await self._conn.fetchrow(sql.SAVE_PLACE, city_id, name, address)
+
+        return Place(
+            place_id=raw_place['id'],
+            name=raw_place['name'],
+            address=raw_place['address'],
+            city=None,
+        )
+
+    async def delete_place(
+            self,
+            user_id: int,
+            place_id: int,
+    ):
+        """Удаление места"""
+        logger.info(f'Удаление места {place_id} для {user_id}')
+        await self._conn.fetch(sql.DELETE_PLACE, user_id, place_id)
+
+    async def get_place(
+            self,
+            user_id: int,
+            place_id: int,
+    ):
+        """Получение места для пользователя"""
+        logger.info(f'Получение места {place_id} для пользователя {user_id}')
+        raw_place = await self._conn.fetchrow(sql.GET_PLACE, user_id, place_id)
+
+        return Place(
+            place_id=raw_place['id'],
+            name=raw_place['name'],
+            address=raw_place['address'],
+            city=City(
+                city_id=raw_place['city_id'],
+                name=raw_place['city_name'],
+                timezone=None,
+            ),
+        )

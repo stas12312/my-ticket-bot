@@ -1,5 +1,4 @@
 """Клавиатуры"""
-from typing import List
 
 from aiogram.utils.keyboard import (
     ReplyKeyboardMarkup,
@@ -10,7 +9,7 @@ from aiogram.utils.keyboard import (
     InlineKeyboardBuilder,
 )
 
-from models import City
+from models import City, Place
 from .buttons import (
     MainMenu,
     Settings,
@@ -29,6 +28,18 @@ def get_menu_keyboard() -> ReplyKeyboardMarkup:
 
     builder.row(KeyboardButton(text=MainMenu.MY_TICKETS), KeyboardButton(text=MainMenu.ADD_TICKET))
     builder.row(KeyboardButton(text=MainMenu.SETTINGS))
+
+    return builder.as_markup(resize_keyboard=True)
+
+
+def get_keyboard_by_values(
+        values: list[str],
+) -> ReplyKeyboardMarkup:
+    """Получение клавиатуры"""
+    builder = ReplyKeyboardBuilder()
+
+    for value in values:
+        builder.row(KeyboardButton(text=value))
 
     return builder.as_markup(resize_keyboard=True)
 
@@ -53,7 +64,7 @@ def get_settings_menu() -> InlineKeyboardMarkup:
 
 
 def get_cities_menu(
-        cities: List[City]
+        cities: list[City]
 ) -> InlineKeyboardMarkup:
     """Получение клавиатуры для выбора города"""
     builder = InlineKeyboardBuilder()
@@ -101,6 +112,60 @@ def get_actions_for_city(
             callback_data=CityCallback(action=EntityAction.list).pack(),
         ),
         CLOSE_BUTTON,
-    ),
+    )
+
+    return builder.as_markup()
+
+
+def get_places_menu(
+        places: list[Place],
+) -> InlineKeyboardMarkup:
+    """Получение меню для списка мест"""
+    builder = InlineKeyboardBuilder()
+
+    for place in places:
+        builder.row(
+            InlineKeyboardButton(
+                text=place.get_show_text(),
+                callback_data=PlaceCallback(action=EntityAction.show, place_id=place.place_id).pack(),
+            )
+        )
+
+    builder.row(
+        InlineKeyboardButton(
+            text=Settings.ADD_PLACE,
+            callback_data=PlaceCallback(action=EntityAction.add).pack(),
+        )
+    )
+    builder.row(
+        InlineKeyboardButton(
+            text=Settings.BACK,
+            callback_data=SettingsCallback(action=EntityAction.show).pack(),
+        ),
+        CLOSE_BUTTON,
+    )
+
+    return builder.as_markup()
+
+
+def get_actions_for_place(
+        place_id: int,
+) -> InlineKeyboardMarkup:
+    """Получение клавиатуры для действия с местом"""
+    builder = InlineKeyboardBuilder()
+
+    builder.row(
+        InlineKeyboardButton(
+            text=Settings.DELETE_PLACE,
+            callback_data=PlaceCallback(action=EntityAction.delete, city_id=place_id).pack(),
+        )
+    )
+    builder.row(
+        InlineKeyboardButton(
+            text=Settings.BACK,
+            callback_data=PlaceCallback(action=EntityAction.list).pack(),
+        ),
+        CLOSE_BUTTON,
+    )
 
     return builder.as_markup()
