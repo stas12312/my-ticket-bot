@@ -4,7 +4,7 @@ from aiogram import Router, F
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 
-from services.repository import Repo
+from services.repositories import Repo
 from ..callbacks import PlaceCallback, EntityAction
 from ..forms import PlaceForm
 from ..keybaords import get_places_menu, get_keyboard_by_values, get_menu_keyboard, get_actions_for_place
@@ -16,7 +16,7 @@ async def show_places_handler(
 ):
     """Отображение мест пользователя"""
 
-    places = await repo.get_places(query.from_user.id)
+    places = await repo.place.list(query.from_user.id)
 
     menu = get_places_menu(places)
 
@@ -35,7 +35,7 @@ async def show_place_handler(
 
     place_id = callback_data.place_id
 
-    place = await repo.get_place(query.from_user.id, place_id)
+    place = await repo.place.get(query.from_user.id, place_id)
     menu = get_actions_for_place(place_id)
     await query.message.edit_text(
         text='Место\n'
@@ -53,7 +53,7 @@ async def delete_place_handler(
 ):
     """Удаление места"""
     place_id = callback_data.place_id
-    await repo.delete_place(query.from_user.id, place_id)
+    await repo.place.delete(query.from_user.id, place_id)
     await query.answer('Место удалено', show_alert=True)
     await query.message.delete()
 
@@ -66,7 +66,7 @@ async def start_add_place_handler(
     """Начало добавления места"""
     await query.message.delete()
     await state.set_state(PlaceForm.city_id)
-    cities = await repo.get_cities(query.from_user.id)
+    cities = await repo.city.list(query.from_user.id)
 
     keyboard = get_keyboard_by_values([city.name for city in cities])
     await query.message.answer('Выберите город', reply_markup=keyboard)
@@ -80,7 +80,7 @@ async def processing_city_handler(
     """Обработка введенного города"""
     city_name = message.text
 
-    city = await repo.get_city_by_name(message.from_user.id, city_name)
+    city = await repo.city.get_by_name(message.from_user.id, city_name)
     if city is None:
         await message.answer('Не удалось определить города, выберите город из предложенных')
         return
@@ -112,7 +112,7 @@ async def processing_address_handler(
     city_id = data['city_id']
     name = data['name']
 
-    place = await repo.save_place(city_id, name, address)
+    place = await repo.place.save(city_id, name, address)
 
     await message.answer(f'Место {place.name} успешно добавлено', reply_markup=get_menu_keyboard())
 
