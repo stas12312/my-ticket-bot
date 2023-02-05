@@ -19,5 +19,5 @@ class Settings(StrEnum):
     ADD_PLACE = '🆕 Добавить место'
     DELETE_PLACE = '🗑 Удалить место'
 
-    BACK = '◀️Назад'
+    BACK = '◀️ Назад'
     CLOSE = '❌ Закрыть'
