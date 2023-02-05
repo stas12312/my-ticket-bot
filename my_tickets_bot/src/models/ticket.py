@@ -12,6 +12,7 @@ class Ticket:
     ticket_id: int
     created_at: datetime
     event_time: datetime
+    event_name: str
     user: User
     place: Place
     event_link: str

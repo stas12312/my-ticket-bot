@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 
 import aiohttp
+# pylint: disable=no-name-in-module
 from tzfpy import get_tz
 
 QUERY_TEMPLATE = 'https://nominatim.openstreetmap.org/search?q={name}&format=json'
@@ -42,8 +43,7 @@ async def get_timezone_name(
         name: str,
 ) -> str | None:
     """Определение названия временной зоны по названию города"""
-    coordinate = await get_coordinate(name)
-    if not coordinate:
+    if not (coordinate := await get_coordinate(name)):
         return None
 
     return get_tz(coordinate.lon, coordinate.lat)
