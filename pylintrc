@@ -12,6 +12,7 @@ ignore=
     5329f1b9835c_create_tables.py,
     cb210963c911_add_adress_field.py,
     env.py,
+    b1e441333a55_add_ticket_fields.py,
 
 
 # Add files or directories matching the regex patterns to the ignore-list. The
