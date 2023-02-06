@@ -8,6 +8,7 @@ from services.repositories import Repo
 from ..callbacks import PlaceCallback, EntityAction
 from ..forms import LocationForm
 from ..keybaords import get_places_menu, get_keyboard_by_values, get_menu_keyboard, get_actions_for_location
+from ..messages import make_location_message
 
 
 async def show_locations_handler(
@@ -38,10 +39,7 @@ async def show_location_handler(
     location = await repo.location.get(query.from_user.id, place_id)
     menu = get_actions_for_location(place_id)
     await query.message.edit_text(
-        text='Место\n'
-             f'Город: {location.city.name}\n'
-             f'Название: {location.name}\n'
-             f'Адрес: {location.address}',
+        text=make_location_message(location),
         reply_markup=menu,
     )
 
@@ -113,16 +111,21 @@ async def processing_address_handler(
 
     location = await repo.location.save(city_id, name, address)
 
-    await message.answer(f'Место {location.name} успешно добавлено', reply_markup=get_menu_keyboard())
+    await message.answer(
+        f'✅ Место добавлено ✅\n\n{make_location_message(location)}',
+        reply_markup=get_menu_keyboard(),
+    )
 
     await state.clear()
 
 
 locations_handler = Router()
 locations_handler.callback_query.register(show_locations_handler, PlaceCallback.filter(F.action == EntityAction.list))
-locations_handler.callback_query.register(start_add_location_handler, PlaceCallback.filter(F.action == EntityAction.add))
+locations_handler.callback_query.register(start_add_location_handler,
+                                          PlaceCallback.filter(F.action == EntityAction.add))
 locations_handler.message.register(processing_city_handler, LocationForm.city_id)
 locations_handler.message.register(processing_name_handler, LocationForm.name)
 locations_handler.message.register(processing_address_handler, LocationForm.address)
 locations_handler.callback_query.register(show_location_handler, PlaceCallback.filter(F.action == EntityAction.show))
-locations_handler.callback_query.register(delete_location_handler, PlaceCallback.filter(F.action == EntityAction.delete))
+locations_handler.callback_query.register(delete_location_handler,
+                                          PlaceCallback.filter(F.action == EntityAction.delete))
