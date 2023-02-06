@@ -8,6 +8,7 @@ from services.repositories import Repo
 from ..callbacks import CityCallback, EntityAction
 from ..forms import CityForm
 from ..keybaords import get_cities_menu, get_actions_for_city
+from ..messages import make_city_message, quote
 
 
 async def show_cities_handler(
@@ -31,8 +32,7 @@ async def show_city_handler(
     city_id = callback_data.city_id
     city = await repo.city.get(query.from_user.id, city_id)
 
-    text = f'Город: {city.name}\n' \
-           f'Временная зона: {city.timezone}'
+    text = make_city_message(city)
 
     keyboard = get_actions_for_city(city_id)
 
@@ -72,15 +72,14 @@ async def processing_name_handler(
     который будет получен по названию города
     """
     name = message.text
-    timezone_name = await get_timezone_name(name)
-    if timezone_name is None:
-        await message.answer(f'Не удалось найти город "{name}", попробуйте еще раз')
+    if (timezone_name := await get_timezone_name(name)) is None:
+        await message.answer(f'Не удалось найти город "{quote(name)}", попробуйте еще раз')
         return
 
     await state.clear()
     added_city = await repo.city.create(message.from_user.id, name, timezone_name)
 
-    await message.answer(f'Город {added_city.name} с временной зоной {added_city.timezone} успешно добавлен')
+    await message.answer(f'✅ Город добавлен ✅ \n\n{make_city_message(added_city)}')
 
 
 cities_handler = Router()
