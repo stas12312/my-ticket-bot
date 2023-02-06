@@ -8,17 +8,17 @@ class CityForm(StatesGroup):
     timezone = State()
 
 
-class PlaceForm(StatesGroup):
+class LocationForm(StatesGroup):
     """Добавление места"""
     city_id = State()
     name = State()
     address = State()
 
 
-class TicketForm(StatesGroup):
+class EventForm(StatesGroup):
     """Добавление билета"""
     city_id = State()
-    place_id = State()
+    location_id = State()
     event_time = State()
     event_link = State()
     link = State()

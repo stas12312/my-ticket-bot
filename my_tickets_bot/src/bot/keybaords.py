@@ -9,7 +9,7 @@ from aiogram.utils.keyboard import (
     InlineKeyboardBuilder,
 )
 
-from models import City, Place
+from models import City, Location
 from .buttons import (
     MainMenu,
     Settings,
@@ -118,22 +118,22 @@ def get_actions_for_city(
 
 
 def get_places_menu(
-        places: list[Place],
+        locations: list[Location],
 ) -> InlineKeyboardMarkup:
     """Получение меню для списка мест"""
     builder = InlineKeyboardBuilder()
 
-    for place in places:
+    for location in locations:
         builder.row(
             InlineKeyboardButton(
-                text=place.get_show_text(),
-                callback_data=PlaceCallback(action=EntityAction.show, place_id=place.place_id).pack(),
+                text=location.get_show_text(),
+                callback_data=PlaceCallback(action=EntityAction.show, place_id=location.location_id).pack(),
             )
         )
 
     builder.row(
         InlineKeyboardButton(
-            text=Settings.ADD_PLACE,
+            text=Settings.ADD_LOCATION,
             callback_data=PlaceCallback(action=EntityAction.add).pack(),
         )
     )
@@ -148,7 +148,7 @@ def get_places_menu(
     return builder.as_markup()
 
 
-def get_actions_for_place(
+def get_actions_for_location(
         place_id: int,
 ) -> InlineKeyboardMarkup:
     """Получение клавиатуры для действия с местом"""
@@ -156,7 +156,7 @@ def get_actions_for_place(
 
     builder.row(
         InlineKeyboardButton(
-            text=Settings.DELETE_PLACE,
+            text=Settings.DELETE_LOCATION,
             callback_data=PlaceCallback(action=EntityAction.delete, city_id=place_id).pack(),
         )
     )

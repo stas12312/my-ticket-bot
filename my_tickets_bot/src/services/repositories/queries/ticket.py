@@ -1,30 +1,22 @@
 SAVE_TICKET = """
     INSERT
-    INTO ticket (user_id, place_id, event_time, event_name, file_id, event_link) VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING *
+    INTO ticket (event_id, comment) VALUES ($1, $2)
+    RETURNING 
+        id AS ticket_id
 """
 
-GET_TICKETS = """
-    SELECT 
-        T.id as ticket_id,
-        T.event_name as event_name,
-        T.event_time AT TIME ZONE C.timezone as event_time,
-        T.event_link as event_link,
-        T.created_at AT TIME ZONE C.timezone as created_at,
-        T.user_id as user_id,
-        P.name as place_name,
-        P.address as place_address,
-        P.id as place_id,
-        C.id as city_id,
-        C.name as city_name,
-        C.timezone as timezone_name,
-        F.id as file_id,
-        F.location as file_location
-    FROM ticket T
-    JOIN place P ON P.id = T.place_id
-    JOIN city C ON C.id = P.city_id
-    LEFT JOIN file F ON F.id = T.file_id
+GET_TICKETS_FOR_EVENT = """
+    SELECT
+        ticket.id AS ticket_id,
+        ticket.created_at AS created_at,
+        
+        file.id AS file_id,
+        file.location AS file_location
+        
+    FROM ticket
+    JOIN event ON event.id = ticket.event_id
+    JOIN file ON file.ticket_id = ticket.id
     WHERE
-        T.user_id = $1
-    ORDER BY T.event_time
+        event.user_id = $1
+        AND event.id = $2
 """

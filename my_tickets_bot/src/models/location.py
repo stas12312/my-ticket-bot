@@ -5,9 +5,9 @@ from .city import City
 
 
 @dataclasses.dataclass
-class Place:
+class Location:
     """Модель места проведения"""
-    place_id: int
+    location_id: int
     name: str | None = None
     address: str | None = None
     city: City | None = None
