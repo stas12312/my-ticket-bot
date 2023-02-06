@@ -42,7 +42,7 @@ def get_clock_emoji(
 
 
 def get_interval_number(
-        time: datetime.time
+        time: datetime.time,
 ) -> int:
     """Получение номера интервала"""
     if (total_minutes := time.hour * 60 + time.minute) >= HR_12:
