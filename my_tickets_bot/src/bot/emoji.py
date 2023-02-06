@@ -1,7 +1,7 @@
 import datetime
 from math import floor
 
-CLOCK_EMOJI = [
+CLOCK_EMOJIS = [
     '🕛',  # 00:00
     '🕧',  # 00:30
     '🕑',  # 01:00
@@ -38,7 +38,7 @@ def get_clock_emoji(
     """Получение эмодзи часов в зависимости от времени"""
 
     interval = get_interval_number(time)
-    return CLOCK_EMOJI[interval]
+    return CLOCK_EMOJIS[interval]
 
 
 def get_interval_number(
