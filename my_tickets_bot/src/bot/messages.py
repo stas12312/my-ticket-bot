@@ -2,10 +2,17 @@
 import datetime
 
 from aiogram.utils.markdown import bold, link, italic
-from aiogram.utils.text_decorations import markdown_decoration as mark
+from aiogram.utils.text_decorations import markdown_decoration
 
 from bot.emoji import get_clock_emoji
-from models import Event, Location
+from models import Event, Location, City
+
+
+def quote(
+        value: str
+) -> str:
+    """Экранирование"""
+    return markdown_decoration.quote(value)
 
 
 def make_event_message(
@@ -23,18 +30,18 @@ def make_event_message(
     ]
 
     if with_command:
-        command = mark.quote(f'/event_{event.event_id}')
+        command = quote(f'/event_{event.event_id}')
         rows.append(f'⚙ Управлять билетами: {command}')
 
-    return '\n'.join(rows)
+    return _make_message_by_rows(rows)
 
 
 def get_full_address_message(
         location: Location,
 ) -> str:
     """Получение строки для адреса"""
-    address = f'{mark.quote(location.city.name)}, {mark.quote(location.address)}'
-    return f'{mark.bold(location.name)} ' \
+    address = f'{quote(location.city.name)}, {quote(location.address)}'
+    return f'{bold(location.name)} ' \
            f'{italic(address)}'
 
 
@@ -42,3 +49,40 @@ def beatify_date(raw_datetime: datetime.datetime) -> str:
     """Преобразование даты в корректное представление"""
 
     return raw_datetime.strftime('%d.%m.%Y %H:%M')
+
+
+def make_city_message(
+        city: City,
+) -> str:
+    """Формирование сообщения для описания города"""
+    rows = [
+        f'🏘 {quote(city.name)}',
+        f'🕰 {quote(city.timezone)}',
+    ]
+    return _make_message_by_rows(rows)
+
+
+def make_location_message(
+        location: Location,
+) -> str:
+    """Формирования сообщения для локации"""
+    rows = []
+
+    if location.city:
+        rows.append(
+            f'🏘 {quote(location.city.name)}'
+        )
+
+    rows.extend([
+        f'🏛 {quote(location.name)}',
+        f'📍 {quote(location.address)}',
+    ])
+
+    return _make_message_by_rows(rows)
+
+
+def _make_message_by_rows(
+        rows: list[str],
+) -> str:
+    """Формирование сообщения из списка строк"""
+    return '\n'.join(rows)
