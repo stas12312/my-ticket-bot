@@ -48,5 +48,5 @@ def get_interval_number(
     if (total_minutes := time.hour * 60 + time.minute) >= HR_12:
         total_minutes -= HR_12
 
-    # Округляем в большую сторону
+    # Округляем к ближайшему интервалу
     return floor(total_minutes / 30 + 0.5)
