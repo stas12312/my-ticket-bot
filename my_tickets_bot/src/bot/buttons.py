@@ -16,8 +16,8 @@ class Settings(StrEnum):
     DELETE_CITY = '🗑 Удалить город'
 
     MY_PLACES = '🎭 Мои места'
-    ADD_PLACE = '🆕 Добавить место'
-    DELETE_PLACE = '🗑 Удалить место'
+    ADD_LOCATION = '🆕 Добавить место'
+    DELETE_LOCATION = '🗑 Удалить место'
 
     BACK = '◀️ Назад'
     CLOSE = '❌ Закрыть'
