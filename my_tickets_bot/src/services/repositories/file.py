@@ -14,14 +14,19 @@ class FileRepo:
 
     async def save_file(
             self,
+            ticket_id: int,
             location: str,
-            file_type: int,
     ) -> File:
         """Сохранение файла"""
-        raw_file = await self._conn.fetchrow(query.SAVE_FILE, location, file_type)
+        record = await self._conn.fetchrow(query.SAVE_FILE, ticket_id, location)
+        return _convert_record_to_file(record)
 
-        return File(
-            file_id=raw_file['id'],
-            location=raw_file['location'],
-            file_type=raw_file['type'],
-        )
+
+def _convert_record_to_file(record: asyncpg.Record) -> File:
+    """Конвертация рекорда в файл"""
+
+    return File(
+        file_id=record.get('file_id'),
+        ticket_id=record.get('ticket_id'),
+        location=record.get('file_location'),
+    )

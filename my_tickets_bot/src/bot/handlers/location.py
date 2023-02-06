@@ -6,17 +6,17 @@ from aiogram.fsm.context import FSMContext
 
 from services.repositories import Repo
 from ..callbacks import PlaceCallback, EntityAction
-from ..forms import PlaceForm
-from ..keybaords import get_places_menu, get_keyboard_by_values, get_menu_keyboard, get_actions_for_place
+from ..forms import LocationForm
+from ..keybaords import get_places_menu, get_keyboard_by_values, get_menu_keyboard, get_actions_for_location
 
 
-async def show_places_handler(
+async def show_locations_handler(
         query: types.CallbackQuery,
         repo: Repo,
 ):
     """Отображение мест пользователя"""
 
-    places = await repo.place.list(query.from_user.id)
+    places = await repo.location.list(query.from_user.id)
 
     menu = get_places_menu(places)
 
@@ -26,7 +26,7 @@ async def show_places_handler(
     )
 
 
-async def show_place_handler(
+async def show_location_handler(
         query: types.CallbackQuery,
         callback_data: PlaceCallback,
         repo: Repo,
@@ -35,37 +35,37 @@ async def show_place_handler(
 
     place_id = callback_data.place_id
 
-    place = await repo.place.get(query.from_user.id, place_id)
-    menu = get_actions_for_place(place_id)
+    location = await repo.location.get(query.from_user.id, place_id)
+    menu = get_actions_for_location(place_id)
     await query.message.edit_text(
         text='Место\n'
-             f'Город: {place.city.name}\n'
-             f'Название: {place.name}\n'
-             f'Адрес: {place.address}',
+             f'Город: {location.city.name}\n'
+             f'Название: {location.name}\n'
+             f'Адрес: {location.address}',
         reply_markup=menu,
     )
 
 
-async def delete_place_handler(
+async def delete_location_handler(
         query: types.CallbackQuery,
         callback_data: PlaceCallback,
         repo: Repo,
 ):
     """Удаление места"""
     place_id = callback_data.place_id
-    await repo.place.delete(query.from_user.id, place_id)
+    await repo.location.delete(query.from_user.id, place_id)
     await query.answer('Место удалено', show_alert=True)
     await query.message.delete()
 
 
-async def start_add_place_handler(
+async def start_add_location_handler(
         query: types.CallbackQuery,
         state: FSMContext,
         repo: Repo,
 ):
     """Начало добавления места"""
     await query.message.delete()
-    await state.set_state(PlaceForm.city_id)
+    await state.set_state(LocationForm.city_id)
     cities = await repo.city.list(query.from_user.id)
 
     keyboard = get_keyboard_by_values([city.name for city in cities])
@@ -85,7 +85,7 @@ async def processing_city_handler(
         return
 
     await state.update_data(city_id=city.city_id)
-    await state.set_state(PlaceForm.name)
+    await state.set_state(LocationForm.name)
     await message.answer('Введите название места', reply_markup=types.ReplyKeyboardRemove())
 
 
@@ -96,7 +96,7 @@ async def processing_name_handler(
     """Обработка введённого названия"""
     name = message.text
     await state.update_data(name=name)
-    await state.set_state(PlaceForm.address)
+    await state.set_state(LocationForm.address)
     await message.answer('Введите адрес места')
 
 
@@ -111,18 +111,18 @@ async def processing_address_handler(
     city_id = data['city_id']
     name = data['name']
 
-    place = await repo.place.save(city_id, name, address)
+    location = await repo.location.save(city_id, name, address)
 
-    await message.answer(f'Место {place.name} успешно добавлено', reply_markup=get_menu_keyboard())
+    await message.answer(f'Место {location.name} успешно добавлено', reply_markup=get_menu_keyboard())
 
     await state.clear()
 
 
-places_handler = Router()
-places_handler.callback_query.register(show_places_handler, PlaceCallback.filter(F.action == EntityAction.list))
-places_handler.callback_query.register(start_add_place_handler, PlaceCallback.filter(F.action == EntityAction.add))
-places_handler.message.register(processing_city_handler, PlaceForm.city_id)
-places_handler.message.register(processing_name_handler, PlaceForm.name)
-places_handler.message.register(processing_address_handler, PlaceForm.address)
-places_handler.callback_query.register(show_place_handler, PlaceCallback.filter(F.action == EntityAction.show))
-places_handler.callback_query.register(delete_place_handler, PlaceCallback.filter(F.action == EntityAction.delete))
+locations_handler = Router()
+locations_handler.callback_query.register(show_locations_handler, PlaceCallback.filter(F.action == EntityAction.list))
+locations_handler.callback_query.register(start_add_location_handler, PlaceCallback.filter(F.action == EntityAction.add))
+locations_handler.message.register(processing_city_handler, LocationForm.city_id)
+locations_handler.message.register(processing_name_handler, LocationForm.name)
+locations_handler.message.register(processing_address_handler, LocationForm.address)
+locations_handler.callback_query.register(show_location_handler, PlaceCallback.filter(F.action == EntityAction.show))
+locations_handler.callback_query.register(delete_location_handler, PlaceCallback.filter(F.action == EntityAction.delete))

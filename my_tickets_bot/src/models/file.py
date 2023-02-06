@@ -6,5 +6,5 @@ import dataclasses
 class File:
     """Модель файла"""
     file_id: int
+    ticket_id: int
     location: str
-    file_type: int

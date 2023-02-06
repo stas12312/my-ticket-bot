@@ -7,5 +7,5 @@ from datetime import tzinfo
 class City:
     """Модель города"""
     city_id: int
-    name: str | None
-    timezone: tzinfo | None
+    name: str | None = None
+    timezone: tzinfo | None = None
