@@ -5,6 +5,7 @@ import logging
 import asyncpg
 from aiogram import Dispatcher, Bot
 
+from bot.commands import BOT_COMMANDS
 from bot.handlers import main_router
 from bot.middlewares import DbMiddleware
 from services.config import load_config
@@ -32,6 +33,7 @@ async def main():
 
     logger.info('Запуск бота')
     bot = Bot(config.bot_token, parse_mode='MarkdownV2')
+    await bot.set_my_commands(BOT_COMMANDS)
     await dp.start_polling(bot)
 
 
