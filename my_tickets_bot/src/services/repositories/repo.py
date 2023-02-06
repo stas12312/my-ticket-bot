@@ -1,10 +1,11 @@
 from asyncpg import Connection
 
 from .city import CityRepo
-from .place import PlaceRepo
-from .ticket import TicketRepo
-from .user import UserRepo
+from .event import EventRepo
 from .file import FileRepo
+from .ticket import TicketRepo
+from .location import LocationRepo
+from .user import UserRepo
 
 
 class Repo:
@@ -16,6 +17,7 @@ class Repo:
     ):
         self.user = UserRepo(connection)
         self.city = CityRepo(connection)
-        self.place = PlaceRepo(connection)
-        self.ticket = TicketRepo(connection)
+        self.location = LocationRepo(connection)
         self.file = FileRepo(connection)
+        self.ticket = TicketRepo(connection)
+        self.event = EventRepo(connection)

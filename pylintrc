@@ -8,11 +8,7 @@ init-hook=import sys; sys.path.append("D:\Projects\my-ticket-bot\my_tickets_bot\
 # paths.
 ignore=
     CVS,
-    190ca66b8c12_add_is_delete_column.py,
-    5329f1b9835c_create_tables.py,
-    cb210963c911_add_adress_field.py,
-    env.py,
-    b1e441333a55_add_ticket_fields.py,
+    2023_02_06211424_init_tables.py,
 
 
 # Add files or directories matching the regex patterns to the ignore-list. The

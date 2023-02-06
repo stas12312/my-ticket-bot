@@ -1,5 +1,6 @@
 """Модели"""
 from .city import City
-from .place import Place
-from .ticket import Ticket
+from .event import Event
+from .location import Location
 from .user import User
+from .ticket import Ticket
