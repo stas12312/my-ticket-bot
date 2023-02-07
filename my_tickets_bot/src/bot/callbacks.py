@@ -30,5 +30,17 @@ class PlaceCallback(CallbackData, prefix='places'):
     place_id: int | None
 
 
+class EventCallback(CallbackData, prefix='events'):
+    """CallbackData для работы с событиями"""
+    action: EntityAction
+    event_id: int | None
+
+
+class TicketCallback(CallbackData, prefix='tickets'):
+    """CallbackData для работы с билетами"""
+    action: EntityAction
+    ticket_id: int | None
+
+
 class CloseCallback(CallbackData, prefix='close'):
     """CallbackData для закрытия меню"""

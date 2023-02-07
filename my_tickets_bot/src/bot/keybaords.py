@@ -9,12 +9,13 @@ from aiogram.utils.keyboard import (
     InlineKeyboardBuilder,
 )
 
-from models import City, Location
+from models import City, Location, Event, Ticket
 from .buttons import (
     MainMenu,
-    Settings,
+    Settings, Action,
 )
-from .callbacks import CityCallback, EntityAction, PlaceCallback, SettingsCallback, CloseCallback
+from .callbacks import CityCallback, EntityAction, PlaceCallback, SettingsCallback, CloseCallback, TicketCallback, \
+    EventCallback
 
 CLOSE_BUTTON = InlineKeyboardButton(
     text=Settings.CLOSE,
@@ -166,6 +167,32 @@ def get_actions_for_location(
             callback_data=PlaceCallback(action=EntityAction.list).pack(),
         ),
         CLOSE_BUTTON,
+    )
+
+    return builder.as_markup()
+
+
+def get_actions_for_event(
+        event: Event,
+        tickets: list[Ticket],
+) -> InlineKeyboardMarkup:
+    """Получение клавиатуры для события"""
+    builder = InlineKeyboardBuilder()
+
+    for row, ticket in enumerate(tickets, start=1):
+        builder.row(
+            InlineKeyboardButton(
+                text=f'⬇ Билет {row}',
+                callback_data=TicketCallback(action=EntityAction.show, ticket_id=ticket.ticket_id).pack(),
+            )
+        )
+
+    builder.row(
+        CLOSE_BUTTON,
+        InlineKeyboardButton(
+            text=Action.DELETE,
+            callback_data=EventCallback(action=EntityAction.delete, event_id=event.event_id).pack(),
+        )
     )
 
     return builder.as_markup()

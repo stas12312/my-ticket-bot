@@ -68,7 +68,7 @@ def make_location_message(
     """Формирования сообщения для локации"""
     rows = []
 
-    if location.city:
+    if location.city.name:
         rows.append(
             f'🏘 {quote(location.city.name)}'
         )
