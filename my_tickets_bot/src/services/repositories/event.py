@@ -34,10 +34,27 @@ class EventRepo:
             user_id: int,
     ) -> list[Event]:
         """Получение списка событий"""
-        records = await self._conn.fetch(q.GET_EVENTS, user_id)
+        records = await self._conn.fetch(q.GET_EVENTS, user_id, None)
 
         return [_convert_record_to_event(record) for record in records]
 
+    async def get(
+            self,
+            user_id: int,
+            event_id: int,
+    ) -> Event | None:
+        """Получение события по идентификатору"""
+        records = await self._conn.fetch(q.GET_EVENTS, user_id, event_id)
+
+        return _convert_record_to_event(records[0]) if records else None
+
+    async def delete(
+            self,
+            user_id: int,
+            event_id: int,
+    ):
+        """Удаление события"""
+        await self._conn.fetch(q.DELETE_EVENT, user_id, event_id)
 
 def _convert_record_to_event(
         record: asyncpg.Record,

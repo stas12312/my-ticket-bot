@@ -1,6 +1,7 @@
 import asyncpg
 
 from models import Ticket
+from models.file import File
 from .queries import ticket as q
 
 
@@ -35,6 +36,16 @@ class TicketRepo:
 
         return [_convert_record_to_ticket(record) for record in records]
 
+    async def get(
+            self,
+            user_id,
+            ticket_id: int,
+    ) -> Ticket:
+        """Получение билета"""
+        record = await self._conn.fetchrow(q.GET_TICKET_BY_ID, user_id, ticket_id)
+
+        return _convert_record_to_ticket(record)
+
 
 def _convert_record_to_ticket(
         record: asyncpg.Record,
@@ -42,6 +53,12 @@ def _convert_record_to_ticket(
     """Конвертация рекорда в модель"""
     return Ticket(
         ticket_id=record.get('ticket_id'),
-        file_url=record.get('file_location'),
         comment=record.get('comment'),
+        file=File(
+            ticket_id=record.get('ticket_id'),
+            file_id=record.get('file_id'),
+            bot_file_id=record.get('bot_file_id'),
+            location=record.get('file_location'),
+        ),
+
     )

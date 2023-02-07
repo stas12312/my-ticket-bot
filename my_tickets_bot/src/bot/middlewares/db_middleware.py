@@ -3,7 +3,7 @@ import logging
 from collections.abc import Callable, Awaitable
 from typing import Any
 
-from aiogram.types import Message
+from aiogram.types import Update
 from asyncpg import Pool, Connection
 
 from services.repositories import Repo
@@ -22,8 +22,8 @@ class DbMiddleware:
 
     async def __call__(
             self,
-            handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
-            event: Message,
+            handler: Callable[[Update, dict[str, Any]], Awaitable[Any]],
+            event: Update,
             data: dict[str, Any],
     ) -> Any:
         """
