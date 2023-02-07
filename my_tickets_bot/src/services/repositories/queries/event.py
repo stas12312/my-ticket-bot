@@ -27,4 +27,16 @@ GET_EVENTS = """
     JOIN city ON city.id = location.city_id
     WHERE
         event.user_id = $1
+        -- Опциональный фильтр по идентификатору
+        AND CASE 
+                WHEN $2::bigint IS NOT NULL THEN event.id = $2::bigint
+                ELSE TRUE
+        END
+"""
+
+DELETE_EVENT = """
+    DELETE FROM event
+    WHERE
+        event.user_id = $1
+        AND event.id = $2
 """

@@ -8,3 +8,4 @@ class File:
     file_id: int
     ticket_id: int
     location: str
+    bot_file_id: str | None

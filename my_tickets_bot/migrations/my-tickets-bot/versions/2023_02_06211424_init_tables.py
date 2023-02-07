@@ -58,7 +58,7 @@ def upgrade() -> None:
     op.create_table(
         'ticket',
         sa.Column('id', sa.BIGINT, primary_key=True),
-        sa.Column('event_id', sa.BIGINT, sa.ForeignKey('event.id')),
+        sa.Column('event_id', sa.BIGINT, sa.ForeignKey('event.id', ondelete='CASCADE')),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column('comment', sa.String),
     )
@@ -67,10 +67,11 @@ def upgrade() -> None:
     op.create_table(
         'file',
         sa.Column('id', sa.BIGINT, primary_key=True),
-        sa.Column('location', sa.String),
-        sa.Column('parent_id', sa.BIGINT, sa.ForeignKey('file.id'), nullable=True),
-        sa.Column('ticket_id', sa.BIGINT, sa.ForeignKey('ticket.id')),
+        sa.Column('location', sa.String, nullable=True),
+        sa.Column('parent_id', sa.BIGINT, sa.ForeignKey('file.id', ondelete='CASCADE'), nullable=True),
+        sa.Column('ticket_id', sa.BIGINT, sa.ForeignKey('ticket.id', ondelete='CASCADE')),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column('bot_file_id', sa.String, nullable=True)
     )
 
     def downgrade() -> None:
