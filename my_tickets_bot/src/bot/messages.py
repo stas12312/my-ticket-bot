@@ -1,11 +1,11 @@
 """Формирование красивых сообщений"""
-import datetime
 
 from aiogram.utils.markdown import bold, link, italic
 from aiogram.utils.text_decorations import markdown_decoration
 
 from bot.emoji import get_clock_emoji
 from models import Event, Location, City
+from services.event_time import get_beatify_datetime
 
 
 def quote(
@@ -26,7 +26,7 @@ def make_event_message(
     rows = [
         f'🎟 Билет на *{event_link}*',
         f'📍 {get_full_address_message(event.location)}',
-        f'{get_clock_emoji(event.time)} {bold(beatify_date(event.time))}',
+        f'{get_clock_emoji(event.time)} {bold(get_beatify_datetime(event.time))}',
     ]
 
     if with_command:
@@ -43,12 +43,6 @@ def get_full_address_message(
     address = f'{quote(location.city.name)}, {quote(location.address)}'
     return f'{bold(location.name)} ' \
            f'{italic(address)}'
-
-
-def beatify_date(raw_datetime: datetime.datetime) -> str:
-    """Преобразование даты в корректное представление"""
-
-    return raw_datetime.strftime('%d.%m.%Y %H:%M')
 
 
 def make_city_message(
