@@ -149,7 +149,7 @@ async def my_events_handler(
 
     events_message = [make_event_message(ticket, with_command=True) for ticket in events]
 
-    msg = '\n\n'.join(events_message) or 'Нет билетов'
+    msg = '\n\n'.join(events_message) or 'У вас нет билетов'
 
     await message.answer(msg, disable_web_page_preview=True)
 
@@ -166,7 +166,11 @@ async def event_card_handler(
     event_message = make_event_message(event)
     keyboards = get_actions_for_event(event, tickets)
 
-    await message.answer(event_message, reply_markup=keyboards)
+    await message.answer(
+        text=event_message,
+        reply_markup=keyboards,
+        disable_web_page_preview=True,
+    )
 
 
 async def delete_event_handler(

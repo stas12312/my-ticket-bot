@@ -25,7 +25,8 @@ def make_event_message(
 
     rows = [
         f'🎟 Билет на *{event_link}*',
-        f'📍 {get_full_address_message(event.location)}',
+        f'🏛 {bold(event.location.name)}',
+        f'📍 {get_address(event.location)}',
         f'{get_clock_emoji(event.time)} {bold(get_beatify_datetime(event.time))}',
     ]
 
@@ -41,8 +42,14 @@ def get_full_address_message(
 ) -> str:
     """Получение строки для адреса"""
     address = f'{quote(location.city.name)}, {quote(location.address)}'
-    return f'{bold(location.name)} ' \
-           f'{italic(address)}'
+    return f'{bold(location.name)} {italic(address)}'
+
+
+def get_address(
+        location: Location,
+) -> str:
+    """Получение адреса"""
+    return f'{quote(location.city.name)}, {quote(location.address)}'
 
 
 def make_city_message(
