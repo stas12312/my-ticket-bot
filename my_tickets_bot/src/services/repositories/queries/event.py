@@ -32,6 +32,7 @@ GET_EVENTS = """
                 WHEN $2::bigint IS NOT NULL THEN event.id = $2::bigint
                 ELSE TRUE
         END
+    ORDER BY event.time
 """
 
 DELETE_EVENT = """
