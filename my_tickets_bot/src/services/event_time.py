@@ -56,10 +56,9 @@ def get_beatify_datetime(
         dt: datetime.datetime,
 ) -> str:
     """Получение строки для даты и времени"""
-    month_name = MONTH_TO_NAME[dt.month]
+    month_name = MONTH_TO_NAME[dt.month - 1]
     day_name = DAY_TO_NAME[dt.weekday()]
     return f'{dt.day} {month_name} в {dt.hour}:{dt.minute} ({day_name})'
-
 
 
 def convert(
