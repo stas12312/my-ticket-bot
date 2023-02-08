@@ -12,10 +12,18 @@ from aiogram.utils.keyboard import (
 from models import City, Location, Event, Ticket
 from .buttons import (
     MainMenu,
-    Settings, Action,
+    Settings,
+    Action,
 )
-from .callbacks import CityCallback, EntityAction, PlaceCallback, SettingsCallback, CloseCallback, TicketCallback, \
-    EventCallback
+from .callbacks import (
+    CityCallback,
+    EntityAction,
+    PlaceCallback,
+    SettingsCallback,
+    CloseCallback,
+    TicketCallback,
+    EventCallback,
+)
 
 CLOSE_BUTTON = InlineKeyboardButton(
     text=Settings.CLOSE,
@@ -27,7 +35,7 @@ def get_menu_keyboard() -> ReplyKeyboardMarkup:
     """Получение клавиатуры для меню"""
     builder = ReplyKeyboardBuilder()
 
-    builder.row(KeyboardButton(text=MainMenu.MY_TICKETS), KeyboardButton(text=MainMenu.ADD_TICKET))
+    builder.row(KeyboardButton(text=MainMenu.MY_EVENTS), KeyboardButton(text=MainMenu.ADD_EVENT))
     builder.row(KeyboardButton(text=MainMenu.SETTINGS))
 
     return builder.as_markup(resize_keyboard=True)
