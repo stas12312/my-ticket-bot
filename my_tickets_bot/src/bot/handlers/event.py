@@ -136,7 +136,7 @@ async def processing_file(
     ticket = await repo.ticket.save(event.event_id)
     await repo.file.save_file(ticket.ticket_id, None, file_id)
 
-    await message.answer('Билет успешно добавлен', reply_markup=get_menu_keyboard())
+    await message.answer('Событие добавлено', reply_markup=get_menu_keyboard())
     await state.clear()
 
 
@@ -149,7 +149,7 @@ async def my_events_handler(
 
     events_message = [make_event_message(ticket, with_command=True) for ticket in events]
 
-    msg = '\n\n'.join(events_message) or 'У вас нет билетов'
+    msg = '\n\n'.join(events_message) or 'У вас нет событий'
 
     await message.answer(msg, disable_web_page_preview=True)
 
@@ -187,8 +187,8 @@ async def delete_event_handler(
 
 events_handler = Router()
 
-events_handler.message.register(add_ticket_handler, Text(text=MainMenu.ADD_TICKET))
-events_handler.message.register(my_events_handler, Text(text=MainMenu.MY_TICKETS))
+events_handler.message.register(add_ticket_handler, Text(text=MainMenu.ADD_EVENT))
+events_handler.message.register(my_events_handler, Text(text=MainMenu.MY_EVENTS))
 events_handler.message.register(processing_city_handler, EventForm.city_id)
 events_handler.message.register(processing_place_handler, EventForm.location_id)
 events_handler.message.register(processing_name_handler, EventForm.event_name)

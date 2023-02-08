@@ -24,7 +24,7 @@ def make_event_message(
     event_link = link(event.name, event.link)
 
     rows = [
-        f'🎟 Билет на *{event_link}*',
+        f'✨ *{event_link}*',
         f'🏛 {bold(event.location.name)}',
         f'📍 {get_address(event.location)}',
         f'{get_clock_emoji(event.time)} {bold(get_beatify_datetime(event.time))}',
@@ -32,7 +32,7 @@ def make_event_message(
 
     if with_command:
         command = quote(f'/event_{event.event_id}')
-        rows.append(f'⚙ Управлять билетами: {command}')
+        rows.append(f'⚙ Управлять {command}')
 
     return _make_message_by_rows(rows)
 
