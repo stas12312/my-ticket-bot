@@ -53,12 +53,12 @@ def parse_datetime(
 
 
 def get_beatify_datetime(
-        dt: datetime.datetime,
+        datetime_: datetime.datetime,
 ) -> str:
     """Получение строки для даты и времени"""
-    month_name = MONTH_TO_NAME[dt.month - 1]
-    day_name = DAY_TO_NAME[dt.weekday()]
-    return f'{dt.day} {month_name} в {dt.hour}:{dt.minute} ({day_name})'
+    month_name = MONTH_TO_NAME[datetime_.month - 1]
+    day_name = DAY_TO_NAME[datetime_.weekday()]
+    return f'{datetime_.day} {month_name} в {datetime_.hour}:{datetime_.minute:02d} ({day_name})'
 
 
 def convert(
