@@ -196,11 +196,18 @@ def get_actions_for_event(
         )
 
     builder.row(
-        CLOSE_BUTTON,
+        InlineKeyboardButton(
+            text=Action.ADD,
+            callback_data=TicketCallback(action=EntityAction.add, event_id=event.event_id).pack(),
+        )
+    )
+
+    builder.row(
         InlineKeyboardButton(
             text=Action.DELETE,
             callback_data=EventCallback(action=EntityAction.delete, event_id=event.event_id).pack(),
-        )
+        ),
+        CLOSE_BUTTON,
     )
 
     return builder.as_markup()

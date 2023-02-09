@@ -5,7 +5,7 @@ from enum import StrEnum
 class MainMenu(StrEnum):
     """Главное меню"""
     MY_EVENTS = '✨ Мои мероприятия'
-    ADD_EVENT = '➕ Добавить мероприятие'
+    ADD_EVENT = '➕ Добавить'
     SETTINGS = '⚙ Настройки'
 
 
@@ -26,3 +26,4 @@ class Settings(StrEnum):
 class Action(StrEnum):
     """Кнопки для действий"""
     DELETE = '🗑 Удалить'
+    ADD = '➕ Добавить'
