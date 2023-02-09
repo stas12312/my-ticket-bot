@@ -2,13 +2,13 @@
 import validators
 from aiogram import Router, F
 from aiogram import types
-from aiogram.filters import Text
+from aiogram.filters import Text, or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ContentType, CallbackQuery
 
 from services.event_time import parse_datetime
 from services.repositories import Repo
-from ..buttons import MainMenu
+from ..buttons import MainMenu, Action
 from ..callbacks import EventCallback, EntityAction
 from ..forms import EventForm
 from ..keybaords import get_keyboard_by_values, get_menu_keyboard, get_actions_for_event
@@ -74,23 +74,9 @@ async def processing_name_handler(
         state: FSMContext,
 ):
     """Обработка введенного названия"""
-    await message.answer('Отправьте ссылку на мероприятие')
+    await message.answer('Введите дату и время проведения мероприятия')
 
     await state.update_data(event_name=message.text)
-    await state.set_state(EventForm.event_link)
-
-
-async def processing_link_handler(
-        message: types.Message,
-        state: FSMContext,
-):
-    """Обработка введения ссылки на мероприятие"""
-    if not validators.url(message.text):
-        await message.answer('Некорректная ссылка, попробуйте еще раз')
-        return
-
-    await state.update_data(event_link=message.text)
-    await message.answer('Введите дату и время проведения мероприятия')
     await state.set_state(EventForm.event_time)
 
 
@@ -110,9 +96,31 @@ async def processing_event_time_handler(
         await message.answer('Не удалось определить дату и время, попробуйте еще раз')
         return
 
-    await message.answer('Отправьте билет')
+    keyboard = get_keyboard_by_values([Action.PASS])
+    await message.answer('Отправьте ссылку на мероприятие', reply_markup=keyboard)
 
     await state.update_data(event_time=parsed_datetime)
+    await state.set_state(EventForm.event_link)
+
+
+async def processing_link_handler(
+        message: types.Message,
+        state: FSMContext,
+):
+    """Обработка введения ссылки на мероприятие"""
+    is_pass = message.text == Action.PASS
+
+    if not validators.url(message.text) and not is_pass:
+        await message.answer('Некорректная ссылка, попробуйте еще раз')
+        return
+
+    if not is_pass:
+        await state.update_data(event_link=message.text)
+    keyboard = get_keyboard_by_values([Action.PASS])
+    await message.answer(
+        text='Отправьте билет',
+        reply_markup=keyboard,
+    )
     await state.set_state(EventForm.file_id)
 
 
@@ -122,6 +130,8 @@ async def processing_file(
         repo: Repo,
 ):
     """Обработка файла"""
+    is_pass = message.text == Action.PASS
+
     data = await state.get_data()
 
     event = await repo.event.save(
@@ -129,14 +139,15 @@ async def processing_file(
         location_id=data['location_id'],
         name=data['event_name'],
         event_time=data['event_time'],
-        link=data['event_link'],
+        link=data.get('event_link'),
     )
 
-    await save_ticket(
-        event_id=event.id,
-        message=message,
-        repo=repo,
-    )
+    if not is_pass:
+        await save_ticket(
+            event_id=event.id,
+            message=message,
+            repo=repo,
+        )
 
     await message.answer('Событие добавлено', reply_markup=get_menu_keyboard())
     await state.clear()
@@ -194,12 +205,12 @@ events_handler.message.register(my_events_handler, Text(text=MainMenu.MY_EVENTS)
 events_handler.message.register(processing_city_handler, EventForm.city_id)
 events_handler.message.register(processing_place_handler, EventForm.location_id)
 events_handler.message.register(processing_name_handler, EventForm.event_name)
-events_handler.message.register(processing_link_handler, EventForm.event_link)
 events_handler.message.register(processing_event_time_handler, EventForm.event_time)
+events_handler.message.register(processing_link_handler, EventForm.event_link)
 events_handler.message.register(
     processing_file,
-    EventForm.file_id,
-    F.content_type.in_([ContentType.DOCUMENT, ContentType.PHOTO]),
+    or_f(EventForm.file_id, F.content_type.in_([ContentType.DOCUMENT, ContentType.PHOTO])),
+    or_f(EventForm.file_id, Text(text=Action.PASS)),
 )
 events_handler.message.register(event_card_handler, Text(startswith='/event_'))
 events_handler.callback_query.register(delete_event_handler, EventCallback.filter(F.action == EntityAction.delete))
