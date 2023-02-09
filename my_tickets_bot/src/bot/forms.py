@@ -16,7 +16,7 @@ class LocationForm(StatesGroup):
 
 
 class EventForm(StatesGroup):
-    """Добавление билета"""
+    """Добавление события"""
     city_id = State()
     location_id = State()
     event_time = State()
@@ -24,3 +24,8 @@ class EventForm(StatesGroup):
     link = State()
     event_name = State()
     file_id = State()
+
+
+class TicketForm(StatesGroup):
+    """Добавление билета"""
+    file = State()

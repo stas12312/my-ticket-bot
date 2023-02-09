@@ -13,6 +13,7 @@ from ..callbacks import EventCallback, EntityAction
 from ..forms import EventForm
 from ..keybaords import get_keyboard_by_values, get_menu_keyboard, get_actions_for_event
 from ..messages import make_event_message
+from ..utils import save_ticket
 
 
 async def add_ticket_handler(
@@ -123,8 +124,6 @@ async def processing_file(
     """Обработка файла"""
     data = await state.get_data()
 
-    file_id = message.document.file_id if message.document else message.photo[-1].file_id
-
     event = await repo.event.save(
         user_id=message.from_user.id,
         location_id=data['location_id'],
@@ -133,8 +132,11 @@ async def processing_file(
         link=data['event_link'],
     )
 
-    ticket = await repo.ticket.save(event.event_id)
-    await repo.file.save_file(ticket.ticket_id, None, file_id)
+    await save_ticket(
+        event_id=event.id,
+        message=message,
+        repo=repo,
+    )
 
     await message.answer('Событие добавлено', reply_markup=get_menu_keyboard())
     await state.clear()
@@ -194,6 +196,10 @@ events_handler.message.register(processing_place_handler, EventForm.location_id)
 events_handler.message.register(processing_name_handler, EventForm.event_name)
 events_handler.message.register(processing_link_handler, EventForm.event_link)
 events_handler.message.register(processing_event_time_handler, EventForm.event_time)
-events_handler.message.register(processing_file, F.content_type.in_([ContentType.DOCUMENT, ContentType.PHOTO]))
+events_handler.message.register(
+    processing_file,
+    EventForm.file_id,
+    F.content_type.in_([ContentType.DOCUMENT, ContentType.PHOTO]),
+)
 events_handler.message.register(event_card_handler, Text(startswith='/event_'))
 events_handler.callback_query.register(delete_event_handler, EventCallback.filter(F.action == EntityAction.delete))
