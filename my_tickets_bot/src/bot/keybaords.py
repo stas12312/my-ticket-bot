@@ -191,7 +191,11 @@ def get_actions_for_event(
         builder.row(
             InlineKeyboardButton(
                 text=f'⬇ Билет {row}',
-                callback_data=TicketCallback(action=EntityAction.show, ticket_id=ticket.ticket_id).pack(),
+                callback_data=TicketCallback(
+                    action=EntityAction.show,
+                    ticket_id=ticket.ticket_id,
+                    event_id=event.event_id,
+                ).pack(),
             )
         )
 
@@ -206,6 +210,26 @@ def get_actions_for_event(
         InlineKeyboardButton(
             text=Action.DELETE,
             callback_data=EventCallback(action=EntityAction.delete, event_id=event.event_id).pack(),
+        ),
+        CLOSE_BUTTON,
+    )
+
+    return builder.as_markup()
+
+
+def get_actions_for_ticket(
+        ticket: Ticket,
+) -> InlineKeyboardMarkup:
+    """Получение клавиатуры для билетов"""
+    builder = InlineKeyboardBuilder()
+
+    builder.row(
+        InlineKeyboardButton(
+            text=Action.DELETE,
+            callback_data=TicketCallback(
+                action=EntityAction.delete,
+                ticket_id=ticket.ticket_id,
+            ).pack(),
         ),
         CLOSE_BUTTON,
     )

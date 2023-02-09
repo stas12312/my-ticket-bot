@@ -1,3 +1,4 @@
+"""Репозиторий для билетов"""
 import asyncpg
 
 from models import Ticket
@@ -40,11 +41,21 @@ class TicketRepo:
             self,
             user_id,
             ticket_id: int,
-    ) -> Ticket:
+    ) -> Ticket | None:
         """Получение билета"""
         record = await self._conn.fetchrow(q.GET_TICKET_BY_ID, user_id, ticket_id)
+        if record is None:
+            return None
 
         return _convert_record_to_ticket(record)
+
+    async def delete(
+            self,
+            user_id: int,
+            ticket_id: int,
+    ) -> None:
+        """Удаление билета"""
+        await self._conn.fetch(q.DELETE_TICKET, user_id, ticket_id)
 
 
 def _convert_record_to_ticket(

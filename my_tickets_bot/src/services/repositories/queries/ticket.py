@@ -1,3 +1,4 @@
+"""Запросы для таблицы билетов"""
 SAVE_TICKET = """
     INSERT
     INTO ticket (event_id, comment) VALUES ($1, $2)
@@ -35,5 +36,13 @@ GET_TICKET_BY_ID = """
     JOIN file ON file.ticket_id = ticket.id
     WHERE
         event.user_id = $1
+        AND ticket.id = $2
+"""
+
+DELETE_TICKET = """
+    DELETE
+    FROM ticket
+    WHERE
+        (SELECT event.user_id FROM event WHERE event.id = ticket.event_id) = $1
         AND ticket.id = $2
 """
