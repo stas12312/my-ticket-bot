@@ -1,10 +1,13 @@
+"""Запуск миграции"""
 import os
+from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
 
 
 def run_migrations(script_location: str, dsn: str) -> None:
+    """Запуск миграции"""
     alembic_cfg = Config()
     alembic_cfg.set_main_option('script_location', script_location)
     alembic_cfg.set_main_option('sqlalchemy.url', dsn)
@@ -22,4 +25,7 @@ def get_connection_url() -> str:
 
 
 if __name__ == '__main__':
-    run_migrations('./my-tickets-bot', get_connection_url())
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    migrations_path = Path(current_path) / Path('my-tickets-bot')
+    print(current_path)
+    run_migrations(migrations_path.as_posix(), get_connection_url())

@@ -1,0 +1,22 @@
+services:
+  postgres:
+    container_name: postgres
+    image: "postgres:15"
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+      PGDATA: "/data/postgres"
+    volumes:
+      - postgres_data:/data/postgres
+    restart: "unless-stopped"
+  bot:
+    build: ./
+    container_name: my-tickets-bot
+    env_file:
+      - .env
+    links:
+      - postgres
+volumes:
+  postgres_data:
+    driver: local
