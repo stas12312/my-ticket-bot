@@ -14,6 +14,7 @@ GET_EVENTS = """
         event.link AS event_link,
         event.time AT TIME ZONE city.timezone AS event_time,
         event.created_at AT TIME ZONE city.timezone AS event_created_at,
+        event.user_id AS user_id,
         
         city.id AS city_id,
         city.name AS city_name,
@@ -26,12 +27,17 @@ GET_EVENTS = """
     JOIN location ON location.id = event.location_id
     JOIN city ON city.id = location.city_id
     WHERE
-        event.user_id = $1
+        -- Опциональный фильтр по пользователю
+        CASE 
+            WHEN $1::bigint IS NOT NULL THEN event.user_id = $1::bigint
+            ELSE TRUE
+        END
         -- Опциональный фильтр по идентификатору
         AND CASE 
-                WHEN $2::bigint IS NOT NULL THEN event.id = $2::bigint
+                WHEN $2::bigint[] IS NOT NULL THEN event.id = ANY($2::bigint[])
                 ELSE TRUE
         END
+        
     ORDER BY event.time
 """
 

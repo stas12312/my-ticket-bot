@@ -1,8 +1,9 @@
+"""Репозиторий для событий"""
 import datetime
 
 import asyncpg
 
-from models import City, Location
+from models import City, Location, User
 from models.event import Event
 from .queries import event as q
 
@@ -31,10 +32,11 @@ class EventRepo:
 
     async def list(
             self,
-            user_id: int,
+            user_id: int | None = None,
+            event_ids: list[int] | None = None,
     ) -> list[Event]:
         """Получение списка событий"""
-        records = await self._conn.fetch(q.GET_EVENTS, user_id, None)
+        records = await self._conn.fetch(q.GET_EVENTS, user_id, event_ids)
 
         return [_convert_record_to_event(record) for record in records]
 
@@ -44,7 +46,7 @@ class EventRepo:
             event_id: int,
     ) -> Event | None:
         """Получение события по идентификатору"""
-        records = await self._conn.fetch(q.GET_EVENTS, user_id, event_id)
+        records = await self._conn.fetch(q.GET_EVENTS, user_id, [event_id])
 
         return _convert_record_to_event(records[0]) if records else None
 
@@ -56,6 +58,7 @@ class EventRepo:
         """Удаление события"""
         await self._conn.fetch(q.DELETE_EVENT, user_id, event_id)
 
+
 def _convert_record_to_event(
         record: asyncpg.Record,
 ) -> Event:
@@ -65,6 +68,9 @@ def _convert_record_to_event(
         name=record.get('event_name'),
         time=record.get('event_time'),
         link=record.get('event_link'),
+        user=User(
+            user_id=record.get('user_id'),
+        ),
         location=Location(
             location_id=record.get('location_id'),
             name=record.get('location_name'),
