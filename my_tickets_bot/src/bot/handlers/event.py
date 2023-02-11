@@ -144,7 +144,7 @@ async def processing_file(
 
     if not is_pass:
         await save_ticket(
-            event_id=event.id,
+            event_id=event.event_id,
             message=message,
             repo=repo,
         )
