@@ -20,4 +20,5 @@ RUN poetry config virtualenvs.create false && poetry install --no-dev --no-inter
 COPY my_tickets_bot /app
 
 COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
 CMD ["./docker-entrypoint.sh"]

@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 5
   bot:
-    image: ghcr.io/stas12312/my-tickets-bot:latest
+    build: ./
     container_name: my-tickets-bot
     env_file:
       - .env
