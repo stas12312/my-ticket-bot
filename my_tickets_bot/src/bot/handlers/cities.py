@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from services.city import get_timezone_name
 from services.repositories import Repo
 from ..callbacks import CityCallback, EntityAction
-from ..forms import CityForm
+from ..forms import CityForm, LocationForm
 from ..keybaords import get_cities_menu, get_actions_for_city
 from ..messages import make_city_message, quote
 
@@ -80,6 +80,11 @@ async def processing_name_handler(
     added_city = await repo.city.create(message.from_user.id, name, timezone_name)
 
     await message.answer(f'✅ Город добавлен ✅ \n\n{make_city_message(added_city)}')
+
+    # Запускаем диалог добавления места
+    await message.answer('Введите название места проведения мероприятий')
+    await state.set_state(LocationForm.name)
+    await state.update_data(city_id=added_city.city_id)
 
 
 cities_handler = Router()
