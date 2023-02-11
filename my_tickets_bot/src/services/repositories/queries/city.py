@@ -37,3 +37,11 @@ GET_CITY_BY_NAME = """
         AND city.name = $2
 
 """
+
+USER_HAS_CITY = """
+    SELECT EXISTS(
+        SELECT TRUE
+        FROM city
+        WHERE city.user_id = $1
+    )
+"""

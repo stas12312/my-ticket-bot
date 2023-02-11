@@ -6,25 +6,32 @@ from aiogram.fsm.context import FSMContext
 from services.repositories import Repo
 from ..callbacks import CloseCallback
 from ..commands import AppCommand as MyCommand
+from ..forms import CityForm
 from ..keybaords import get_menu_keyboard
 
 
 async def start_handler(
         message: types.Message,
+        state: FSMContext,
         repo: Repo,
 ):
     """Обработчик команды /start"""
 
-    keyboard = get_menu_keyboard()
-
     user = message.from_user
+    user_has_cities = await repo.city.user_has_city(user.id)
 
     await repo.user.save(user.id, user.username)
+
+    keyboard = get_menu_keyboard() if user_has_cities else None
 
     await message.answer(
         text='Приветствуем в "Мои билеты"',
         reply_markup=keyboard,
     )
+    # Если у пользователя нет городов, предлагаем его добавить
+    if not user_has_cities:
+        await message.answer('Для начала работы необходимо добавить город\nВведите название города')
+        await state.set_state(CityForm.name)
 
 
 async def close_menu(

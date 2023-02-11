@@ -46,6 +46,13 @@ class CityRepo:
             timezone=raw_city['timezone'],
         )
 
+    async def user_has_city(
+            self,
+            user_id: int,
+    ) -> bool:
+        """Проверка наличия городов у пользователя"""
+        return await self._conn.fetchval(query.USER_HAS_CITY, user_id)
+
     async def get(
             self,
             user_id: int,
