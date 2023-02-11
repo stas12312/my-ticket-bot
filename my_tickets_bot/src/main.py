@@ -27,7 +27,7 @@ async def start_scheduler(
     """Запуск планировщика"""
     scheduler = AsyncIOScheduler()
     scheduler.add_job(send_notifications, 'cron', minute='*', args=(bot, poll))
-    scheduler.add_job(send_day_notifications, 'interval', seconds=5, args=(bot, poll))
+    scheduler.add_job(send_day_notifications, 'cron', hour='*', args=(bot, poll))
     scheduler.start()
 
 
