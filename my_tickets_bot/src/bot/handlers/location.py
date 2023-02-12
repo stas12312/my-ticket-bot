@@ -5,9 +5,9 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 
 from services.repositories import Repo
-from ..callbacks import PlaceCallback, EntityAction
+from ..callbacks import LocationCallback, EntityAction
 from ..forms import LocationForm
-from ..keybaords import get_places_menu, get_keyboard_by_values, get_menu_keyboard, get_actions_for_location
+from ..keybaords import get_locations_menu, get_keyboard_by_values, get_menu_keyboard, get_actions_for_location
 from ..messages import make_location_message
 
 
@@ -17,9 +17,9 @@ async def show_locations_handler(
 ):
     """Отображение мест пользователя"""
 
-    places = await repo.location.list(query.from_user.id)
+    locations = await repo.location.list(query.from_user.id)
 
-    menu = get_places_menu(places)
+    menu = get_locations_menu(locations)
 
     await query.message.edit_text(
         text='Ваши места',
@@ -29,15 +29,15 @@ async def show_locations_handler(
 
 async def show_location_handler(
         query: types.CallbackQuery,
-        callback_data: PlaceCallback,
+        callback_data: LocationCallback,
         repo: Repo,
 ):
     """Отображение места проведения"""
 
-    place_id = callback_data.place_id
+    location_id = callback_data.location_id
 
-    location = await repo.location.get(query.from_user.id, place_id)
-    menu = get_actions_for_location(place_id)
+    location = await repo.location.get(query.from_user.id, location_id)
+    menu = get_actions_for_location(location.location_id)
     await query.message.edit_text(
         text=make_location_message(location),
         reply_markup=menu,
@@ -46,13 +46,13 @@ async def show_location_handler(
 
 async def delete_location_handler(
         query: types.CallbackQuery,
-        callback_data: PlaceCallback,
+        callback_data: LocationCallback,
         repo: Repo,
 ):
     """Удаление места"""
-    place_id = callback_data.place_id
-    await repo.location.delete(query.from_user.id, place_id)
-    await query.answer('Место удалено', show_alert=True)
+    location_id = callback_data.location_id
+    await repo.location.delete(query.from_user.id, location_id)
+    await query.answer('Место удалено')
     await query.message.delete()
 
 
@@ -120,12 +120,13 @@ async def processing_address_handler(
 
 
 locations_handler = Router()
-locations_handler.callback_query.register(show_locations_handler, PlaceCallback.filter(F.action == EntityAction.list))
+locations_handler.callback_query.register(show_locations_handler,
+                                          LocationCallback.filter(F.action == EntityAction.list))
 locations_handler.callback_query.register(start_add_location_handler,
-                                          PlaceCallback.filter(F.action == EntityAction.add))
+                                          LocationCallback.filter(F.action == EntityAction.add))
 locations_handler.message.register(processing_city_handler, LocationForm.city_id)
 locations_handler.message.register(processing_name_handler, LocationForm.name)
 locations_handler.message.register(processing_address_handler, LocationForm.address)
-locations_handler.callback_query.register(show_location_handler, PlaceCallback.filter(F.action == EntityAction.show))
+locations_handler.callback_query.register(show_location_handler, LocationCallback.filter(F.action == EntityAction.show))
 locations_handler.callback_query.register(delete_location_handler,
-                                          PlaceCallback.filter(F.action == EntityAction.delete))
+                                          LocationCallback.filter(F.action == EntityAction.delete))

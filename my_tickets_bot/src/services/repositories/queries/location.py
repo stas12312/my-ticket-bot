@@ -1,5 +1,5 @@
 """Запросы для мест"""
-GET_LOCATIONS = """
+LIST = """
     SELECT
         location.id AS id,
         location.name AS name,
@@ -16,10 +16,13 @@ GET_LOCATIONS = """
                 WHEN $2::bigint IS NOT NULL THEN location.city_id = $2::bigint
                 ELSE TRUE
             END 
+        AND location.is_deleted IS DISTINCT FROM TRUE
+        -- Не отображаем места для удаленных городов
+        AND city.is_deleted IS DISTINCT FROM TRUE 
             
 """
 
-GET_PLACE = """
+GET_LOCATION = """
     SELECT
         location.id AS id,
         location.name AS name,
@@ -34,7 +37,7 @@ GET_PLACE = """
         AND location.id = $2
 """
 
-GET_PLACE_BY_NAME = """
+GET_BY_NAME = """
     SELECT
         location.id AS id,
         location.name AS name,
@@ -48,13 +51,13 @@ GET_PLACE_BY_NAME = """
         AND location.name = $2
 """
 
-SAVE_PLACE = """
+SAVE = """
     INSERT
     INTO location (city_id, name, address) VALUES ($1, $2, $3)
     RETURNING *
 """
 
-DELETE_PLACE = """
+DELETE = """
     UPDATE location
     SET is_deleted = True
     WHERE
