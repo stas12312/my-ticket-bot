@@ -42,7 +42,7 @@ GET_CITY_BY_NAME = """
     FROM city
     WHERE
         user_id = $1
-        AND lower(city.name) = $2
+        AND lower(city.name) = lower($2)
         AND CASE
             WHEN $3 IS TRUE THEN TRUE
             ELSE city.is_deleted IS DISTINCT FROM TRUE
