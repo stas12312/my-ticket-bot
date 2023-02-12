@@ -24,10 +24,10 @@ class CityCallback(CallbackData, prefix='cities'):
     city_id: int | None
 
 
-class PlaceCallback(CallbackData, prefix='places'):
+class LocationCallback(CallbackData, prefix='locations'):
     """CallbackData для работы с местами"""
     action: EntityAction
-    place_id: int | None
+    location_id: int | None
 
 
 class EventCallback(CallbackData, prefix='events'):

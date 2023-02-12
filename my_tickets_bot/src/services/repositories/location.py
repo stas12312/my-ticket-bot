@@ -21,7 +21,7 @@ class LocationRepo:
             city_id: int | None = None,
     ) -> list[Location]:
         """Получение списка мест"""
-        records = await self._conn.fetch(q.GET_LOCATIONS, user_id, city_id)
+        records = await self._conn.fetch(q.LIST, user_id, city_id)
 
         return [_convert_record_to_location(record) for record in records]
 
@@ -32,35 +32,35 @@ class LocationRepo:
             address: str,
     ) -> Location:
         """Сохранение места"""
-        record = await self._conn.fetchrow(q.SAVE_PLACE, city_id, name, address)
+        record = await self._conn.fetchrow(q.SAVE, city_id, name, address)
 
         return _convert_record_to_location(record)
 
     async def delete(
             self,
             user_id: int,
-            place_id: int,
+            location_id: int,
     ):
         """Удаление места"""
-        await self._conn.fetch(q.DELETE_PLACE, user_id, place_id)
+        await self._conn.fetch(q.DELETE, user_id, location_id)
 
     async def get(
             self,
             user_id: int,
-            place_id: int,
+            location_id: int,
     ):
         """Получение места для пользователя"""
-        raw_place = await self._conn.fetchrow(q.GET_PLACE, user_id, place_id)
+        record = await self._conn.fetchrow(q.GET_LOCATION, user_id, location_id)
 
-        return _convert_record_to_location(raw_place)
+        return _convert_record_to_location(record)
 
     async def get_by_name(
             self,
             user_id: int,
-            place_name: str,
+            name: str,
     ) -> Location | None:
         """Получение места по названию"""
-        raw_place = await self._conn.fetchrow(q.GET_PLACE_BY_NAME, user_id, place_name)
+        raw_place = await self._conn.fetchrow(q.GET_BY_NAME, user_id, name)
         return _convert_record_to_location(raw_place)
 
 
