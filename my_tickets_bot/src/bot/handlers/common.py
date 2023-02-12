@@ -18,7 +18,7 @@ async def start_handler(
     """Обработчик команды /start"""
 
     user = message.from_user
-    user_has_cities = await repo.city.user_has_city(user.id)
+    user_has_cities = await repo.city.user_has_cities(user.id, with_deleted=True)
 
     await repo.user.save(user.id, user.username)
 

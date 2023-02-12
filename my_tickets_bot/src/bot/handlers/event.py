@@ -11,7 +11,7 @@ from services.repositories import Repo
 from ..buttons import MainMenu, Action
 from ..callbacks import EventCallback, EntityAction
 from ..forms import EventForm
-from ..keybaords import get_keyboard_by_values, get_menu_keyboard, get_actions_for_event
+from ..keybaords import get_keyboard_by_values, get_menu_keyboard, get_actions_for_event, get_add_city_keyboard
 from ..messages import make_event_message
 from ..utils import save_ticket
 
@@ -25,6 +25,13 @@ async def add_ticket_handler(
     cities = await repo.city.list(message.from_user.id)
 
     keyboard = get_keyboard_by_values([city.name for city in cities])
+
+    if not cities:
+        await message.answer(
+            text='Для добавления события необходимо добавить город и место',
+            reply_markup=get_add_city_keyboard(),
+        )
+        return
 
     await message.answer('Выберите город', reply_markup=keyboard)
     await state.set_state(EventForm.city_id)
