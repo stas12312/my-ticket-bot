@@ -42,6 +42,11 @@ USER_HAS_CITY = """
     SELECT EXISTS(
         SELECT TRUE
         FROM city
-        WHERE city.user_id = $1
+        WHERE 
+            city.user_id = $1
+            AND CASE 
+                WHEN $2 IS TRUE THEN TRUE
+                ELSE city.is_deleted IS DISTINCT FROM TRUE
+            END
     )
 """

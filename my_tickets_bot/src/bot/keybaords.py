@@ -235,3 +235,17 @@ def get_actions_for_ticket(
     )
 
     return builder.as_markup()
+
+
+def get_add_city_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура для добавления города"""
+    return InlineKeyboardBuilder([
+        [
+            InlineKeyboardButton(
+                text=Settings.ADD_CITY,
+                callback_data=CityCallback(
+                    action=EntityAction.add,
+                ).pack()
+            ),
+        ],
+    ]).as_markup()
