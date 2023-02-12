@@ -18,7 +18,7 @@ from .buttons import (
 from .callbacks import (
     CityCallback,
     EntityAction,
-    PlaceCallback,
+    LocationCallback,
     SettingsCallback,
     CloseCallback,
     TicketCallback,
@@ -64,7 +64,7 @@ def get_settings_menu() -> InlineKeyboardMarkup:
         ),
         InlineKeyboardButton(
             text=Settings.MY_PLACES,
-            callback_data=PlaceCallback(action=EntityAction.list).pack()
+            callback_data=LocationCallback(action=EntityAction.list).pack()
         ),
     )
     builder.row(CLOSE_BUTTON)
@@ -126,7 +126,7 @@ def get_actions_for_city(
     return builder.as_markup()
 
 
-def get_places_menu(
+def get_locations_menu(
         locations: list[Location],
 ) -> InlineKeyboardMarkup:
     """Получение меню для списка мест"""
@@ -136,14 +136,14 @@ def get_places_menu(
         builder.row(
             InlineKeyboardButton(
                 text=location.get_show_text(),
-                callback_data=PlaceCallback(action=EntityAction.show, place_id=location.location_id).pack(),
+                callback_data=LocationCallback(action=EntityAction.show, location_id=location.location_id).pack(),
             )
         )
 
     builder.row(
         InlineKeyboardButton(
             text=Settings.ADD_LOCATION,
-            callback_data=PlaceCallback(action=EntityAction.add).pack(),
+            callback_data=LocationCallback(action=EntityAction.add).pack(),
         )
     )
     builder.row(
@@ -158,7 +158,7 @@ def get_places_menu(
 
 
 def get_actions_for_location(
-        place_id: int,
+        location_id: int,
 ) -> InlineKeyboardMarkup:
     """Получение клавиатуры для действия с местом"""
     builder = InlineKeyboardBuilder()
@@ -166,13 +166,13 @@ def get_actions_for_location(
     builder.row(
         InlineKeyboardButton(
             text=Settings.DELETE_LOCATION,
-            callback_data=PlaceCallback(action=EntityAction.delete, city_id=place_id).pack(),
+            callback_data=LocationCallback(action=EntityAction.delete, location_id=location_id).pack(),
         )
     )
     builder.row(
         InlineKeyboardButton(
             text=Settings.BACK,
-            callback_data=PlaceCallback(action=EntityAction.list).pack(),
+            callback_data=LocationCallback(action=EntityAction.list).pack(),
         ),
         CLOSE_BUTTON,
     )
