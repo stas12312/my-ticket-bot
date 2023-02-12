@@ -19,4 +19,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index('city_name_user_id_ids')
+    op.drop_index('city_name_user_id_idx')
