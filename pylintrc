@@ -10,6 +10,7 @@ ignore=
     CVS,
     2023_02_06211424_init_tables.py,
     2023_02_10233535_add_indexes.py,
+    2023_02_12204527_add_city_user_id_index.py,
 
 
 # Add files or directories matching the regex patterns to the ignore-list. The

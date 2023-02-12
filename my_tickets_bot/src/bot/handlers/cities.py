@@ -77,15 +77,20 @@ async def processing_name_handler(
         return
 
     await state.clear()
-    added_city = await repo.city.create(message.from_user.id, name, timezone_name)
 
-    await message.answer(f'✅ Город добавлен ✅ \n\n{make_city_message(added_city)}')
-
-    # Запускаем диалог добавления места
-    await message.answer('Введите название места проведения мероприятий')
-    await state.set_state(LocationForm.name)
-    await state.update_data(city_id=added_city.city_id)
-
+    city = await repo.city.get_by_name(message.from_user.id, name, True)
+    if not city:
+        added_city = await repo.city.create(message.from_user.id, name, timezone_name)
+        await message.answer(f'✅ Город добавлен ✅ \n\n{make_city_message(added_city)}')
+        # Запускаем диалог добавления места
+        await message.answer('Введите название места проведения мероприятий')
+        await state.set_state(LocationForm.name)
+        await state.update_data(city_id=added_city.city_id)
+    elif city.is_deleted:
+        await repo.city.restore(message.from_user.id, city.city_id)
+        await message.answer('✅ Город был восстановлен ✅')
+    else:
+        await message.answer('⚠️ Данный город уже добавлен ⚠️')
 
 cities_handler = Router()
 cities_handler.callback_query.register(show_cities_handler, CityCallback.filter(F.action == EntityAction.list))
