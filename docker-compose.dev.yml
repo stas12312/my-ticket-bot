@@ -24,6 +24,7 @@ services:
       - .env
     volumes:
       - ./my_tickets_bot/src:/app/src
+      - ./my_tickets_bot/migrations:/app/migrations
     depends_on:
      postgres:
         condition: service_healthy

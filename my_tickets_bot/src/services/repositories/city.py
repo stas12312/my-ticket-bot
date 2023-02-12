@@ -1,4 +1,5 @@
 """Репозиторий для таблицы городов"""
+import asyncpg
 from asyncpg import Connection
 
 from models import City
@@ -19,17 +20,8 @@ class CityRepo:
             user_id: int,
     ) -> list[City]:
         """Получение городов пользователя"""
-        raw_cities = await self._conn.fetch(query.GET_USER_CITIES, user_id)
-
-        cities: list[City] = []
-        for city in raw_cities:
-            cities.append(City(
-                city_id=city['id'],
-                name=city['name'],
-                timezone=city['timezone']
-            ))
-
-        return cities
+        records = await self._conn.fetch(query.GET_USER_CITIES, user_id)
+        return [_convert_record_to_city(record) for record in records]
 
     async def create(
             self,
@@ -39,13 +31,8 @@ class CityRepo:
     ) -> City:
         """Сохранение города"""
 
-        raw_city = await self._conn.fetchrow(query.CREATE_CITY, user_id, name, timezone)
-
-        return City(
-            city_id=raw_city['id'],
-            name=raw_city['name'],
-            timezone=raw_city['timezone'],
-        )
+        record = await self._conn.fetchrow(query.CREATE_CITY, user_id, name, timezone)
+        return _convert_record_to_city(record)
 
     async def user_has_cities(
             self,
@@ -61,26 +48,18 @@ class CityRepo:
             city_id: int,
     ) -> City:
         """Получение города для пользователя"""
-        raw_city = await self._conn.fetchrow(query.GET_CITY, user_id, city_id)
-        return City(
-            city_id=raw_city['id'],
-            name=raw_city['name'],
-            timezone=raw_city['timezone'],
-        )
+        record = await self._conn.fetchrow(query.GET_CITY, user_id, city_id)
+        return _convert_record_to_city(record)
 
     async def get_by_name(
             self,
             user_id: int,
             name: str,
-    ) -> City:
+            with_deleted: bool = False,
+    ) -> City | None:
         """Получение города по названию"""
-
-        raw_city = await self._conn.fetchrow(query.GET_CITY_BY_NAME, user_id, name)
-        return City(
-            city_id=raw_city['id'],
-            name=raw_city['name'],
-            timezone=raw_city['timezone'],
-        )
+        record = await self._conn.fetchrow(query.GET_CITY_BY_NAME, user_id, name, with_deleted)
+        return _convert_record_to_city(record) if record else None
 
     async def delete(
             self,
@@ -89,3 +68,21 @@ class CityRepo:
     ):
         """Удаление города"""
         await self._conn.fetch(query.DELETE_CITY, user_id, city_id)
+
+    async def restore(
+            self,
+            user_id: int,
+            city_id: int,
+    ):
+        """Восстановление города"""
+        await self._conn.fetch(query.RESTORE, user_id, city_id)
+
+
+def _convert_record_to_city(record: asyncpg.Record) -> City:
+    """Конвертация рекорда в город"""
+    return City(
+        city_id=record.get('id'),
+        name=record.get('name'),
+        timezone=record.get('timezone'),
+        is_deleted=record.get('is_deleted')
+    )

@@ -46,7 +46,7 @@ async def processing_city_handler(
     city_name = message.text
 
     if (city := await repo.city.get_by_name(message.from_user.id, city_name)) is None:
-        await message.answer('Не удалось определить города, повторите попытку')
+        await message.answer('Не удалось определить город, повторите попытку')
         return
 
     places = await repo.location.list(message.from_user.id, city.city_id)
