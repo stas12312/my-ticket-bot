@@ -26,6 +26,15 @@ class EventForm(StatesGroup):
     file_id = State()
 
 
+class EditEventForm(StatesGroup):
+    """Редактирование события"""
+    city_id = State()
+    location_id = State()
+    name = State()
+    time = State()
+    link = State()
+
+
 class TicketForm(StatesGroup):
     """Добавление билета"""
     file = State()

@@ -23,4 +23,4 @@ async def my_settings_handler(
 
 settings_router = Router()
 settings_router.message.register(my_settings_handler, Text(text=MainMenu.SETTINGS))
-settings_router.callback_query.register(my_settings_handler, SettingsCallback.filter(F.action == EntityAction.show))
+settings_router.callback_query.register(my_settings_handler, SettingsCallback.filter(F.action == EntityAction.SHOW))

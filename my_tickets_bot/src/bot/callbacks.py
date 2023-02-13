@@ -6,11 +6,20 @@ from aiogram.utils.keyboard import CallbackData
 
 class EntityAction(StrEnum):
     """Действия с сущностями"""
-    add = 'add'
-    update = 'update'
-    delete = 'delete'
-    list = 'list'
-    show = 'show'
+    ADD = 'add'
+    UPDATE = 'update'
+    DELETE = 'delete'
+    LIST = 'list'
+    SHOW = 'show'
+    EDIT = 'edit'
+
+
+class EditEventField(StrEnum):
+    """Названия полей для редактирования"""
+    LOCATION = 'location'
+    NAME = 'name'
+    TIME = 'time'
+    LINK = 'link'
 
 
 class SettingsCallback(CallbackData, prefix='settings'):
@@ -34,6 +43,12 @@ class EventCallback(CallbackData, prefix='events'):
     """CallbackData для работы с событиями"""
     action: EntityAction
     event_id: int | None
+
+
+class EditEventCallback(CallbackData, prefix='edit_event'):
+    """CallbackData для редактирования события"""
+    event_id: int | None
+    field_name: EditEventField
 
 
 class TicketCallback(CallbackData, prefix='tickets'):

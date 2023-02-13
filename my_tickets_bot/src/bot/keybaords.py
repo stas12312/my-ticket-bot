@@ -23,6 +23,7 @@ from .callbacks import (
     CloseCallback,
     TicketCallback,
     EventCallback,
+    EditEventCallback, EditEventField,
 )
 
 CLOSE_BUTTON = InlineKeyboardButton(
@@ -56,15 +57,15 @@ def get_keyboard_by_values(
 def get_settings_menu() -> InlineKeyboardMarkup:
     """Получение клавиатуры для настроек"""
     builder = InlineKeyboardBuilder()
-    print(CityCallback(action=EntityAction.list).pack())
+    print(CityCallback(action=EntityAction.LIST).pack())
     builder.row(
         InlineKeyboardButton(
             text=Settings.MY_CITIES,
-            callback_data=CityCallback(action=EntityAction.list).pack(),
+            callback_data=CityCallback(action=EntityAction.LIST).pack(),
         ),
         InlineKeyboardButton(
             text=Settings.MY_PLACES,
-            callback_data=LocationCallback(action=EntityAction.list).pack()
+            callback_data=LocationCallback(action=EntityAction.LIST).pack()
         ),
     )
     builder.row(CLOSE_BUTTON)
@@ -82,20 +83,20 @@ def get_cities_menu(
         builder.row(
             InlineKeyboardButton(
                 text=city.name,
-                callback_data=CityCallback(action=EntityAction.show, city_id=city.city_id).pack(),
+                callback_data=CityCallback(action=EntityAction.SHOW, city_id=city.city_id).pack(),
             )
         )
 
     builder.row(
         InlineKeyboardButton(
             text=Settings.ADD_CITY,
-            callback_data=CityCallback(action=EntityAction.add).pack(),
+            callback_data=CityCallback(action=EntityAction.ADD).pack(),
         )
     )
     builder.row(
         InlineKeyboardButton(
             text=Settings.BACK,
-            callback_data=SettingsCallback(action=EntityAction.show).pack(),
+            callback_data=SettingsCallback(action=EntityAction.SHOW).pack(),
         ),
         CLOSE_BUTTON,
     )
@@ -112,13 +113,13 @@ def get_actions_for_city(
     builder.row(
         InlineKeyboardButton(
             text=Settings.DELETE_CITY,
-            callback_data=CityCallback(action=EntityAction.delete, city_id=city_id).pack(),
+            callback_data=CityCallback(action=EntityAction.DELETE, city_id=city_id).pack(),
         )
     )
     builder.row(
         InlineKeyboardButton(
             text=Settings.BACK,
-            callback_data=CityCallback(action=EntityAction.list).pack(),
+            callback_data=CityCallback(action=EntityAction.LIST).pack(),
         ),
         CLOSE_BUTTON,
     )
@@ -136,20 +137,20 @@ def get_locations_menu(
         builder.row(
             InlineKeyboardButton(
                 text=location.get_show_text(),
-                callback_data=LocationCallback(action=EntityAction.show, location_id=location.location_id).pack(),
+                callback_data=LocationCallback(action=EntityAction.SHOW, location_id=location.location_id).pack(),
             )
         )
 
     builder.row(
         InlineKeyboardButton(
             text=Settings.ADD_LOCATION,
-            callback_data=LocationCallback(action=EntityAction.add).pack(),
+            callback_data=LocationCallback(action=EntityAction.ADD).pack(),
         )
     )
     builder.row(
         InlineKeyboardButton(
             text=Settings.BACK,
-            callback_data=SettingsCallback(action=EntityAction.show).pack(),
+            callback_data=SettingsCallback(action=EntityAction.SHOW).pack(),
         ),
         CLOSE_BUTTON,
     )
@@ -166,13 +167,13 @@ def get_actions_for_location(
     builder.row(
         InlineKeyboardButton(
             text=Settings.DELETE_LOCATION,
-            callback_data=LocationCallback(action=EntityAction.delete, location_id=location_id).pack(),
+            callback_data=LocationCallback(action=EntityAction.DELETE, location_id=location_id).pack(),
         )
     )
     builder.row(
         InlineKeyboardButton(
             text=Settings.BACK,
-            callback_data=LocationCallback(action=EntityAction.list).pack(),
+            callback_data=LocationCallback(action=EntityAction.LIST).pack(),
         ),
         CLOSE_BUTTON,
     )
@@ -192,7 +193,7 @@ def get_actions_for_event(
             InlineKeyboardButton(
                 text=f'⬇ Билет {row}',
                 callback_data=TicketCallback(
-                    action=EntityAction.show,
+                    action=EntityAction.SHOW,
                     ticket_id=ticket.ticket_id,
                     event_id=event.event_id,
                 ).pack(),
@@ -202,14 +203,21 @@ def get_actions_for_event(
     builder.row(
         InlineKeyboardButton(
             text=Action.ADD,
-            callback_data=TicketCallback(action=EntityAction.add, event_id=event.event_id).pack(),
+            callback_data=TicketCallback(action=EntityAction.ADD, event_id=event.event_id).pack(),
         )
     )
 
     builder.row(
         InlineKeyboardButton(
+            text=Action.EDIT,
+            callback_data=EventCallback(action=EntityAction.EDIT, event_id=event.event_id).pack(),
+        ),
+    )
+
+    builder.row(
+        InlineKeyboardButton(
             text=Action.DELETE,
-            callback_data=EventCallback(action=EntityAction.delete, event_id=event.event_id).pack(),
+            callback_data=EventCallback(action=EntityAction.DELETE, event_id=event.event_id).pack(),
         ),
         CLOSE_BUTTON,
     )
@@ -227,7 +235,7 @@ def get_actions_for_ticket(
         InlineKeyboardButton(
             text=Action.DELETE,
             callback_data=TicketCallback(
-                action=EntityAction.delete,
+                action=EntityAction.DELETE,
                 ticket_id=ticket.ticket_id,
             ).pack(),
         ),
@@ -244,8 +252,61 @@ def get_add_city_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(
                 text=Settings.ADD_CITY,
                 callback_data=CityCallback(
-                    action=EntityAction.add,
+                    action=EntityAction.ADD,
                 ).pack()
             ),
         ],
     ]).as_markup()
+
+
+def get_actions_for_edit_event(
+        event_id: int,
+) -> InlineKeyboardMarkup:
+    """Получение клавиатуры для редактирования события"""
+    builder = InlineKeyboardBuilder()
+
+    builder.row(
+        InlineKeyboardButton(
+            text='Изменить название',
+            callback_data=EditEventCallback(
+                field_name=EditEventField.NAME,
+                event_id=event_id,
+            ).pack(),
+        ),
+        InlineKeyboardButton(
+            text='Изменить место',
+            callback_data=EditEventCallback(
+                field_name=EditEventField.LOCATION,
+                event_id=event_id,
+            ).pack(),
+        ),
+    )
+
+    builder.row(
+        InlineKeyboardButton(
+            text='Изменить время',
+            callback_data=EditEventCallback(
+                field_name=EditEventField.TIME,
+                event_id=event_id,
+            ).pack(),
+        ),
+        InlineKeyboardButton(
+            text='Изменить ссылку',
+            callback_data=EditEventCallback(
+                field_name=EditEventField.LINK,
+                event_id=event_id,
+            ).pack(),
+        ),
+    )
+
+    builder.row(
+        InlineKeyboardButton(
+            text=Settings.BACK,
+            callback_data=EventCallback(
+                action=EntityAction.SHOW,
+                event_id=event_id,
+            ).pack(),
+        ),
+        CLOSE_BUTTON,
+    )
+    return builder.as_markup()

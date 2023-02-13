@@ -6,6 +6,7 @@ import asyncpg
 from models import City, Location, User
 from models.event import Event
 from .queries import event as q
+from ..event_time import localize_datetime
 
 
 class EventRepo:
@@ -24,10 +25,13 @@ class EventRepo:
             event_time: datetime.datetime,
             location_id: int,
             link: str | None,
+            event_id: int | None = None
     ) -> Event:
         """Сохранения события"""
-
-        record = await self._conn.fetchrow(q.SAVE_EVENT, user_id, name, event_time, link, location_id)
+        if event_id is None:
+            record = await self._conn.fetchrow(q.CREATE_EVENT, user_id, name, event_time, link, location_id)
+        else:
+            record = await self._conn.fetchrow(q.UPDATE_EVENT, event_id, user_id, name, event_time, link, location_id)
         return _convert_record_to_event(record)
 
     async def list(
@@ -63,10 +67,14 @@ def _convert_record_to_event(
         record: asyncpg.Record,
 ) -> Event:
     """Конвертация рекорда в событие"""
+
+    if (event_time := record.get('event_time')) and (city_timezone := record.get('city_timezone')):
+        event_time = localize_datetime(event_time, city_timezone)
+
     return Event(
         event_id=record.get('event_id'),
         name=record.get('event_name'),
-        time=record.get('event_time'),
+        time=event_time,
         link=record.get('event_link'),
         user=User(
             user_id=record.get('user_id'),
@@ -78,6 +86,7 @@ def _convert_record_to_event(
             city=City(
                 city_id=record.get('city_id'),
                 name=record.get('city_name'),
+                timezone=record.get('city_timezone'),
             ),
         )
     )
