@@ -93,8 +93,8 @@ async def processing_name_handler(
         await message.answer('⚠️ Данный город уже добавлен ⚠️')
 
 cities_handler = Router()
-cities_handler.callback_query.register(show_cities_handler, CityCallback.filter(F.action == EntityAction.list))
-cities_handler.callback_query.register(start_add_city_handler, CityCallback.filter(F.action == EntityAction.add))
-cities_handler.callback_query.register(show_city_handler, CityCallback.filter(F.action == EntityAction.show))
-cities_handler.callback_query.register(delete_city, CityCallback.filter(F.action == EntityAction.delete))
+cities_handler.callback_query.register(show_cities_handler, CityCallback.filter(F.action == EntityAction.LIST))
+cities_handler.callback_query.register(start_add_city_handler, CityCallback.filter(F.action == EntityAction.ADD))
+cities_handler.callback_query.register(show_city_handler, CityCallback.filter(F.action == EntityAction.SHOW))
+cities_handler.callback_query.register(delete_city, CityCallback.filter(F.action == EntityAction.DELETE))
 cities_handler.message.register(processing_name_handler, CityForm.name)

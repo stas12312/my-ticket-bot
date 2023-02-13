@@ -45,11 +45,17 @@ def parse_datetime(
     if (parsed_datetime := convert(raw_datetime)) is None:
         return None
 
+    return localize_datetime(parsed_datetime, timezone_name)
+
+
+def localize_datetime(
+        datetime_: datetime.datetime,
+        timezone_name: str,
+) -> datetime.datetime:
+    """Локализация времени"""
     timezone = pytz.timezone(timezone_name)
 
-    parsed_datetime = timezone.localize(parsed_datetime)
-
-    return parsed_datetime
+    return timezone.localize(datetime_)
 
 
 def get_beatify_datetime(

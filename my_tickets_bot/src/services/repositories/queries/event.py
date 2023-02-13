@@ -1,9 +1,18 @@
 """Запросы к таблице event"""
 
-SAVE_EVENT = """
+CREATE_EVENT = """
     INSERT
     INTO event (user_id, name, time, link, location_id) VALUES ($1, $2, $3, $4, $5)
     RETURNING 
+        id AS event_id
+"""
+UPDATE_EVENT = """
+    UPDATE event
+    SET name=$3, time=$4, link=$5, location_id=$6
+    WHERE
+        id = $1
+        AND user_id=$2
+    RETURNING
         id AS event_id
 """
 
@@ -18,6 +27,7 @@ GET_EVENTS = """
         
         city.id AS city_id,
         city.name AS city_name,
+        city.timezone AS city_timezone,
         
         location.id AS location_id,
         location.name AS location_name,
