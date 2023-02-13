@@ -120,13 +120,18 @@ async def processing_address_handler(
 
 
 locations_handler = Router()
-locations_handler.callback_query.register(show_locations_handler,
-                                          LocationCallback.filter(F.action == EntityAction.list))
-locations_handler.callback_query.register(start_add_location_handler,
-                                          LocationCallback.filter(F.action == EntityAction.add))
+locations_handler.callback_query.register(
+    show_locations_handler, LocationCallback.filter(F.action == EntityAction.LIST),
+)
+locations_handler.callback_query.register(
+    start_add_location_handler, LocationCallback.filter(F.action == EntityAction.ADD),
+)
 locations_handler.message.register(processing_city_handler, LocationForm.city_id)
 locations_handler.message.register(processing_name_handler, LocationForm.name)
 locations_handler.message.register(processing_address_handler, LocationForm.address)
-locations_handler.callback_query.register(show_location_handler, LocationCallback.filter(F.action == EntityAction.show))
-locations_handler.callback_query.register(delete_location_handler,
-                                          LocationCallback.filter(F.action == EntityAction.delete))
+locations_handler.callback_query.register(
+    show_location_handler, LocationCallback.filter(F.action == EntityAction.SHOW),
+)
+locations_handler.callback_query.register(
+    delete_location_handler, LocationCallback.filter(F.action == EntityAction.DELETE),
+)

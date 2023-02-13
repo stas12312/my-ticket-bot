@@ -1,22 +1,20 @@
-"""Обработчики для работы с билетами"""
+"""Добавление мероприятия"""
 import validators
-from aiogram import Router, F
-from aiogram import types
-from aiogram.filters import Text, or_f
+from aiogram import types, Router, F
+from aiogram.filters import or_f, Text
 from aiogram.fsm.context import FSMContext
-from aiogram.types import ContentType, CallbackQuery
+from aiogram.types import ContentType
 
+from bot.buttons import Action, MainMenu
+from bot.forms import EventForm
+from bot.keybaords import get_keyboard_by_values, get_add_city_keyboard, get_menu_keyboard
+from bot.messages import quote
+from bot.utils import save_ticket
 from services.event_time import parse_datetime
 from services.repositories import Repo
-from ..buttons import MainMenu, Action
-from ..callbacks import EventCallback, EntityAction
-from ..forms import EventForm
-from ..keybaords import get_keyboard_by_values, get_menu_keyboard, get_actions_for_event, get_add_city_keyboard
-from ..messages import make_event_message
-from ..utils import save_ticket
 
 
-async def add_ticket_handler(
+async def start_add_event_handler(
         message: types.Message,
         state: FSMContext,
         repo: Repo,
@@ -81,7 +79,7 @@ async def processing_name_handler(
         state: FSMContext,
 ):
     """Обработка введенного названия"""
-    await message.answer('Введите дату и время проведения мероприятия')
+    await message.answer(f'Введите дату и время проведения мероприятия\nПример: _{quote("22.02.23 20:00")}_')
 
     await state.update_data(event_name=message.text)
     await state.set_state(EventForm.event_time)
@@ -160,64 +158,15 @@ async def processing_file(
     await state.clear()
 
 
-async def my_events_handler(
-        message: types.Message,
-        repo: Repo,
-):
-    """Отображения событий пользователя"""
-    events = await repo.event.list(message.from_user.id)
-
-    events_message = [make_event_message(ticket, with_command=True) for ticket in events]
-
-    msg = '\n\n'.join(events_message) or 'У вас нет событий'
-
-    await message.answer(msg, disable_web_page_preview=True)
-
-
-async def event_card_handler(
-        message: types.Message,
-        repo: Repo,
-):
-    """Получение карточки билета"""
-    event_id = int(message.text.split('_')[1])
-    event = await repo.event.get(message.from_user.id, event_id)
-    tickets = await repo.ticket.list_for_event(message.from_user.id, event.event_id)
-
-    event_message = make_event_message(event)
-    keyboards = get_actions_for_event(event, tickets)
-
-    await message.answer(
-        text=event_message,
-        reply_markup=keyboards,
-        disable_web_page_preview=True,
-    )
-
-
-async def delete_event_handler(
-        query: CallbackQuery,
-        callback_data: EventCallback,
-        repo: Repo,
-):
-    """Удаление события"""
-    event_id = callback_data.event_id
-    await repo.event.delete(query.from_user.id, event_id)
-    await query.message.delete()
-    await query.answer('Билеты удалены')
-
-
-events_handler = Router()
-
-events_handler.message.register(add_ticket_handler, Text(text=MainMenu.ADD_EVENT))
-events_handler.message.register(my_events_handler, Text(text=MainMenu.MY_EVENTS))
-events_handler.message.register(processing_city_handler, EventForm.city_id)
-events_handler.message.register(processing_place_handler, EventForm.location_id)
-events_handler.message.register(processing_name_handler, EventForm.event_name)
-events_handler.message.register(processing_event_time_handler, EventForm.event_time)
-events_handler.message.register(processing_link_handler, EventForm.event_link)
-events_handler.message.register(
+router = Router()
+router.message.register(start_add_event_handler, Text(text=MainMenu.ADD_EVENT))
+router.message.register(processing_city_handler, EventForm.city_id)
+router.message.register(processing_place_handler, EventForm.location_id)
+router.message.register(processing_name_handler, EventForm.event_name)
+router.message.register(processing_event_time_handler, EventForm.event_time)
+router.message.register(processing_link_handler, EventForm.event_link)
+router.message.register(
     processing_file,
     or_f(EventForm.file_id, F.content_type.in_([ContentType.DOCUMENT, ContentType.PHOTO])),
     or_f(EventForm.file_id, Text(text=Action.PASS)),
 )
-events_handler.message.register(event_card_handler, Text(startswith='/event_'))
-events_handler.callback_query.register(delete_event_handler, EventCallback.filter(F.action == EntityAction.delete))

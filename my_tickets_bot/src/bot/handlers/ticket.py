@@ -98,11 +98,11 @@ async def delete_ticket_handler(
 
 
 tickets_handler = Router()
-tickets_handler.callback_query.register(download_ticket_handler, TicketCallback.filter(F.action == EntityAction.show))
-tickets_handler.callback_query.register(start_add_ticket_handler, TicketCallback.filter(F.action == EntityAction.add))
+tickets_handler.callback_query.register(download_ticket_handler, TicketCallback.filter(F.action == EntityAction.SHOW))
+tickets_handler.callback_query.register(start_add_ticket_handler, TicketCallback.filter(F.action == EntityAction.ADD))
 tickets_handler.message.register(
     save_ticket_handler,
     TicketForm.file,
     F.content_type.in_([ContentType.DOCUMENT, ContentType.PHOTO]),
 )
-tickets_handler.callback_query.register(delete_ticket_handler, TicketCallback.filter(F.action == EntityAction.delete))
+tickets_handler.callback_query.register(delete_ticket_handler, TicketCallback.filter(F.action == EntityAction.DELETE))
