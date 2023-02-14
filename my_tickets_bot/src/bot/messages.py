@@ -1,11 +1,13 @@
 """Формирование красивых сообщений"""
+from datetime import datetime
 
+import pytz
 from aiogram.utils.markdown import bold, link, italic
 from aiogram.utils.text_decorations import markdown_decoration
 
 from bot.emoji import get_clock_emoji
 from models import Event, Location, City
-from services.event_time import get_beatify_datetime
+from services.event_time import get_beatify_datetime, get_left_time
 
 
 def quote(
@@ -22,6 +24,7 @@ def make_event_message(
     """Формирование сообщения для описания билета"""
 
     event_link = link(event.name, event.link)
+    now = pytz.utc.localize(datetime.now()).astimezone(pytz.timezone(event.location.city.timezone))
 
     rows = [
         f'✨ *{event_link}*',
@@ -29,6 +32,9 @@ def make_event_message(
         f'📍 {get_address(event.location)}',
         f'{get_clock_emoji(event.time)} {bold(get_beatify_datetime(event.time))}',
     ]
+
+    if left_time := get_left_time(now, event.time):
+        rows.append(f'⏳ Через {italic(quote(left_time))}')
 
     if with_command:
         command = quote(f'/event_{event.event_id}')
