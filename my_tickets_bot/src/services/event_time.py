@@ -3,6 +3,8 @@ import datetime
 
 import pytz
 
+from .localization import plural
+
 DATETIME_FORMATS = [
     '%d.%m.%Y %H:%M',
     '%d.%m.%Y %H %M',
@@ -34,6 +36,13 @@ DAY_TO_NAME = [
     'Сб',
     'Вс',
 ]
+
+SECOND = 1
+MINUTE = SECOND * 60
+HOUR = MINUTE * 60
+DAY = 1
+MONTH = 30
+YEAR = MONTH * 12
 
 
 def parse_datetime(
@@ -76,5 +85,44 @@ def convert(
             return datetime.datetime.strptime(raw_datetime, fmt)
         except ValueError:
             pass
+
+    return None
+
+
+def get_left_time(
+        first: datetime.datetime,
+        second: datetime.datetime,
+) -> str | None:
+    """
+    Получение оставшегося времени между двумя временными точками
+    Имеют значение только две соседние пары времен
+    """
+    delta = second - first
+
+    if delta.total_seconds() < 0:
+        return None
+
+    # Считаем все значения
+    minutes, _ = divmod(delta.seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    months, days = divmod(delta.days, 30)
+    years, months = divmod(months, 12)
+
+    # Формируем строки с правильным окончанием
+    names = [
+        plural(years, 'год', 'года', 'лет'),
+        plural(months, 'месяц', 'месяца', 'месяцев'),
+        plural(days, 'день', 'дня', 'дней'),
+        plural(hours, 'час', 'часа', 'часов'),
+        plural(minutes, 'минута', 'минуты', 'минут')
+    ]
+    main_parts = [years, months, days, hours, minutes]
+    additional_parts = [months, days, hours, minutes, None]
+
+    for i, (main_part, additional_part) in enumerate(zip(main_parts, additional_parts)):
+        if main_part and additional_part:
+            return f'{names[i]} {names[i + 1]}'
+        if main_part:
+            return f'{names[i]}'
 
     return None
