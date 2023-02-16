@@ -47,7 +47,16 @@ GET_EVENTS = """
                 WHEN $2::bigint[] IS NOT NULL THEN event.id = ANY($2::bigint[])
                 ELSE TRUE
         END
-        
+        -- Опциональный фильтр по прошедшим мероприятиям
+        -- $3 Определяет режим сравнения с $4 датой
+        -- $3 = True - Показываем актуальные события
+        -- $3 = False - Показываем прошедшие события
+        AND 
+            CASE
+                WHEN $3 IS TRUE THEN event.time >= $4
+                WHEN $3 IS FALSE THEN event.time < $4
+                ELSE TRUE
+            END        
     ORDER BY event.time
 """
 

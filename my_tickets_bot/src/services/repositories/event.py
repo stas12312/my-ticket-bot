@@ -38,9 +38,11 @@ class EventRepo:
             self,
             user_id: int | None = None,
             event_ids: list[int] | None = None,
+            is_actual: bool | None = None,
+            actual_time: datetime.datetime | None = None,
     ) -> list[Event]:
         """Получение списка событий"""
-        records = await self._conn.fetch(q.GET_EVENTS, user_id, event_ids)
+        records = await self._conn.fetch(q.GET_EVENTS, user_id, event_ids, is_actual, actual_time)
 
         return [_convert_record_to_event(record) for record in records]
 
