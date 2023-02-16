@@ -1,4 +1,6 @@
 """Отображение мероприятия"""
+import datetime
+
 from aiogram import Router, F
 from aiogram import types
 from aiogram.filters import Text
@@ -43,7 +45,8 @@ async def my_events_handler(
         repo: Repo,
 ):
     """Отображения событий пользователя"""
-    events = await repo.event.list(message.from_user.id)
+    actual_time = datetime.datetime.now() - datetime.timedelta(hours=12)
+    events = await repo.event.list(message.from_user.id, is_actual=True, actual_time=actual_time)
 
     events_message = [make_event_message(ticket, with_command=True) for ticket in events]
 
