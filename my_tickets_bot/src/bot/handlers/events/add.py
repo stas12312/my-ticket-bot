@@ -8,7 +8,7 @@ from aiogram.types import ContentType
 from bot.buttons import Action, MainMenu
 from bot.forms import EventForm
 from bot.keybaords import get_keyboard_by_values, get_add_city_keyboard, get_menu_keyboard
-from bot.messages import quote
+from bot.messages import quote, get_address
 from bot.utils import save_ticket
 from services.event_time import parse_datetime
 from services.repositories import Repo
@@ -31,8 +31,31 @@ async def start_add_event_handler(
         )
         return
 
-    await message.answer('Выберите город', reply_markup=keyboard)
-    await state.set_state(EventForm.city_id)
+    # Если требуется выбрать город, то выводим список
+    if len(cities) >= 2:
+        await message.answer('Выберите город', reply_markup=keyboard)
+        await state.set_state(EventForm.city_id)
+        return
+
+    city = cities[0]
+    await state.update_data(city_id=city.city_id)
+
+    locations = await repo.location.list(message.from_user.id, city.city_id)
+
+    # Если необходимо выбрать локацию
+    keyboard = get_keyboard_by_values([location.name for location in locations])
+    if len(locations) >= 2:
+        await message.answer(f'🏙️ {city.name}')
+        await message.answer('Выберите место проведения', reply_markup=keyboard)
+        await state.set_state(EventForm.location_id)
+        return
+
+    # Переходим на этап ввода названия, так как город и локация в единственном экземпляре
+    location = locations[0]
+    await state.update_data(location_id=location.location_id)
+    await state.set_state(EventForm.event_name)
+    await message.answer(f'🏙️ {city.name}\n🏛️ {location.name}\n📍 {get_address(location)}')
+    await message.answer('Введите название мероприятия', reply_markup=types.ReplyKeyboardRemove())
 
 
 async def processing_city_handler(
