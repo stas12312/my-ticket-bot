@@ -21,7 +21,7 @@ async def delete_event_handler(
 ):
     """Удаление события"""
     event_id = callback_data.event_id
-    await repo.event.DELETE(query.from_user.id, event_id)
+    await repo.event.delete(query.from_user.id, event_id)
     await query.message.delete()
     await query.answer('Билеты удалены')
 

@@ -50,7 +50,7 @@ async def my_events_handler(
 
     events_message = [make_event_message(ticket, with_command=True) for ticket in events]
 
-    msg = '\n\n'.join(events_message) or 'У вас нет событий'
+    msg = '\n\n'.join(events_message) or 'У вас нет мероприятий'
 
     await message.answer(msg, disable_web_page_preview=True)
 
