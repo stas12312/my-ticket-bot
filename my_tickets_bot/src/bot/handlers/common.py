@@ -20,7 +20,7 @@ async def start_handler(
     user = message.from_user
     user_has_cities = await repo.city.user_has_cities(user.id, with_deleted=True)
 
-    await repo.user.save(user.id, user.username)
+    await repo.user.save(user.id, user.username, user.first_name, user.last_name)
 
     keyboard = get_menu_keyboard() if user_has_cities else None
 
