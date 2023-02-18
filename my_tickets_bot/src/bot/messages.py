@@ -38,7 +38,7 @@ def make_event_message(
 
     rows.append(f'{get_clock_emoji(event.time)} {bold(get_beatify_datetime(event.time))}')
 
-    if left_time := get_left_time(now, event.time) and with_left_time:
+    if (left_time := get_left_time(now, event.time)) and with_left_time:
         rows.append(f'⏳ Через {italic(quote(left_time))}')
 
     if with_command:
