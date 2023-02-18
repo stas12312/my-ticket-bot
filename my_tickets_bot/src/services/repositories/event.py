@@ -63,9 +63,8 @@ class EventRepo:
             event_id: int,
     ) -> Event | None:
         """Получение события по идентификатору"""
-        records = await self._conn.fetch(q.GET_EVENTS, user_id, [event_id], None, None)
-
-        return _convert_record_to_event(records[0]) if records else None
+        events = await self.list(user_id, [event_id])
+        return events[0] if event_id else None
 
     async def delete(
             self,
