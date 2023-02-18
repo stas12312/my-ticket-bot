@@ -20,6 +20,8 @@ def quote(
 def make_event_message(
         event: Event,
         with_command: bool = False,
+        with_address: bool = True,
+        with_left_time: bool = True,
 ) -> str:
     """Формирование сообщения для описания билета"""
 
@@ -29,11 +31,14 @@ def make_event_message(
     rows = [
         f'✨ *{event_link}*',
         f'🏛 {bold(event.location.name)}',
-        f'📍 {get_address(event.location)}',
-        f'{get_clock_emoji(event.time)} {bold(get_beatify_datetime(event.time))}',
     ]
 
-    if left_time := get_left_time(now, event.time):
+    if with_address:
+        rows.append(f'📍 {get_address(event.location)}')
+
+    rows.append(f'{get_clock_emoji(event.time)} {bold(get_beatify_datetime(event.time))}')
+
+    if left_time := get_left_time(now, event.time) and with_left_time:
         rows.append(f'⏳ Через {italic(quote(left_time))}')
 
     if with_command:

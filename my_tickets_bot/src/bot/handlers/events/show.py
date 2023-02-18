@@ -81,11 +81,20 @@ async def get_message_with_keyboard(
         is_actual=True,
         actual_datetime=actual_time,
         number=page,
-        size=4,
+        size=5,
     )
 
     events = await event_paginator.get_events()
-    events_message = [make_event_message(ticket, with_command=True) for ticket in events]
+    events_message = [
+        make_event_message(
+            event=event,
+            with_command=True,
+            with_address=False,
+            with_left_time=False,
+        )
+        for event
+        in events
+    ]
 
     keyboard = await get_event_list_keyboard(event_paginator) if await event_paginator.get_page_count() > 1 else None
 
