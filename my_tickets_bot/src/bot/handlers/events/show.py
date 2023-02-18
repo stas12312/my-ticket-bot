@@ -6,9 +6,14 @@ from aiogram import types
 from aiogram.filters import Text
 
 from bot.buttons import MainMenu
-from bot.callbacks import EventCallback, EntityAction
-from bot.keybaords import get_actions_for_event, get_actions_for_edit_event
+from bot.callbacks import EventCallback, EntityAction, PaginationCallback
+from bot.keybaords import (
+    get_actions_for_event,
+    get_actions_for_edit_event,
+    get_event_list_keyboard,
+)
 from bot.messages import make_event_message
+from bot.paginator import EventPaginator
 from services.repositories import Repo
 
 
@@ -45,14 +50,48 @@ async def my_events_handler(
         repo: Repo,
 ):
     """Отображения событий пользователя"""
-    actual_time = datetime.datetime.now() - datetime.timedelta(hours=12)
-    events = await repo.event.list(message.from_user.id, is_actual=True, actual_time=actual_time)
+    msg, keyboard = await get_message_with_keyboard(message.from_user.id, 0, repo)
+    await message.answer(msg, disable_web_page_preview=True, reply_markup=keyboard)
 
+
+async def my_events_with_page_handler(
+        query: types.CallbackQuery,
+        callback_data: EventPaginator,
+        repo: Repo,
+):
+    """Обработка переключения страницы"""
+    await query.answer()
+    if callback_data.page is None:
+        return
+    msg, keyboard = await get_message_with_keyboard(query.from_user.id, callback_data.page, repo)
+    await query.message.edit_text(msg, disable_web_page_preview=True, reply_markup=keyboard)
+
+
+async def get_message_with_keyboard(
+        user_id: int,
+        page: int,
+        repo: Repo,
+) -> tuple[str, types.InlineKeyboardMarkup]:
+    """Получение сообщения и клавиатуры для списка мероприятий"""
+    actual_time = datetime.datetime.now() - datetime.timedelta(hours=12)
+
+    event_paginator = EventPaginator(
+        repo=repo,
+        user_id=user_id,
+        is_actual=True,
+        actual_datetime=actual_time,
+        number=page,
+        size=4,
+    )
+
+    events = await event_paginator.get_events()
     events_message = [make_event_message(ticket, with_command=True) for ticket in events]
+
+    keyboard = await get_event_list_keyboard(event_paginator) if await event_paginator.get_page_count() > 1 else None
 
     msg = '\n\n'.join(events_message) or 'У вас нет мероприятий'
 
-    await message.answer(msg, disable_web_page_preview=True)
+    return msg, keyboard
 
 
 async def event_card_handler(
@@ -80,3 +119,4 @@ router.message.register(my_events_handler, Text(text=MainMenu.MY_EVENTS))
 router.message.register(event_card_handler, Text(startswith='/event_'))
 router.callback_query.register(show_edits_handler, EventCallback.filter(F.action == EntityAction.EDIT))
 router.callback_query.register(show_event_handler, EventCallback.filter(F.action == EntityAction.SHOW))
+router.callback_query.register(my_events_with_page_handler, PaginationCallback.filter(F.object_name == 'EVENT'))

@@ -58,6 +58,19 @@ GET_EVENTS = """
                 ELSE TRUE
             END        
     ORDER BY event.time
+    LIMIT $5 OFFSET $6
+"""
+
+GET_COUNT = """
+    SELECT COUNT(*)
+    FROM event
+    WHERE 
+        event.user_id = $1::bigint
+        AND CASE
+                WHEN $2 IS TRUE THEN event.time >= $3
+                WHEN $2 IS FALSE THEN event.time < $3
+                ELSE TRUE
+            END     
 """
 
 DELETE_EVENT = """

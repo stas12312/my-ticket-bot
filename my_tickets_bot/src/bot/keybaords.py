@@ -13,7 +13,7 @@ from models import City, Location, Event, Ticket
 from .buttons import (
     MainMenu,
     Settings,
-    Action,
+    Action, Pagination,
 )
 from .callbacks import (
     CityCallback,
@@ -23,8 +23,9 @@ from .callbacks import (
     CloseCallback,
     TicketCallback,
     EventCallback,
-    EditEventCallback, EditEventField,
+    EditEventCallback, EditEventField, PaginationCallback,
 )
+from .paginator import EventPaginator
 
 CLOSE_BUTTON = InlineKeyboardButton(
     text=Settings.CLOSE,
@@ -309,4 +310,39 @@ def get_actions_for_edit_event(
         ),
         CLOSE_BUTTON,
     )
+    return builder.as_markup()
+
+
+async def get_event_list_keyboard(
+        event_paginator: EventPaginator,
+) -> InlineKeyboardMarkup:
+    """Получение клавиатуры для списка мероприятий"""
+    builder = InlineKeyboardBuilder()
+
+    prev_page = event_paginator.prev_page() if await event_paginator.has_prev() else None
+    next_page = event_paginator.next_page() if await event_paginator.has_next() else None
+
+    builder.row(
+        InlineKeyboardButton(
+            text=Pagination.PREV if prev_page is not None else ' ',
+            callback_data=PaginationCallback(
+                object_name='EVENT',
+                page=prev_page,
+            ).pack(),
+        ),
+        InlineKeyboardButton(
+            text=f'{event_paginator.page + 1} / {await event_paginator.get_page_count()}',
+            callback_data=PaginationCallback(
+                object_name='EVENT',
+            ).pack(),
+        ),
+        InlineKeyboardButton(
+            text=Pagination.NEXT if next_page is not None else ' ',
+            callback_data=PaginationCallback(
+                object_name='EVENT',
+                page=next_page,
+            ).pack(),
+        ),
+    )
+
     return builder.as_markup()
