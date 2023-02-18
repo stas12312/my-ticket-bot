@@ -29,3 +29,9 @@ class Action(StrEnum):
     ADD = '➕ Добавить'
     PASS = '▶️ Пропустить'
     EDIT = '✏ Редактировать'
+
+
+class Pagination(StrEnum):
+    """Кнопки для пагинации"""
+    NEXT = '⏭'
+    PREV = '⏮'

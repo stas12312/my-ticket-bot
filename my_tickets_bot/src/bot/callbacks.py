@@ -60,3 +60,9 @@ class TicketCallback(CallbackData, prefix='tickets'):
 
 class CloseCallback(CallbackData, prefix='close'):
     """CallbackData для закрытия меню"""
+
+
+class PaginationCallback(CallbackData, prefix='page'):
+    """CallbackData для пагинации"""
+    object_name: str
+    page: int | None

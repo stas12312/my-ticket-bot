@@ -25,7 +25,7 @@ class EventRepo:
             event_time: datetime.datetime,
             location_id: int,
             link: str | None,
-            event_id: int | None = None
+            event_id: int | None = None,
     ) -> Event:
         """Сохранения события"""
         if event_id is None:
@@ -40,11 +40,22 @@ class EventRepo:
             event_ids: list[int] | None = None,
             is_actual: bool | None = None,
             actual_time: datetime.datetime | None = None,
+            limit: int = 5,
+            offset: int = 0,
     ) -> list[Event]:
         """Получение списка событий"""
-        records = await self._conn.fetch(q.GET_EVENTS, user_id, event_ids, is_actual, actual_time)
+        records = await self._conn.fetch(q.GET_EVENTS, user_id, event_ids, is_actual, actual_time, limit, offset)
 
         return [_convert_record_to_event(record) for record in records]
+
+    async def get_count(
+            self,
+            user_id: int,
+            is_actual: bool,
+            actual_time: datetime.datetime,
+    ):
+        """Получение количества событий"""
+        return await self._conn.fetchval(q.GET_COUNT, user_id, is_actual, actual_time)
 
     async def get(
             self,
