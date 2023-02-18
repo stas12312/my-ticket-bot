@@ -110,6 +110,10 @@ async def event_card_handler(
     """Получение карточки билета"""
     event_id = int(message.text.split('_')[1])
     event = await repo.event.get(message.from_user.id, event_id)
+    if not event:
+        await message.answer('⚠️ Мероприятие не найдено ⚠️')
+        return
+
     tickets = await repo.ticket.list_for_event(message.from_user.id, event.event_id)
 
     event_message = make_event_message(event)
@@ -120,6 +124,7 @@ async def event_card_handler(
         reply_markup=keyboards,
         disable_web_page_preview=True,
     )
+    await message.delete()
 
 
 router = Router()

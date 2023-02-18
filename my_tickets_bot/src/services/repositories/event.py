@@ -64,7 +64,7 @@ class EventRepo:
     ) -> Event | None:
         """Получение события по идентификатору"""
         events = await self.list(user_id, [event_id])
-        return events[0] if event_id else None
+        return events[0] if events else None
 
     async def delete(
             self,
