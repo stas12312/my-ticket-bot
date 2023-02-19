@@ -8,9 +8,9 @@ from aiogram.types import ContentType
 from bot.buttons import Action, MainMenu
 from bot.forms import EventForm
 from bot.keybaords import get_keyboard_by_values, get_add_city_keyboard, get_menu_keyboard
-from bot.messages import quote, get_address
+from bot.messages import get_address, TIME_EXAMPLES
 from bot.utils import save_ticket
-from services.event_time import parse_datetime
+from services.event_time import parse_datetime, get_localtime
 from services.repositories import Repo
 
 
@@ -102,8 +102,7 @@ async def processing_name_handler(
         state: FSMContext,
 ):
     """Обработка введенного названия"""
-    await message.answer(f'Введите дату и время проведения мероприятия\nПример: _{quote("22.02.23 20:00")}_')
-
+    await message.answer(f'Введите дату и время проведения мероприятия\n{TIME_EXAMPLES}')
     await state.update_data(event_name=message.text)
     await state.set_state(EventForm.event_time)
 
@@ -120,7 +119,9 @@ async def processing_event_time_handler(
     city_id = data.get('city_id')
     city = await repo.city.get(message.from_user.id, city_id)
 
-    if (parsed_datetime := parse_datetime(raw_datetime, city.timezone)) is None:
+    now = get_localtime(city.timezone)
+
+    if (parsed_datetime := parse_datetime(raw_datetime, city.timezone, now)) is None:
         await message.answer('Не удалось определить дату и время, попробуйте еще раз')
         return
 

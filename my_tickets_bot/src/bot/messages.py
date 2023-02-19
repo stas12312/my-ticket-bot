@@ -17,6 +17,12 @@ def quote(
     return markdown_decoration.quote(value)
 
 
+TIME_EXAMPLES = f'Примеры:\n' \
+                f'_{quote("20.03.23 20:00")}_\n' \
+                f'_{quote("20.03 19:00")}_\n' \
+                f'_{quote("20 марта 21:30")}_'
+
+
 def make_event_message(
         event: Event,
         with_command: bool = False,

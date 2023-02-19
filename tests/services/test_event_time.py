@@ -1,9 +1,11 @@
 """Тесты работы со временем события"""
 import datetime
+from unittest.mock import patch
 
 import pytest
+import pytz
 
-from services.event_time import get_beatify_datetime, get_left_time
+from services.event_time import get_beatify_datetime, get_left_time, parse_datetime, get_localtime
 
 testdata = [
     (6, 2, 23, 14, 10, '6 Февраля в 14:10 (Пн)'),
@@ -38,3 +40,32 @@ testdata = [
 def test_get_interval(first: datetime.datetime, second: datetime.datetime, result: str):
     """Проверка получения оставшегося времени"""
     assert get_left_time(first, second) == result
+
+
+testdata = [
+    ('01.02.23 20:30', datetime.datetime(2023, 2, 1, 20, 30)),
+    ('01.02.23 20 30', datetime.datetime(2023, 2, 1, 20, 30)),
+    ('10.06 20:30', datetime.datetime(2023, 6, 10, 20, 30)),
+    ('09.06 20:30', datetime.datetime(2024, 6, 9, 20, 30)),
+    ('20 МаРта 21:30', datetime.datetime(2024, 3, 20, 21, 30)),
+    ('28 Октября 19:30', datetime.datetime(2023, 10, 28, 19, 30)),
+    ('31 февраля 21:30', None),
+]
+
+
+@pytest.mark.parametrize('input_time,result', testdata)
+def test_parse_datetime(input_time: str, result: datetime.datetime | None):
+    """Проверка парсинга введенного времени"""
+    now = datetime.datetime(2023, 6, 10)
+    parsed_datetime = parse_datetime(input_time, now=now)
+    assert parsed_datetime == result
+
+
+def test_get_localtime():
+    """Проверка получения локального времени"""
+    with patch('datetime.datetime', wraps=datetime.datetime) as dt_mock:
+        dt_mock.utcnow.return_value = datetime.datetime(2023, 1, 1, 1, 0)
+
+        local_now = get_localtime('Europe/Moscow')
+
+    assert local_now == pytz.timezone('Europe/Moscow').localize(datetime.datetime(2023, 1, 1, 4, 0))

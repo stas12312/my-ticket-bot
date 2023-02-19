@@ -1,5 +1,6 @@
 """Обработка даты и времени мероприятия"""
 import datetime
+import re
 
 import pytz
 
@@ -10,7 +11,10 @@ DATETIME_FORMATS = [
     '%d.%m.%Y %H %M',
     '%d.%m.%y %H:%M',
     '%d.%m.%y %H %M',
+    '%d.%m %H:%M',
 ]
+
+FORMAT_REGEX = re.compile(r'^([1-3][0-9]?) (\w*) ([0-2][0-9]:[0-9][0-9])')
 
 MONTH_TO_NAME = [
     'Января',
@@ -26,6 +30,8 @@ MONTH_TO_NAME = [
     'Ноября',
     'Декабря',
 ]
+
+MONTH_NAME_TO_NUMBER = {name: number for number, name in enumerate(MONTH_TO_NAME, start=1)}
 
 DAY_TO_NAME = [
     'Пн',
@@ -46,15 +52,32 @@ YEAR = MONTH * 12
 
 
 def parse_datetime(
-        raw_datetime: str,
-        timezone_name: str,
+        input_value: str,
+        timezone_name: str | None = None,
+        now: datetime.datetime | None = None,
 ) -> datetime.datetime | None:
     """Парсинг введённой даты"""
 
-    if (parsed_datetime := convert(raw_datetime)) is None:
+    if (parsed_datetime := convert(input_value)) is None:
         return None
 
-    return localize_datetime(parsed_datetime, timezone_name)
+    if now:
+        parsed_datetime = set_year(parsed_datetime, now)
+    return localize_datetime(parsed_datetime, timezone_name) if timezone_name else parsed_datetime
+
+
+def set_year(
+        datetime_: datetime.datetime,
+        now: datetime.datetime,
+) -> datetime.datetime:
+    """Определение года"""
+    day, month = now.day, now.month
+    if datetime_.year >= now.year:
+        return datetime_
+
+    if datetime_.day >= day and datetime_.month >= month:
+        return datetime_.replace(year=now.year)
+    return datetime_.replace(year=now.year + 1)
 
 
 def localize_datetime(
@@ -86,7 +109,29 @@ def convert(
         except ValueError:
             pass
 
-    return None
+    return convert_with_month_name(raw_datetime)
+
+
+def convert_with_month_name(
+        raw_datetime: str,
+) -> datetime.datetime | None:
+    """Конвертация строки с названием месяца в дату"""
+    result = FORMAT_REGEX.match(raw_datetime)
+    if not result:
+        return None
+
+    day = result.group(1)
+    month_name = result.group(2).capitalize()
+    hour, minute = result.group(3).split(':')
+
+    month_number = MONTH_NAME_TO_NUMBER.get(month_name)
+    if month_number is None:
+        return None
+
+    try:
+        return datetime.datetime(datetime.MINYEAR, month_number, int(day), int(hour), int(minute))
+    except ValueError:
+        return None
 
 
 def get_left_time(
@@ -126,3 +171,9 @@ def get_left_time(
             return f'{names[i]}'
 
     return None
+
+
+def get_localtime(timezone: str) -> datetime.datetime:
+    """Получение локального времени во временной зоне"""
+    now = datetime.datetime.utcnow()
+    return pytz.utc.localize(now).astimezone(pytz.timezone(timezone))

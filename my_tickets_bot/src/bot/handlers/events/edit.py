@@ -9,8 +9,8 @@ from aiogram.fsm.context import FSMContext
 from bot.callbacks import EventCallback, EntityAction, EditEventCallback, EditEventField
 from bot.forms import EditEventForm
 from bot.keybaords import get_actions_for_edit_event, get_menu_keyboard, get_keyboard_by_values
-from bot.messages import make_event_message, quote
-from services.event_time import parse_datetime
+from bot.messages import make_event_message, TIME_EXAMPLES
+from services.event_time import parse_datetime, get_localtime
 from services.repositories import Repo
 
 
@@ -66,7 +66,7 @@ async def edit_time_handler(
     await state.set_state(EditEventForm.time)
     await state.update_data(event_id=event_id, message_id=query.message.message_id)
     await query.message.answer(
-        text=f'Введите новые дату и время проведения мероприятия\nПример _{quote("22.02.23 20:00")}_',
+        text=f'Введите новые дату и время проведения мероприятия\n{TIME_EXAMPLES}',
         reply_markup=types.ReplyKeyboardRemove(),
     )
 
@@ -141,7 +141,8 @@ async def edit_handler(
             event.link = message.text
 
         case EditEventForm.time:
-            parsed_datetime = parse_datetime(message.text, event.location.city.timezone)
+            now = get_localtime(event.location.city.timezone)
+            parsed_datetime = parse_datetime(message.text, event.location.city.timezone, now)
             if not parsed_datetime:
                 await message.answer('Некорректное время')
                 return
