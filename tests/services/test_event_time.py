@@ -43,21 +43,21 @@ def test_get_interval(first: datetime.datetime, second: datetime.datetime, resul
 
 
 testdata = [
-    ('01.02.23 20:30', datetime.datetime(2023, 2, 1, 20, 30)),
-    ('01.02.23 20 30', datetime.datetime(2023, 2, 1, 20, 30)),
-    ('10.06 20:30', datetime.datetime(2023, 6, 10, 20, 30)),
-    ('09.06 20:30', datetime.datetime(2024, 6, 9, 20, 30)),
-    ('20 МаРта 21:30', datetime.datetime(2024, 3, 20, 21, 30)),
-    ('28 Октября 19:30', datetime.datetime(2023, 10, 28, 19, 30)),
-    ('1 Октября 19:30', datetime.datetime(2023, 10, 1, 19, 30)),
-    ('31 февраля 21:30', None),
+    ('01.02.23 20:30', datetime.datetime(2023, 6, 10), datetime.datetime(2023, 2, 1, 20, 30)),
+    ('01.02.23 20 30', datetime.datetime(2023, 6, 10), datetime.datetime(2023, 2, 1, 20, 30)),
+    ('10.06 20:30', datetime.datetime(2023, 6, 10), datetime.datetime(2023, 6, 10, 20, 30)),
+    ('09.06 20:30', datetime.datetime(2023, 6, 10), datetime.datetime(2024, 6, 9, 20, 30)),
+    ('20 МаРта 21:30', datetime.datetime(2023, 6, 10), datetime.datetime(2024, 3, 20, 21, 30)),
+    ('28 Октября 19:30', datetime.datetime(2023, 6, 10), datetime.datetime(2023, 10, 28, 19, 30)),
+    ('1 Октября 19:30', datetime.datetime(2023, 6, 10), datetime.datetime(2023, 10, 1, 19, 30)),
+    ('31 января 20:00', datetime.datetime(2023, 2, 1), datetime.datetime(2024, 1, 31, 20, 0)),
+    ('31 февраля 21:30', datetime.datetime(2023, 6, 10), None),
 ]
 
 
-@pytest.mark.parametrize('input_time,result', testdata)
-def test_parse_datetime(input_time: str, result: datetime.datetime | None):
+@pytest.mark.parametrize('input_time,now,result', testdata)
+def test_parse_datetime(input_time: str, result: datetime.datetime | None, now: datetime.datetime):
     """Проверка парсинга введенного времени"""
-    now = datetime.datetime(2023, 6, 10)
     parsed_datetime = parse_datetime(input_time, now=now)
     assert parsed_datetime == result
 
