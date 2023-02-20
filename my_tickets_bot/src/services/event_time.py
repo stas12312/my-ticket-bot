@@ -74,7 +74,7 @@ def set_year(
     if datetime_.year >= now.year:
         return datetime_
 
-    if datetime_.month * 30 + datetime_.day < now.month * 30 + now.day:
+    if datetime_.month * 31 + datetime_.day < now.month * 31 + now.day:
         return datetime_.replace(year=now.year + 1)
     return datetime_.replace(year=now.year)
 
