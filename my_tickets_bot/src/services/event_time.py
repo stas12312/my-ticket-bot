@@ -14,7 +14,7 @@ DATETIME_FORMATS = [
     '%d.%m %H:%M',
 ]
 
-FORMAT_REGEX = re.compile(r'^([1-3][0-9]?) (\w*) ([0-2][0-9]:[0-9][0-9])')
+FORMAT_REGEX = re.compile(r'^([1-3]?[0-9]) (\w*) ([0-2][0-9]:[0-9][0-9])')
 
 MONTH_TO_NAME = [
     'Января',
@@ -71,13 +71,12 @@ def set_year(
         now: datetime.datetime,
 ) -> datetime.datetime:
     """Определение года"""
-    day, month = now.day, now.month
     if datetime_.year >= now.year:
         return datetime_
 
-    if datetime_.day >= day and datetime_.month >= month:
-        return datetime_.replace(year=now.year)
-    return datetime_.replace(year=now.year + 1)
+    if datetime_.month * 30 + datetime_.day < now.month * 30 + now.day:
+        return datetime_.replace(year=now.year + 1)
+    return datetime_.replace(year=now.year)
 
 
 def localize_datetime(
