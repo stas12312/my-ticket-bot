@@ -9,6 +9,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from bot.commands import BOT_COMMANDS
 from bot.handlers import main_router
 from bot.middlewares import DbMiddleware
+from bot.utils import send_message_for_users
 from services.config import load_config
 from services.notifications import send_notifications, send_day_notifications
 
@@ -49,6 +50,7 @@ async def main():
 
     await start_scheduler(bot, poll)
     await bot.set_my_commands(BOT_COMMANDS)
+    await send_message_for_users(bot, config.admin_ids, '⚠️ ОБНОВЛЕНО ⚠️')
     await dispatcher.start_polling(bot)
 
 

@@ -7,7 +7,7 @@ from enum import StrEnum
 class EnvName(StrEnum):
     """Название переменных окружения"""
     BOT_TOKEN = 'BOT_TOKEN'
-    ADMIN_ID = 'ADMIN_ID'
+    ADMIN_IDS = 'ADMIN_IDS'
     LOGGING_LEVEL = 'LOGGING_LEVEL'
 
     PG_HOST = 'PG_HOST'
@@ -21,7 +21,7 @@ class EnvName(StrEnum):
 class Config:
     """Конфигурация приложения"""
     bot_token: str
-    admin_id: int
+    admin_ids: list[int]
 
     pg_host: str
     pg_port: int
@@ -40,7 +40,7 @@ def load_config() -> Config:
     """Загрузка конфигурации"""
     return Config(
         bot_token=os.environ.get(EnvName.BOT_TOKEN),
-        admin_id=int(os.environ.get(EnvName.ADMIN_ID)),
+        admin_ids=[int(v) for v in os.environ.get(EnvName.ADMIN_IDS).split(',')],
         pg_host=os.environ.get(EnvName.PG_HOST),
         pg_port=int(os.environ.get(EnvName.PG_PORT)),
         pg_user=os.environ.get(EnvName.PG_USER),
