@@ -50,6 +50,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   # Connect to existing Droplet via SSH and (re)installs add. runs the image
   # ! Ensure you have installed the preconfigured Droplet with Docker
