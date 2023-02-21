@@ -1,7 +1,9 @@
 """Вспомогательные функции"""
+import logging
 from enum import IntEnum
 
 from aiogram import Bot
+from aiogram import exceptions
 from aiogram.types import File, Message
 
 from services.repositories import Repo
@@ -50,8 +52,10 @@ async def safe_send_message(
         message: str,
 ):
     """Безопасная отправка сообщения"""
-
-    await bot.send_message(
-        chat_id=user_id,
-        text=message,
-    )
+    try:
+        await bot.send_message(
+            chat_id=user_id,
+            text=message,
+        )
+    except exceptions.TelegramForbiddenError:
+        logging.warning('User %s blocked bot', user_id)
