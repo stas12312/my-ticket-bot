@@ -14,6 +14,7 @@ from bot.keybaords import (
 )
 from bot.messages import make_event_message
 from bot.paginator import EventPaginator
+from services.profile import duration
 from services.repositories import Repo
 
 
@@ -67,6 +68,7 @@ async def my_events_with_page_handler(
     await query.message.edit_text(msg, disable_web_page_preview=True, reply_markup=keyboard)
 
 
+@duration
 async def get_message_with_keyboard(
         user_id: int,
         page: int,
