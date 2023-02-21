@@ -79,4 +79,4 @@ jobs:
             cd my-tickets-bot
             
             # Restart docker-compose
-            docker-compose down && docker-compose up -d
+            docker-compose up -d
