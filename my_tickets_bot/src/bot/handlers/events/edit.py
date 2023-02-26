@@ -9,7 +9,8 @@ from aiogram.fsm.context import FSMContext
 from bot.callbacks import EventCallback, EntityAction, EditEventCallback, EditEventField
 from bot.forms import EditEventForm
 from bot.keybaords import get_actions_for_edit_event, get_menu_keyboard, get_keyboard_by_values
-from bot.messages import make_event_message, TIME_EXAMPLES
+from bot.messages import TIME_EXAMPLES
+from bot.services.events.messages import make_event_message
 from services.event_time import parse_datetime, get_localtime
 from services.repositories import Repo
 

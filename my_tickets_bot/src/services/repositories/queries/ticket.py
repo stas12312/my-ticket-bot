@@ -12,7 +12,8 @@ GET_TICKETS_FOR_EVENT = """
         ticket.created_at AS created_at,
         
         file.id AS file_id,
-        file.location AS file_location
+        file.location AS file_location,
+        file.bot_file_id AS bot_file_id
         
     FROM ticket
     JOIN event ON event.id = ticket.event_id

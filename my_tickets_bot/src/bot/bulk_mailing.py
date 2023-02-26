@@ -3,13 +3,14 @@ import logging
 
 import aiogram
 import asyncpg
+from aiogram.exceptions import TelegramForbiddenError
 
-from bot.keybaords import get_actions_for_event
-from bot.messages import make_event_message
+from bot.services.events.messages import make_event_message, send_event_card
+from bot.utils import safe_send_message
 from services.repositories import Repo
 
-EVENTS_MAILING_TITLE = '❗ *Уведомление*❗\n_Напоминаем о ближайшем мероприятии_\n'
-NEXT_DAY_MAILING_TITLE = '❗ *Уведомление*❗\n_Напоминаем о завтрашних мероприятиях_\n'
+EVENTS_MAILING_TITLE = '🔔 _Напоминаем о ближайшем мероприятии_ 🔔\n'
+NEXT_DAY_MAILING_TITLE = '🔔 _Напоминаем о завтрашних мероприятиях_ 🔔\n'
 
 logger = logging.getLogger(__name__)
 
@@ -25,15 +26,10 @@ async def coming_events_mailing(
 
     for event in events:
         logger.info('Отправка уведомления user_id=%s event_id=%s', event.user.user_id, event.event_id)
-        event_msg = make_event_message(event)
-        tickets = await repo.ticket.list_for_event(event.user.user_id, event.event_id)
-        keyboard = get_actions_for_event(event, tickets)
-        msg = f'{EVENTS_MAILING_TITLE}\n{event_msg}'
-        await bot.send_message(
-            chat_id=event.user.user_id,
-            text=msg,
-            reply_markup=keyboard,
-        )
+        try:
+            await send_event_card(bot, event.user.user_id, event.event_id, repo, EVENTS_MAILING_TITLE)
+        except TelegramForbiddenError:
+            logger.info('Ошибка при отправке уведомления user_id=%s', event.user.user_id)
 
 
 async def next_day_events_mailing(
@@ -48,7 +44,4 @@ async def next_day_events_mailing(
         events = await repo.event.list(event_ids=event_ids)
         events_msg = '\n\n'.join([make_event_message(e, with_command=True) for e in events])
         msg = f'{NEXT_DAY_MAILING_TITLE}\n{events_msg}'
-        await bot.send_message(
-            chat_id=user_id,
-            text=msg,
-        )
+        await safe_send_message(bot, user_id, msg, disable_web_page_preview=True)

@@ -13,7 +13,9 @@ from models import City, Location, Event, Ticket
 from .buttons import (
     MainMenu,
     Settings,
-    Action, Pagination,
+    Action,
+    Pagination,
+    Event as EventButton,
 )
 from .callbacks import (
     CityCallback,
@@ -23,7 +25,9 @@ from .callbacks import (
     CloseCallback,
     TicketCallback,
     EventCallback,
-    EditEventCallback, EditEventField, PaginationCallback,
+    EditEventCallback,
+    EditEventField,
+    PaginationCallback,
 )
 from .paginator import EventPaginator
 
@@ -189,24 +193,16 @@ def get_actions_for_event(
     """Получение клавиатуры для события"""
     builder = InlineKeyboardBuilder()
 
-    for row, ticket in enumerate(tickets, start=1):
+    if tickets:
         builder.row(
             InlineKeyboardButton(
-                text=f'⬇ Билет {row}',
+                text='⬇ Билет' if len(tickets) == 1 else '⬇ Билеты',
                 callback_data=TicketCallback(
                     action=EntityAction.SHOW,
-                    ticket_id=ticket.ticket_id,
                     event_id=event.event_id,
                 ).pack(),
             )
         )
-
-    builder.row(
-        InlineKeyboardButton(
-            text=Action.ADD,
-            callback_data=TicketCallback(action=EntityAction.ADD, event_id=event.event_id).pack(),
-        )
-    )
 
     builder.row(
         InlineKeyboardButton(
@@ -298,6 +294,13 @@ def get_actions_for_edit_event(
                 event_id=event_id,
             ).pack(),
         ),
+    )
+
+    builder.row(
+        InlineKeyboardButton(
+            text=EventButton.ADD_TICKET,
+            callback_data=TicketCallback(action=EntityAction.ADD, event_id=event_id).pack(),
+        )
     )
 
     builder.row(
