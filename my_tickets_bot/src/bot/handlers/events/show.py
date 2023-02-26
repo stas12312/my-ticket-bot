@@ -1,7 +1,7 @@
 """Отображение мероприятия"""
 import datetime
 
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram import types
 from aiogram.filters import Text
 
@@ -12,8 +12,8 @@ from bot.keybaords import (
     get_actions_for_edit_event,
     get_event_list_keyboard,
 )
-from bot.messages import make_event_message
 from bot.paginator import EventPaginator
+from bot.services.events.messages import send_event_card, make_event_message
 from services.profile import duration
 from services.repositories import Repo
 
@@ -107,25 +107,12 @@ async def get_message_with_keyboard(
 
 async def event_card_handler(
         message: types.Message,
+        bot: Bot,
         repo: Repo,
 ):
     """Получение карточки билета"""
     event_id = int(message.text.split('_')[1])
-    event = await repo.event.get(message.from_user.id, event_id)
-    if not event:
-        await message.answer('⚠️ Мероприятие не найдено ⚠️')
-        return
-
-    tickets = await repo.ticket.list_for_event(message.from_user.id, event.event_id)
-
-    event_message = make_event_message(event)
-    keyboards = get_actions_for_event(event, tickets)
-
-    await message.answer(
-        text=event_message,
-        reply_markup=keyboards,
-        disable_web_page_preview=True,
-    )
+    await send_event_card(bot, message.from_user.id, event_id, repo)
     await message.delete()
 
 

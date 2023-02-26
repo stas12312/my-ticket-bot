@@ -31,6 +31,11 @@ class Action(StrEnum):
     EDIT = '✏ Редактировать'
 
 
+class Event(StrEnum):
+    """Кнопки для мероприятий"""
+    ADD_TICKET = '➕ Билет'
+
+
 class Pagination(StrEnum):
     """Кнопки для пагинации"""
     NEXT = '⏭'
