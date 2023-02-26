@@ -1,10 +1,12 @@
+"""Основной репозиторй"""
 from asyncpg import Connection
 
 from .city import CityRepo
+from .common import CommonRepo
 from .event import EventRepo
 from .file import FileRepo
-from .ticket import TicketRepo
 from .location import LocationRepo
+from .ticket import TicketRepo
 from .user import UserRepo
 
 
@@ -21,3 +23,4 @@ class Repo:
         self.file = FileRepo(connection)
         self.ticket = TicketRepo(connection)
         self.event = EventRepo(connection)
+        self.common = CommonRepo(connection)

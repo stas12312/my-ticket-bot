@@ -3,11 +3,12 @@ import os
 
 from services.config import EnvName, load_config
 
+
 def setup():
     """Загрузка переменных в окружение"""
     os.environ.update({
         EnvName.BOT_TOKEN: 'bot_token',
-        EnvName.ADMIN_ID: '111555',
+        EnvName.ADMIN_IDS: '111555',
         EnvName.PG_HOST: 'localhost',
         EnvName.PG_PORT: '5554',
         EnvName.PG_USER: 'postgres',
@@ -23,7 +24,7 @@ def test_load_config():
     config = load_config()
 
     assert config.bot_token == 'bot_token'
-    assert config.admin_id == 111555
+    assert config.admin_ids == [111555]
     assert config.pg_host == 'localhost'
     assert config.pg_port == 5554
     assert config.pg_user == 'postgres'

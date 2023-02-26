@@ -1,6 +1,7 @@
 """Репозиторий пользователя"""
-from asyncpg import Connection, Record
+from asyncpg import Connection
 
+from models import User
 from .queries import user
 
 
@@ -19,6 +20,15 @@ class UserRepo:
             username: str | None,
             first_name: str | None,
             last_name: str | None,
-    ) -> Record:
+    ) -> User:
         """Сохранение пользователя"""
-        return await self._conn.fetchrow(user.SAVE_USER, user_id, username, first_name, last_name)
+        record = await self._conn.fetchrow(user.SAVE_USER, user_id, username, first_name, last_name)
+        return _convert_record_to_user(record)
+
+
+def _convert_record_to_user(record) -> User:
+    """Преобразование рекорда в пользователя"""
+    return User(
+        user_id=record['id'],
+        username=record['username'],
+    )
