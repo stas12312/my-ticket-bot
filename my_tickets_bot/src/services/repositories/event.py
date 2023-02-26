@@ -24,7 +24,7 @@ class EventRepo:
             name: str,
             event_time: datetime.datetime,
             location_id: int,
-            link: str | None,
+            link: str | None = None,
             event_id: int | None = None,
     ) -> Event:
         """Сохранения события"""

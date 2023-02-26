@@ -1,13 +1,17 @@
 """Роутер с общими обработчиками"""
+import datetime
+
 from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from services.repositories import Repo
+from services.statistic import get_user_statistic
 from ..callbacks import CloseCallback
 from ..commands import AppCommand as MyCommand
 from ..forms import CityForm
 from ..keybaords import get_menu_keyboard
+from ..messages import get_message_for_statistic
 
 
 async def start_handler(
@@ -50,8 +54,20 @@ async def cancel(
     await message.answer('Действие отменено', reply_markup=get_menu_keyboard())
 
 
+async def statistic(
+        message: types.Message,
+        repo: Repo,
+):
+    """Отображение статистики"""
+    now = datetime.datetime.utcnow()
+    rows = await get_user_statistic(message.from_user.id, now, repo)
+    msg = get_message_for_statistic(rows)
+    await message.answer(msg)
+
+
 common_handlers = Router()
 
 common_handlers.message.register(start_handler, Command(commands=MyCommand.START))
 common_handlers.callback_query.register(close_menu, CloseCallback.filter())
 common_handlers.message.register(cancel, Command(commands=MyCommand.CANCEL))
+common_handlers.message.register(statistic, Command(commands=MyCommand.STATISTIC))

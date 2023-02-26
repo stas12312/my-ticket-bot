@@ -4,6 +4,7 @@ from aiogram.utils.markdown import bold, italic
 from aiogram.utils.text_decorations import markdown_decoration
 
 from models import Location, City
+from services.statistic import RowStatistic
 
 
 def quote(
@@ -68,4 +69,21 @@ def _make_message_by_rows(
         rows: list[str],
 ) -> str:
     """Формирование сообщения из списка строк"""
+    return '\n'.join(rows)
+
+
+def get_message_for_statistic(
+        statistic: list[RowStatistic],
+) -> str:
+    """Формирование сообщения для статистики"""
+    total_count = 0
+    rows = ['📊 Статистика мероприятий 📊']
+    for row in statistic:
+        rows.append(f'\n{bold(row.year)}')
+        if row.past_count:
+            rows.append(f'Прошедшие: {row.past_count}')
+        if row.planned_count:
+            rows.append(f'Планируются: {row.planned_count}')
+        total_count += row.planned_count + row.past_count
+
     return '\n'.join(rows)
