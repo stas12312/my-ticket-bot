@@ -40,7 +40,7 @@ def make_city_message(
 ) -> str:
     """Формирование сообщения для описания города"""
     rows = [
-        f'🏘 {quote(city.name)}',
+        f'🏘 _{quote(city.name)}_\n',
         f'🕰 {quote(city.timezone)}',
     ]
     return _make_message_by_rows(rows)
@@ -50,18 +50,10 @@ def make_location_message(
         location: Location,
 ) -> str:
     """Формирования сообщения для локации"""
-    rows = []
-
-    if location.city.name:
-        rows.append(
-            f'🏘 {quote(location.city.name)}'
-        )
-
-    rows.extend([
-        f'🏛 {quote(location.name)}',
-        f'📍 {quote(location.address)}',
-    ])
-
+    rows = [
+        f'🏛 _{quote(location.name)}_\n',
+        f'📍 {quote(location.city.name)}, {quote(location.address)}',
+    ]
     return _make_message_by_rows(rows)
 
 

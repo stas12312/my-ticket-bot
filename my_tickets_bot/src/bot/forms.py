@@ -10,9 +10,8 @@ class CityForm(StatesGroup):
 
 class LocationForm(StatesGroup):
     """Добавление места"""
-    city_id = State()
-    name = State()
-    address = State()
+    input_name = State()
+    input_address = State()
 
 
 class EventForm(StatesGroup):
