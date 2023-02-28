@@ -65,12 +65,8 @@ def get_settings_menu() -> InlineKeyboardMarkup:
     print(CityCallback(action=EntityAction.LIST).pack())
     builder.row(
         InlineKeyboardButton(
-            text=Settings.MY_CITIES,
+            text=Settings.CITIES_AND_PLACES,
             callback_data=CityCallback(action=EntityAction.LIST).pack(),
-        ),
-        InlineKeyboardButton(
-            text=Settings.MY_PLACES,
-            callback_data=LocationCallback(action=EntityAction.LIST).pack()
         ),
     )
     builder.row(CLOSE_BUTTON)
@@ -117,6 +113,13 @@ def get_actions_for_city(
 
     builder.row(
         InlineKeyboardButton(
+            text=Settings.PLACES,
+            callback_data=LocationCallback(action=EntityAction.LIST, city_id=city_id).pack()
+        )
+    )
+
+    builder.row(
+        InlineKeyboardButton(
             text=Settings.DELETE_CITY,
             callback_data=CityCallback(action=EntityAction.DELETE, city_id=city_id).pack(),
         )
@@ -133,6 +136,7 @@ def get_actions_for_city(
 
 
 def get_locations_menu(
+        city_id: int,
         locations: list[Location],
 ) -> InlineKeyboardMarkup:
     """Получение меню для списка мест"""
@@ -141,7 +145,7 @@ def get_locations_menu(
     for location in locations:
         builder.row(
             InlineKeyboardButton(
-                text=location.get_show_text(),
+                text=location.name,
                 callback_data=LocationCallback(action=EntityAction.SHOW, location_id=location.location_id).pack(),
             )
         )
@@ -149,13 +153,13 @@ def get_locations_menu(
     builder.row(
         InlineKeyboardButton(
             text=Settings.ADD_LOCATION,
-            callback_data=LocationCallback(action=EntityAction.ADD).pack(),
+            callback_data=LocationCallback(action=EntityAction.ADD, city_id=city_id).pack(),
         )
     )
     builder.row(
         InlineKeyboardButton(
             text=Settings.BACK,
-            callback_data=SettingsCallback(action=EntityAction.SHOW).pack(),
+            callback_data=CityCallback(action=EntityAction.SHOW, city_id=city_id).pack(),
         ),
         CLOSE_BUTTON,
     )
@@ -164,6 +168,7 @@ def get_locations_menu(
 
 
 def get_actions_for_location(
+        city_id: int,
         location_id: int,
 ) -> InlineKeyboardMarkup:
     """Получение клавиатуры для действия с местом"""
@@ -178,7 +183,7 @@ def get_actions_for_location(
     builder.row(
         InlineKeyboardButton(
             text=Settings.BACK,
-            callback_data=LocationCallback(action=EntityAction.LIST).pack(),
+            callback_data=LocationCallback(action=EntityAction.LIST, city_id=city_id).pack(),
         ),
         CLOSE_BUTTON,
     )

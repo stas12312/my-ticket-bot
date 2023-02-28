@@ -36,6 +36,7 @@ class CityCallback(CallbackData, prefix='cities'):
 class LocationCallback(CallbackData, prefix='locations'):
     """CallbackData для работы с местами"""
     action: EntityAction
+    city_id: int | None
     location_id: int | None
 
 

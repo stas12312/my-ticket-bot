@@ -110,6 +110,7 @@ disable=
     protected-access,
     too-few-public-methods,
     consider-using-assignment-expr,
+    missing-module-docstring,
     # handled by black
     format,
     # We anticipate #3512 where it will become optional

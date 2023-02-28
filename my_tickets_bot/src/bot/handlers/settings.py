@@ -12,7 +12,8 @@ async def my_settings_handler(
         message_or_query: types.Message | types.CallbackQuery,
 ):
     """Отображение настроек"""
-    text = 'Выберите нужный пункт'
+    text = '⚙ _Настройки_\n\n' \
+           'ℹ️ Выберите нужный пункт'
     keyboard = get_settings_menu()
     if isinstance(message_or_query, types.Message):
         await message_or_query.answer(text, reply_markup=keyboard)
