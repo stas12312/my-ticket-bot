@@ -1,9 +1,11 @@
+import validators
 from aiogram import types, Router, F
 from aiogram.fsm.context import FSMContext
 
+from bot.buttons import Action
 from bot.callbacks import LocationCallback, EntityAction
 from bot.forms import LocationForm
-from bot.keybaords import get_menu_keyboard
+from bot.keybaords import get_menu_keyboard, get_keyboard_by_values
 from bot.messages import make_location_message
 from services.repositories import Repo
 
@@ -34,21 +36,39 @@ async def processing_name_handler(
 async def processing_address_handler(
         message: types.Message,
         state: FSMContext,
-        repo: Repo,
 ):
     """Обработка введенного адреса и сохранение места"""
+
+    await state.update_data(address=message.text)
+    keyboard = get_keyboard_by_values([Action.PASS])
+    await message.answer('Введите ссылку на сайт', reply_markup=keyboard)
+    await state.set_state(LocationForm.input_url)
+
+
+async def processing_url(
+        message: types.Message,
+        state: FSMContext,
+        repo: Repo,
+):
+    """Обработка ссылки"""
     data = await state.get_data()
-    address = message.text
+    address = data['address']
     city_id = data['city_id']
     name = data['name']
+    url = None
+    if message != Action.PASS:
+        url = message.text
+        if not validators.url(message.text):
+            await message.answer('Некорректная ссылка, попробуйте еще раз')
+            return
 
-    location = await repo.location.save(city_id, name, address)
+    db_location = await repo.location.save(city_id, name, address, url)
+    location = await repo.location.get(message.from_user.id, db_location.location_id)
 
     await message.answer(
         f'✅ Место добавлено ✅\n\n{make_location_message(location)}',
         reply_markup=get_menu_keyboard(),
     )
-
     await state.clear()
 
 
@@ -62,3 +82,4 @@ router.callback_query.register(
 )
 router.message.register(processing_name_handler, LocationForm.input_name)
 router.message.register(processing_address_handler, LocationForm.input_address)
+router.message.register(processing_url, LocationForm.input_url)

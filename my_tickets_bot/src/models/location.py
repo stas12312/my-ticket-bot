@@ -11,3 +11,4 @@ class Location:
     name: str | None = None
     address: str | None = None
     city: City | None = None
+    url: str | None = None

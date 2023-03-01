@@ -61,6 +61,7 @@ def make_event_message(
     """Формирование сообщения для описания билета"""
 
     event_link = link(event.name, event.link)
+    location_url_name = link(event.location.name, event.location.url)
     now = pytz.utc.localize(datetime.now()).astimezone(pytz.timezone(event.location.city.timezone))
 
     rows = []
@@ -69,7 +70,7 @@ def make_event_message(
 
     rows.extend([
         f'✨ *{event_link}*',
-        f'🏛 {bold(event.location.name)}',
+        f'🏛 *{location_url_name}*',
     ])
 
     if with_address:

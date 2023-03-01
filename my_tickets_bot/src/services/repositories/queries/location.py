@@ -27,6 +27,7 @@ GET_LOCATION = """
         location.id AS id,
         location.name AS name,
         location.address AS address,
+        location.url AS url,
         
         city.id AS city_id,
         city.name AS city_name
@@ -53,7 +54,7 @@ GET_BY_NAME = """
 
 SAVE = """
     INSERT
-    INTO location (city_id, name, address) VALUES ($1, $2, $3)
+    INTO location (city_id, name, address, url) VALUES ($1, $2, $3, $4)
     RETURNING *
 """
 

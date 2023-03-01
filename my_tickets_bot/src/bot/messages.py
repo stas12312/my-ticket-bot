@@ -1,6 +1,6 @@
 """Формирование красивых сообщений"""
 
-from aiogram.utils.markdown import bold, italic
+from aiogram.utils.markdown import bold, italic, link
 from aiogram.utils.text_decorations import markdown_decoration
 
 from models import Location, City
@@ -50,8 +50,11 @@ def make_location_message(
         location: Location,
 ) -> str:
     """Формирования сообщения для локации"""
+
+    url_name = link(location.name, location.url)
+
     rows = [
-        f'🏛 _{quote(location.name)}_\n',
+        f'🏛 _{url_name}_\n',
         f'📍 {quote(location.city.name)}, {quote(location.address)}',
     ]
     return _make_message_by_rows(rows)
