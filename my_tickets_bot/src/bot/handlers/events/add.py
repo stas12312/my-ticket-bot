@@ -7,10 +7,11 @@ from aiogram.types import ContentType
 
 from bot.buttons import Action, MainMenu
 from bot.forms import EventForm
-from bot.keybaords import get_keyboard_by_values, get_menu_keyboard
-from bot.services.cities.keyboards import get_add_city_keyboard
-from bot.messages import TIME_EXAMPLES
-from bot.services.locations.messages import get_address
+from bot.keyboards.city import get_add_city_keyboard
+from bot.keyboards.common import get_menu_keyboard
+from bot.keyboards.utils import get_keyboard_by_values
+from bot.messages.location import get_address
+from bot.messages.templates import TIME_EXAMPLES
 from bot.utils import save_ticket
 from services.event_time import parse_datetime, get_localtime
 from services.repositories import Repo

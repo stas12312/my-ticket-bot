@@ -10,8 +10,8 @@ from services.statistic import get_user_statistic
 from ..callbacks import CloseCallback
 from ..commands import AppCommand as MyCommand
 from ..forms import CityForm
-from ..keybaords import get_menu_keyboard
-from ..messages import get_message_for_statistic
+from ..keyboards.common import get_menu_keyboard
+from ..messages.statistic import get_message_for_statistic
 
 
 async def start_handler(

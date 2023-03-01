@@ -1,7 +1,7 @@
 from aiogram import types, Router, F
 
 from bot.callbacks import LocationCallback, EntityAction
-from bot.services.locations.messages import get_show_locations_params
+from bot.messages.location import get_show_locations_params
 from services.repositories import Repo
 
 

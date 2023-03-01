@@ -1,7 +1,7 @@
 from aiogram import types, Router, F
 
 from bot.callbacks import CityCallback, EntityAction
-from bot.services.cities.messages import get_show_cities_params
+from bot.messages.city import get_show_cities_params
 from services.repositories import Repo
 
 

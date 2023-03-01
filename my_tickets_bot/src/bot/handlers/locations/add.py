@@ -5,8 +5,9 @@ from aiogram.fsm.context import FSMContext
 from bot.buttons import Action
 from bot.callbacks import LocationCallback, EntityAction
 from bot.forms import LocationForm
-from bot.keybaords import get_menu_keyboard, get_keyboard_by_values
-from bot.services.locations.messages import make_location_message
+from bot.keyboards.common import get_menu_keyboard
+from bot.keyboards.utils import get_keyboard_by_values
+from bot.messages.location import make_location_message
 from services.repositories import Repo
 
 
@@ -56,7 +57,7 @@ async def processing_url(
     city_id = data['city_id']
     name = data['name']
     url = None
-    if message != Action.PASS:
+    if message.text != Action.PASS:
         url = message.text
         if not validators.url(message.text):
             await message.answer('Некорректная ссылка, попробуйте еще раз')

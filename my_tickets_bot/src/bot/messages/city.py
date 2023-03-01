@@ -1,9 +1,9 @@
 from aiogram import types
 
-from bot.services.cities.keyboards import get_cities_menu
-from bot.messages import quote, _make_message_by_rows
+from bot.keyboards.city import get_cities_menu
 from models import City
 from services.repositories import Repo
+from .utils import quote, make_message_by_rows
 
 
 def make_city_message(
@@ -14,7 +14,7 @@ def make_city_message(
         f'🏘 _{quote(city.name)}_\n',
         f'🕰 {quote(city.timezone)}',
     ]
-    return _make_message_by_rows(rows)
+    return make_message_by_rows(rows)
 
 
 async def get_show_cities_params(

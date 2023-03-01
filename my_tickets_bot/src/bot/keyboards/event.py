@@ -1,75 +1,12 @@
-"""Клавиатуры"""
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from aiogram.utils.keyboard import (
-    ReplyKeyboardMarkup,
-    ReplyKeyboardBuilder,
-    KeyboardButton,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    InlineKeyboardBuilder,
-)
-
+from bot.buttons import Action, Event as EventButton, Settings, Pagination
+from bot.callbacks import TicketCallback, EntityAction, EventCallback, EditEventCallback, EditEventField, \
+    PaginationCallback
+from bot.keyboards.utils import CLOSE_BUTTON
+from bot.paginator import EventPaginator
 from models import Event, Ticket
-from .buttons import (
-    MainMenu,
-    Settings,
-    Action,
-    Pagination,
-    Event as EventButton,
-)
-from .callbacks import (
-    CityCallback,
-    EntityAction,
-    CloseCallback,
-    TicketCallback,
-    EventCallback,
-    EditEventCallback,
-    EditEventField,
-    PaginationCallback,
-)
-from .paginator import EventPaginator
-
-CLOSE_BUTTON = InlineKeyboardButton(
-    text=Settings.CLOSE,
-    callback_data=CloseCallback().pack(),
-)
-
-
-def get_menu_keyboard() -> ReplyKeyboardMarkup:
-    """Получение клавиатуры для меню"""
-    builder = ReplyKeyboardBuilder()
-
-    builder.row(KeyboardButton(text=MainMenu.MY_EVENTS), KeyboardButton(text=MainMenu.ADD_EVENT))
-    builder.row(KeyboardButton(text=MainMenu.SETTINGS))
-
-    return builder.as_markup(resize_keyboard=True)
-
-
-def get_keyboard_by_values(
-        values: list[str],
-) -> ReplyKeyboardMarkup:
-    """Получение клавиатуры"""
-    builder = ReplyKeyboardBuilder()
-
-    for value in values:
-        builder.row(KeyboardButton(text=value))
-
-    return builder.as_markup(resize_keyboard=True)
-
-
-def get_settings_menu() -> InlineKeyboardMarkup:
-    """Получение клавиатуры для настроек"""
-    builder = InlineKeyboardBuilder()
-    print(CityCallback(action=EntityAction.LIST).pack())
-    builder.row(
-        InlineKeyboardButton(
-            text=Settings.CITIES_AND_PLACES,
-            callback_data=CityCallback(action=EntityAction.LIST).pack(),
-        ),
-    )
-    builder.row(CLOSE_BUTTON)
-
-    return builder.as_markup()
 
 
 def get_actions_for_event(
@@ -101,26 +38,6 @@ def get_actions_for_event(
         InlineKeyboardButton(
             text=Action.DELETE,
             callback_data=EventCallback(action=EntityAction.DELETE, event_id=event.event_id).pack(),
-        ),
-        CLOSE_BUTTON,
-    )
-
-    return builder.as_markup()
-
-
-def get_actions_for_ticket(
-        ticket: Ticket,
-) -> InlineKeyboardMarkup:
-    """Получение клавиатуры для билетов"""
-    builder = InlineKeyboardBuilder()
-
-    builder.row(
-        InlineKeyboardButton(
-            text=Action.DELETE,
-            callback_data=TicketCallback(
-                action=EntityAction.DELETE,
-                ticket_id=ticket.ticket_id,
-            ).pack(),
         ),
         CLOSE_BUTTON,
     )

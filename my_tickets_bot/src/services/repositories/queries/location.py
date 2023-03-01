@@ -62,6 +62,7 @@ DELETE = """
     UPDATE location
     SET is_deleted = True
     WHERE
-        (SELECT city.user_id FROM city WHERE city.id = location.city_id) = $1 -- Проверка, что пользователю доступно место
+        -- Проверка, что пользователю доступно место
+        (SELECT city.user_id FROM city WHERE city.id = location.city_id) = $1
         AND location.id = $2
 """

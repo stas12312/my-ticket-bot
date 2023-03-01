@@ -5,6 +5,7 @@ from .queries import file as query
 
 
 class FileRepo:
+    """Репозиторий файла"""
 
     def __init__(
             self,

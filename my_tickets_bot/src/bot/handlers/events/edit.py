@@ -8,9 +8,11 @@ from aiogram.fsm.context import FSMContext
 
 from bot.callbacks import EventCallback, EntityAction, EditEventCallback, EditEventField
 from bot.forms import EditEventForm
-from bot.keybaords import get_actions_for_edit_event, get_menu_keyboard, get_keyboard_by_values
-from bot.messages import TIME_EXAMPLES
-from bot.services.events.messages import make_event_message
+from bot.keyboards.common import get_menu_keyboard
+from bot.keyboards.event import get_actions_for_edit_event
+from bot.keyboards.utils import get_keyboard_by_values
+from bot.messages.event import make_event_message
+from bot.messages.templates import TIME_EXAMPLES
 from services.event_time import parse_datetime, get_localtime
 from services.repositories import Repo
 
@@ -112,7 +114,7 @@ async def edit_location_handler(
         return
 
     locations = await repo.location.list(message.from_user.id, city.city_id)
-    keyboard = get_keyboard_by_values([l.name for l in locations])
+    keyboard = get_keyboard_by_values([location.name for location in locations])
     await message.answer('Выберите место', reply_markup=keyboard)
     await state.set_state(EditEventForm.location_id)
 
