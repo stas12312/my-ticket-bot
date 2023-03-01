@@ -18,6 +18,7 @@ testdata = [
 
 @pytest.mark.parametrize('hour,minute,correct_interval', testdata)
 def test_get_interval(hour: int, minute: int, correct_interval: str):
+    """Проверка определения эмодзи для времени"""
     time = datetime.time(hour=hour, minute=minute)
 
     interval = get_interval_number(time)

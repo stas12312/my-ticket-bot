@@ -1,10 +1,10 @@
 from aiogram import types
 from aiogram.utils.markdown import bold, italic, link
 
-from bot.messages import quote, _make_message_by_rows
+from bot.keyboards.location import get_locations_menu
 from models import Location
 from services.repositories import Repo
-from .keyboards import get_locations_menu
+from .utils import quote, make_message_by_rows
 
 
 def get_full_address_message(
@@ -33,7 +33,7 @@ def make_location_message(
         f'🏛 _{url_name}_\n',
         f'📍 {quote(location.city.name)}, {quote(location.address)}',
     ]
-    return _make_message_by_rows(rows)
+    return make_message_by_rows(rows)
 
 
 async def get_show_locations_params(

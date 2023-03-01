@@ -1,4 +1,3 @@
-"""Функционал сообщений для мероприятий"""
 from datetime import datetime
 
 import pytz
@@ -6,13 +5,13 @@ from aiogram import Bot
 from aiogram.utils.markdown import link, bold, italic
 
 from bot.emoji import get_clock_emoji
-from bot.keybaords import get_actions_for_event
-from bot.messages import quote, _make_message_by_rows
-from bot.services.locations.messages import get_address
+from bot.messages.location import get_address
 from bot.utils import get_func_for_file
 from models import Event
 from services.event_time import get_beatify_datetime, get_left_time
 from services.repositories import Repo
+from .utils import quote, make_message_by_rows
+from ..keyboards.event import get_actions_for_event
 
 
 async def send_event_card(
@@ -86,4 +85,4 @@ def make_event_message(
         command = quote(f'/event_{event.event_id}')
         rows.append(f'⚙ Управлять {command}')
 
-    return _make_message_by_rows(rows)
+    return make_message_by_rows(rows)

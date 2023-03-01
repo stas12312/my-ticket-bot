@@ -5,7 +5,7 @@ from aiogram.filters import Text
 
 from ..buttons import MainMenu
 from ..callbacks import SettingsCallback, EntityAction
-from ..keybaords import get_settings_menu
+from ..keyboards.setting import get_settings_menu
 
 
 async def my_settings_handler(

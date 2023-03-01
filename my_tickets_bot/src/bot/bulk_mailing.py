@@ -5,7 +5,7 @@ import aiogram
 import asyncpg
 from aiogram.exceptions import TelegramForbiddenError
 
-from bot.services.events.messages import make_event_message, send_event_card
+from bot.messages.event import send_event_card, make_event_message
 from bot.utils import safe_send_message
 from services.repositories import Repo
 

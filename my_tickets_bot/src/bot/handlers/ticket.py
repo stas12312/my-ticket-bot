@@ -6,8 +6,9 @@ from aiogram.types import ContentType
 
 from bot.callbacks import TicketCallback, EntityAction
 from bot.forms import TicketForm
-from bot.keybaords import get_actions_for_event, get_actions_for_ticket
-from bot.services.events.messages import make_event_message
+from bot.keyboards.ticket import get_actions_for_ticket
+from bot.keyboards.event import get_actions_for_event
+from bot.messages.event import make_event_message
 from bot.utils import save_ticket, get_func_for_file
 from models import Ticket
 from services.repositories import Repo

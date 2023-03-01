@@ -7,13 +7,9 @@ from aiogram.filters import Text
 
 from bot.buttons import MainMenu
 from bot.callbacks import EventCallback, EntityAction, PaginationCallback
-from bot.keybaords import (
-    get_actions_for_event,
-    get_actions_for_edit_event,
-    get_event_list_keyboard,
-)
+from bot.keyboards.event import get_actions_for_event, get_actions_for_edit_event, get_event_list_keyboard
 from bot.paginator import EventPaginator
-from bot.services.events.messages import send_event_card, make_event_message
+from bot.messages.event import send_event_card, make_event_message
 from services.profile import duration
 from services.repositories import Repo
 

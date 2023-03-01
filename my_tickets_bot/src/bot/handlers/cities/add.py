@@ -3,8 +3,8 @@ from aiogram.fsm.context import FSMContext
 
 from bot.callbacks import CityCallback, EntityAction
 from bot.forms import LocationForm, CityForm
-from bot.messages import quote
-from bot.services.cities.messages import make_city_message
+from bot.messages.city import make_city_message
+from bot.messages.utils import quote
 from services.city import get_timezone_name
 from services.repositories import Repo
 

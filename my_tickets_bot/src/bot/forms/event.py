@@ -1,18 +1,4 @@
-"""Формы для добавления сущностей"""
 from aiogram.fsm.state import StatesGroup, State
-
-
-class CityForm(StatesGroup):
-    """Добавление города"""
-    name = State()
-    timezone = State()
-
-
-class LocationForm(StatesGroup):
-    """Добавление места"""
-    input_name = State()
-    input_address = State()
-    input_url = State()
 
 
 class EventForm(StatesGroup):
@@ -33,8 +19,3 @@ class EditEventForm(StatesGroup):
     name = State()
     time = State()
     link = State()
-
-
-class TicketForm(StatesGroup):
-    """Добавление билета"""
-    file = State()

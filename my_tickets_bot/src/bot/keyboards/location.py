@@ -3,7 +3,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from bot.buttons import Settings
 from bot.callbacks import LocationCallback, EntityAction, CityCallback
-from bot.keybaords import CLOSE_BUTTON
+from bot.keyboards.utils import CLOSE_BUTTON
 from models import Location
 
 
