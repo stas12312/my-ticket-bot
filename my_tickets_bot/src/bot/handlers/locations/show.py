@@ -1,8 +1,8 @@
 from aiogram import types, Router, F
 
 from bot.callbacks import LocationCallback, EntityAction
-from bot.keybaords import get_locations_menu, get_actions_for_location
-from bot.messages import make_location_message, quote
+from bot.services.locations.keyboards import get_actions_for_location
+from bot.services.locations.messages import make_location_message, get_show_locations_params
 from services.repositories import Repo
 
 
@@ -13,16 +13,9 @@ async def show_city_locations(
 ):
     """Отображение мест пользователя"""
     city_id = callback_data.city_id
-    city = await repo.city.get(query.from_user.id, city_id)
-    locations = await repo.location.list(query.from_user.id, city_id)
+    msg, keyboard = await get_show_locations_params(query.from_user.id, city_id, repo)
 
-    menu = get_locations_menu(city_id, locations)
-
-    await query.message.edit_text(
-        text=f'🎭 _Ваши места в городе {quote(city.name)}_ \n\n'
-             f'ℹ️ Выберите место',
-        reply_markup=menu,
-    )
+    await query.message.edit_text(msg, reply_markup=keyboard)
 
 
 async def show_location(
