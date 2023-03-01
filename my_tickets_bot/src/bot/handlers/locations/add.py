@@ -6,7 +6,7 @@ from bot.buttons import Action
 from bot.callbacks import LocationCallback, EntityAction
 from bot.forms import LocationForm
 from bot.keybaords import get_menu_keyboard, get_keyboard_by_values
-from bot.messages import make_location_message
+from bot.services.locations.messages import make_location_message
 from services.repositories import Repo
 
 

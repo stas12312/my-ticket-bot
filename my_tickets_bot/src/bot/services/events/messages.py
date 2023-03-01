@@ -7,7 +7,8 @@ from aiogram.utils.markdown import link, bold, italic
 
 from bot.emoji import get_clock_emoji
 from bot.keybaords import get_actions_for_event
-from bot.messages import get_address, quote, _make_message_by_rows
+from bot.messages import quote, _make_message_by_rows
+from bot.services.locations.messages import get_address
 from bot.utils import get_func_for_file
 from models import Event
 from services.event_time import get_beatify_datetime, get_left_time
