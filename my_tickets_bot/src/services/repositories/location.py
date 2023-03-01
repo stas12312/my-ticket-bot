@@ -30,9 +30,10 @@ class LocationRepo:
             city_id: int,
             name: str,
             address: str,
+            url: str | None = None
     ) -> Location:
         """Сохранение места"""
-        record = await self._conn.fetchrow(q.SAVE, city_id, name, address)
+        record = await self._conn.fetchrow(q.SAVE, city_id, name, address, url)
 
         return _convert_record_to_location(record)
 
@@ -70,6 +71,7 @@ def _convert_record_to_location(record: asyncpg.Record) -> Location:
         location_id=record.get('id'),
         name=record.get('name'),
         address=record.get('address'),
+        url=record.get('url'),
         city=City(
             city_id=record.get('city_id'),
             name=record.get('city_name'),

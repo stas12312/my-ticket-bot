@@ -12,6 +12,7 @@ ignore=
     2023_02_10233535_add_indexes.py,
     2023_02_12204527_add_city_user_id_index.py,
     2023_02_19002449_add_user_name.py,
+    2023_03_01220818_add_location_link.py,
 
 
 # Add files or directories matching the regex patterns to the ignore-list. The

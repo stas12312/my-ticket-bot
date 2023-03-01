@@ -38,6 +38,7 @@ async def show_location(
     await query.message.edit_text(
         text=make_location_message(location),
         reply_markup=menu,
+        disable_web_page_preview=True,
     )
 
 

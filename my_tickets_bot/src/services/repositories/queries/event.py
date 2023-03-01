@@ -31,7 +31,8 @@ GET_EVENTS = """
         
         location.id AS location_id,
         location.name AS location_name,
-        location.address AS location_address
+        location.address AS location_address,
+        location.url AS location_url
         
     FROM event
     JOIN location ON location.id = event.location_id

@@ -95,6 +95,7 @@ def _convert_record_to_event(
             location_id=record.get('location_id'),
             name=record.get('location_name'),
             address=record.get('location_address'),
+            url=record.get('location_url'),
             city=City(
                 city_id=record.get('city_id'),
                 name=record.get('city_name'),
