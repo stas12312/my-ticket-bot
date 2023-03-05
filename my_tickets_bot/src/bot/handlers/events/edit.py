@@ -141,7 +141,7 @@ async def edit_handler(
             if not validators.url(message.text):
                 await message.answer('Некорректная ссылка')
                 return
-            event.link = message.text
+            event.url = message.text
 
         case EditEventForm.time:
             now = get_localtime(event.location.city.timezone)
@@ -163,7 +163,7 @@ async def edit_handler(
         name=event.name,
         event_time=event.time,
         location_id=event.location.location_id,
-        link=event.link,
+        link=event.url,
     )
 
     new_event = await repo.event.get(message.from_user.id, event_id)
