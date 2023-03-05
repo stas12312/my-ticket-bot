@@ -58,6 +58,18 @@ SAVE = """
     RETURNING *
 """
 
+UPDATE = """
+    UPDATE location
+    SET
+        name = $3,
+        address = $4,
+        url = $5
+    WHERE
+        id = $1
+        AND city_id = $2
+    RETURNING *
+"""
+
 DELETE = """
     UPDATE location
     SET is_deleted = True

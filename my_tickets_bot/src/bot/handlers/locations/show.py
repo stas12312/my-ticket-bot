@@ -1,7 +1,7 @@
 from aiogram import types, Router, F
 
 from bot.callbacks import LocationCallback, EntityAction
-from bot.keyboards.location import get_actions_for_location
+from bot.keyboards.location import get_actions_for_location, get_actions_for_edit
 from bot.messages.location import make_location_message, get_show_locations_params
 from services.repositories import Repo
 
@@ -35,6 +35,18 @@ async def show_location(
     )
 
 
+async def location_edit(
+        query: types.CallbackQuery,
+        callback_data: LocationCallback,
+):
+    """Отображение редактирования места"""
+    location_id = callback_data.location_id
+    city_id = callback_data.city_id
+
+    keyboard = get_actions_for_edit(city_id, location_id)
+    await query.message.edit_reply_markup(reply_markup=keyboard)
+
+
 router = Router()
 router.callback_query.register(
     show_city_locations,
@@ -44,3 +56,4 @@ router.callback_query.register(
     )
 )
 router.callback_query.register(show_location, LocationCallback.filter(F.action == EntityAction.SHOW))
+router.callback_query.register(location_edit, LocationCallback.filter(F.action == EntityAction.EDIT))

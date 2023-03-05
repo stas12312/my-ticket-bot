@@ -30,11 +30,14 @@ class LocationRepo:
             city_id: int,
             name: str,
             address: str,
-            url: str | None = None
+            url: str | None = None,
+            location_id: int | None = None,
     ) -> Location:
         """Сохранение места"""
-        record = await self._conn.fetchrow(q.SAVE, city_id, name, address, url)
-
+        if location_id is None:
+            record = await self._conn.fetchrow(q.SAVE, city_id, name, address, url)
+        else:
+            record = await self._conn.fetchrow(q.UPDATE, location_id, city_id, name, address, url)
         return _convert_record_to_location(record)
 
     async def delete(
