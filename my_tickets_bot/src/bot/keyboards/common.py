@@ -1,5 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardButton
 
 from bot.buttons import MainMenu
 
@@ -12,3 +12,14 @@ def get_menu_keyboard() -> ReplyKeyboardMarkup:
     builder.row(KeyboardButton(text=MainMenu.SETTINGS))
 
     return builder.as_markup(resize_keyboard=True)
+
+
+def get_url_button(
+        url: str,
+        label: str,
+) -> InlineKeyboardButton:
+    """Формирование URL кнопки"""
+    return InlineKeyboardButton(
+        text=label,
+        url=url
+    )

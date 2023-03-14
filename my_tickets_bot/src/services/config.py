@@ -16,7 +16,15 @@ class EnvName(StrEnum):
     PG_PASSWORD = 'PG_PASSWORD'
     PG_DB = 'PG_DB'
 
+    S3_ENDPOINT_URL = 'S3_ENDPOINT_URL'
+    REGION_NAME = 'REGION_NAME'
+    AWS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID'
+    AWS_SECRET_ACCESS_KEY = 'AWS_ACCESS_KEY'
+    BUCKET = 'BUCKET'
+    FOLDER = 'FOLDER'
 
+
+# pylint: disable=too-many-instance-attributes
 @dataclasses.dataclass
 class Config:
     """Конфигурация приложения"""
@@ -28,6 +36,13 @@ class Config:
     pg_user: str
     pg_password: str
     pg_db: str
+
+    s3_endpoint_url: str
+    region_name: str
+    aws_access_key_id: str
+    aws_secret_access_key: str
+    bucket: str
+    folder: str
 
     logging_level: str
 
@@ -47,4 +62,10 @@ def load_config() -> Config:
         pg_password=os.environ.get(EnvName.PG_PASSWORD),
         pg_db=os.environ.get(EnvName.PG_DB),
         logging_level=os.environ.get(EnvName.LOGGING_LEVEL),
+        s3_endpoint_url=os.environ.get(EnvName.S3_ENDPOINT_URL),
+        region_name=os.environ.get(EnvName.REGION_NAME),
+        aws_access_key_id=os.environ.get(EnvName.AWS_ACCESS_KEY_ID),
+        aws_secret_access_key=os.environ.get(EnvName.AWS_SECRET_ACCESS_KEY),
+        bucket=os.environ.get(EnvName.BUCKET),
+        folder=os.environ.get(EnvName.FOLDER),
     )

@@ -7,6 +7,7 @@ from bot.callbacks import TicketCallback, EntityAction, EventCallback, EditEvent
 from bot.keyboards.utils import CLOSE_BUTTON
 from bot.paginator import EventPaginator
 from models import Event, Ticket
+from .common import get_url_button
 
 
 def get_actions_for_event(
@@ -137,4 +138,15 @@ async def get_event_list_keyboard(
         ),
     )
 
+    return builder.as_markup()
+
+
+def get_keyboard_for_link(
+        url: str,
+) -> InlineKeyboardMarkup:
+    """Получение клавиатуры для получения ссылки на календарь"""
+    builder = InlineKeyboardBuilder()
+
+    url_button = get_url_button(url, '🗓 Добавить в календарь')
+    builder.add(url_button)
     return builder.as_markup()

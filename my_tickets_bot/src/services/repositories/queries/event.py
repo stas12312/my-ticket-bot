@@ -24,6 +24,7 @@ GET_EVENTS = """
         event.time AT TIME ZONE city.timezone AS event_time,
         event.created_at AT TIME ZONE city.timezone AS event_created_at,
         event.user_id AS user_id,
+        event."UUID" AS uuid,
         
         city.id AS city_id,
         city.name AS city_name,
