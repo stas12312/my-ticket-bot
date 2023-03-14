@@ -88,6 +88,7 @@ def _convert_record_to_event(
         name=record.get('event_name'),
         time=event_time,
         link=record.get('event_link'),
+        uuid=record.get('uuid'),
         user=User(
             user_id=record.get('user_id'),
         ),

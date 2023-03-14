@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+from uuid import UUID
 
 from .location import Location
 from .user import User
@@ -14,3 +15,4 @@ class Event:
     location: Location
     link: str | None = None
     user: User | None = None
+    uuid: UUID | None = None

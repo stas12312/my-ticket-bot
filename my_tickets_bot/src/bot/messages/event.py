@@ -86,3 +86,17 @@ def make_event_message(
         rows.append(f'⚙ Управлять {command}')
 
     return make_message_by_rows(rows)
+
+
+def make_message_for_calendar(
+        event: Event,
+) -> str:
+    """Формирование сообщения для события в календаре"""
+    rows = [
+        f'📍 {get_address(event.location)}',
+    ]
+
+    if event.link:
+        rows.append(f'🔗 {event.link}')
+
+    return make_message_by_rows(rows)
