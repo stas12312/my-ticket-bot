@@ -40,3 +40,15 @@ GET_USER_STATISTIC = """
     FROM statistic
     ORDER BY year
 """
+
+GET_EVENTS_FOR_DATE = """
+    SELECT 
+        COALESCE(array_agg(event.id), '{}'::bigint[])
+    FROM 
+        event
+    JOIN location ON location.id = event.location_id
+    JOIN city ON city.id = location.city_id
+    WHERE
+        city.user_id = $1
+        AND event.time AT TIME ZONE city.timezone BETWEEN $2 AND $2 + interval '1 day'
+"""

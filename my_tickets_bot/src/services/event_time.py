@@ -14,7 +14,14 @@ DATETIME_FORMATS = [
     '%d.%m %H:%M',
 ]
 
-FORMAT_REGEX = re.compile(r'^([1-3]?[0-9]) (\w*) ([0-2][0-9]:[0-9][0-9])')
+DATE_FORMATS = [
+    '%d.%m',
+    '%d.%m',
+    '%d.%m.%y',
+]
+
+DATETIME_REGEX = re.compile(r'^([1-3]?[0-9]) (\w*) ([0-2][0-9]:[0-9][0-9])')
+DATE_REGEX = re.compile(r'^([1-3]?[0-9]) (\w*)')
 
 MONTH_TO_NAME = [
     'Января',
@@ -58,7 +65,7 @@ def parse_datetime(
 ) -> datetime.datetime | None:
     """Парсинг введённой даты"""
 
-    if (parsed_datetime := convert(input_value)) is None:
+    if (parsed_datetime := convert(input_value, DATETIME_FORMATS)) is None:
         return None
 
     if now:
@@ -66,8 +73,22 @@ def parse_datetime(
     return localize_datetime(parsed_datetime, timezone_name) if timezone_name else parsed_datetime
 
 
+def parse_date(
+        input_value: str,
+        now: datetime.datetime | None = None,
+) -> datetime.date | None:
+    """Парсинг введённой даты"""
+    if (parsed_date := convert(input_value, DATE_FORMATS)) is None:
+        return None
+
+    if now:
+        parsed_date = set_year(parsed_date, now)
+
+    return parsed_date
+
+
 def set_year(
-        datetime_: datetime.datetime,
+        datetime_: datetime.datetime | datetime.date,
         now: datetime.datetime,
 ) -> datetime.datetime:
     """Определение года"""
@@ -100,22 +121,23 @@ def get_beatify_datetime(
 
 def convert(
         raw_datetime: str,
+        formats: list[str],
 ) -> datetime.datetime | None:
     """Конвертация в дату"""
-    for fmt in DATETIME_FORMATS:
+    for fmt in formats:
         try:
             return datetime.datetime.strptime(raw_datetime, fmt)
         except ValueError:
             pass
 
-    return convert_with_month_name(raw_datetime)
+    return convert_datetime_with_month(raw_datetime) or convert_date_with_month(raw_datetime)
 
 
-def convert_with_month_name(
+def convert_datetime_with_month(
         raw_datetime: str,
 ) -> datetime.datetime | None:
     """Конвертация строки с названием месяца в дату"""
-    result = FORMAT_REGEX.match(raw_datetime)
+    result = DATETIME_REGEX.match(raw_datetime)
     if not result:
         return None
 
@@ -129,6 +151,27 @@ def convert_with_month_name(
 
     try:
         return datetime.datetime(datetime.MINYEAR, month_number, int(day), int(hour), int(minute))
+    except ValueError:
+        return None
+
+
+def convert_date_with_month(
+        row_date: str,
+) -> datetime.date | None:
+    """Конвертация даты с введенными названием месяца"""
+    result = DATE_REGEX.match(row_date)
+    if not result:
+        return None
+
+    day = result.group(1)
+    month_name = result.group(2).capitalize()
+
+    month_number = MONTH_NAME_TO_NUMBER.get(month_name)
+    if month_number is None:
+        return None
+
+    try:
+        return datetime.date(datetime.MINYEAR, month_number, int(day))
     except ValueError:
         return None
 
