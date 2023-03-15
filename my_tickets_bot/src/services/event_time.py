@@ -171,7 +171,7 @@ def convert_date_with_month(
         return None
 
     try:
-        return datetime.datetime(datetime.MINYEAR, month_number, int(day), 0, 0)
+        return datetime.date(datetime.MINYEAR, month_number, int(day))
     except ValueError:
         return None
 
