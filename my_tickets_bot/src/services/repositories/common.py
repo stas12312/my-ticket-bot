@@ -30,6 +30,14 @@ class CommonRepo:
         records = await self._conn.fetch(q.GET_USER_STATISTIC, user_id, now)
         return [_convert_record_to_statistic(r) for r in records]
 
+    async def get_event_ids_for_date(
+            self,
+            user_id: int,
+            date: datetime.date,
+    ) -> list[int]:
+        """Получение идентификаторов мероприятий на дату"""
+        return await self._conn.fetchval(q.GET_EVENTS_FOR_DATE, user_id, date)
+
 
 def _convert_record_to_statistic(record: asyncpg.Record) -> YearStatistic:
     """Преобразование рекорда в строку статистики"""

@@ -12,7 +12,7 @@ from bot.keyboards.common import get_menu_keyboard
 from bot.keyboards.event import get_keyboard_for_link
 from bot.keyboards.utils import get_keyboard_by_values
 from bot.messages.location import get_address
-from bot.messages.templates import TIME_EXAMPLES
+from bot.messages.templates import DATETIME_EXAMPLES
 from bot.utils import save_ticket
 from models import Event
 from services.calendar import get_calendar_for_event, CONTENT_TYPE
@@ -110,7 +110,7 @@ async def processing_name_handler(
         state: FSMContext,
 ):
     """Обработка введенного названия"""
-    await message.answer(f'Введите дату и время проведения мероприятия\n{TIME_EXAMPLES}')
+    await message.answer(f'Введите дату и время проведения мероприятия\n{DATETIME_EXAMPLES}')
     await state.update_data(event_name=message.text)
     await state.set_state(EventForm.event_time)
 
