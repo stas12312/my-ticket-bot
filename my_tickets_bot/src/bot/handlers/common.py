@@ -94,6 +94,7 @@ async def show_events_on_date(
     event_ids_for_date = await repo.common.get_event_ids_for_date(message.from_user.id, date)
     if not event_ids_for_date:
         await message.answer('На данную дату мероприятий не найдено')
+        await state.clear()
         return
 
     events = await repo.event.list(message.from_user.id, event_ids=event_ids_for_date)
