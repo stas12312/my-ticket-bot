@@ -4,6 +4,7 @@ from urllib import parse
 import aioboto3
 
 from services.config import Config
+from services.profile import duration
 
 
 def create_session(
@@ -26,6 +27,7 @@ def get_filename(
     return f'{config.folder}/{user_id}/{filename}'
 
 
+@duration
 async def upload_file(
         s3_client,
         name: str,

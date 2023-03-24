@@ -188,7 +188,7 @@ async def processing_file(
             message=message,
             repo=repo,
         )
-
+    await state.clear()
     filename = await upload_calendar(message.from_user.id, event, config, s3_client)
 
     file_url = await get_object_url(filename, config)
@@ -196,7 +196,6 @@ async def processing_file(
         'Вы можете добавить мероприятие в календарь',
         reply_markup=get_keyboard_for_link(file_url)
     )
-    await state.clear()
     await message.answer('✅ Мероприятие добавлено', reply_markup=get_menu_keyboard())
 
 
