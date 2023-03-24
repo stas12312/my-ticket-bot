@@ -163,7 +163,7 @@ async def edit_handler(
         name=event.name,
         event_time=event.time,
         location_id=event.location.location_id,
-        link=event.url,
+        link=event.linka,
     )
 
     new_event = await repo.event.get(message.from_user.id, event_id)
