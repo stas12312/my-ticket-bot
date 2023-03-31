@@ -22,6 +22,7 @@ DATE_FORMATS = [
 
 DATETIME_REGEX = re.compile(r'^([1-3]?[0-9]) (\w*) ([0-2][0-9]:[0-9][0-9])')
 DATE_REGEX = re.compile(r'^([1-3]?[0-9]) (\w*)')
+INTERVAL_REGEX = re.compile(r'^(\d*):(\d*)|^(\d*)$')
 
 MONTH_TO_NAME = [
     'Января',
@@ -176,19 +177,29 @@ def convert_date_with_month(
         return None
 
 
-def get_left_time(
-        first: datetime.datetime,
-        second: datetime.datetime,
+def get_interval(
+        first: datetime.datetime | None,
+        second: datetime.datetime | None,
 ) -> str | None:
     """
     Получение оставшегося времени между двумя временными точками
     Имеют значение только две соседние пары времен
     """
+    if not (first and second):
+        return None
+
     delta = second - first
 
     if delta.total_seconds() < 0:
         return None
 
+    return get_title_for_delta(delta)
+
+
+def get_title_for_delta(
+        delta: datetime.timedelta,
+) -> str | None:
+    """Получение текстового представления интервала"""
     # Считаем все значения
     minutes, _ = divmod(delta.seconds, 60)
     hours, minutes = divmod(minutes, 60)
@@ -213,6 +224,25 @@ def get_left_time(
             return f'{names[i]}'
 
     return None
+
+
+def parse_duration(
+        raw_interval: str,
+) -> datetime.timedelta | None:
+    """
+    Получение интервала из строки
+    При вводе одного числа, оно интерпретируется как количество минут,
+    при вводе двух чисел через :, время интерпретируется как часы:минуты
+    """
+    result = INTERVAL_REGEX.match(raw_interval)
+    if result is None:
+        return None
+
+    raw_hours, raw_minutes, raw_only_minutes = result.groups()
+    if raw_hours:
+        return datetime.timedelta(hours=int(raw_hours), minutes=int(raw_minutes))
+
+    return datetime.timedelta(minutes=int(raw_only_minutes))
 
 
 def get_localtime(timezone: str) -> datetime.datetime:

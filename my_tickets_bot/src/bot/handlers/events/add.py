@@ -12,12 +12,12 @@ from bot.keyboards.common import get_menu_keyboard
 from bot.keyboards.event import get_keyboard_for_link
 from bot.keyboards.utils import get_keyboard_by_values
 from bot.messages.location import get_address
-from bot.messages.templates import DATETIME_EXAMPLES
+from bot.messages.templates import DATETIME_EXAMPLES, DURATION_EXAMPLES
 from bot.utils import save_ticket
 from models import Event
 from services.calendar import get_calendar_for_event, CONTENT_TYPE
 from services.config import Config
-from services.event_time import parse_datetime, get_localtime
+from services.event_time import parse_datetime, get_localtime, parse_duration
 from services.object_storage import upload_file, get_filename, get_object_url
 from services.repositories import Repo
 
@@ -134,9 +134,37 @@ async def processing_event_time_handler(
         return
 
     keyboard = get_keyboard_by_values([Action.PASS])
-    await message.answer('Отправьте ссылку на мероприятие', reply_markup=keyboard)
+
+    await message.answer(
+        'Введите продолжительность\n'
+        f'{DURATION_EXAMPLES}',
+        reply_markup=keyboard,
+    )
 
     await state.update_data(event_time=parsed_datetime)
+    await state.set_state(EventForm.event_duration)
+
+
+async def processing_duration_time(
+        message: types.Message,
+        state: FSMContext,
+):
+    """Обработка продолжительности мероприятия"""
+    is_pass = message.text == Action.PASS
+    data = await state.get_data()
+    if not is_pass:
+        interval = parse_duration(message.text)
+        if not interval:
+            await message.answer('Не удалось определить продолжительность, попробуйте еще раз')
+            return
+
+        event_time = data.get('event_time')
+        event_end = event_time + interval
+        await state.update_data(end_time=event_end)
+
+    keyboard = get_keyboard_by_values([Action.PASS])
+    await message.answer('Отправьте ссылку на мероприятие', reply_markup=keyboard)
+
     await state.set_state(EventForm.event_link)
 
 
@@ -179,6 +207,7 @@ async def processing_file(
         name=data['event_name'],
         event_time=data['event_time'],
         link=data.get('event_link'),
+        end_time=data.get('end_time'),
     )
     event = await repo.event.get(message.from_user.id, event.event_id)
 
@@ -226,6 +255,7 @@ router.message.register(processing_city_handler, EventForm.city_id)
 router.message.register(processing_place_handler, EventForm.location_id)
 router.message.register(processing_name_handler, EventForm.event_name)
 router.message.register(processing_event_time_handler, EventForm.event_time)
+router.message.register(processing_duration_time, EventForm.event_duration)
 router.message.register(processing_link_handler, EventForm.event_link)
 router.message.register(
     processing_file,

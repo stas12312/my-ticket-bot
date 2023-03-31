@@ -2,13 +2,13 @@
 
 CREATE_EVENT = """
     INSERT
-    INTO event (user_id, name, time, link, location_id) VALUES ($1, $2, $3, $4, $5)
+    INTO event (user_id, name, time, link, location_id, end_time) VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING 
         id AS event_id
 """
 UPDATE_EVENT = """
     UPDATE event
-    SET name=$3, time=$4, link=$5, location_id=$6
+    SET name=$3, time=$4, link=$5, location_id=$6, end_time=$7
     WHERE
         id = $1
         AND user_id=$2
@@ -22,6 +22,7 @@ GET_EVENTS = """
         event.name AS event_name,
         event.link AS event_link,
         event.time AT TIME ZONE city.timezone AS event_time,
+        event.end_time AT TIME ZONE city.timezone AS event_end_time,
         event.created_at AT TIME ZONE city.timezone AS event_created_at,
         event.user_id AS user_id,
         event."UUID" AS uuid,

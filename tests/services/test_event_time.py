@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 import pytz
 
-from services.event_time import get_beatify_datetime, get_left_time, parse_datetime, get_localtime
+from services.event_time import get_beatify_datetime, get_interval, parse_datetime, get_localtime, parse_duration
 
 testdata = [
     (6, 2, 23, 14, 10, '6 Февраля в 14:10 (Пн)'),
@@ -39,7 +39,7 @@ testdata = [
 @pytest.mark.parametrize('first,second,result', testdata)
 def test_get_interval(first: datetime.datetime, second: datetime.datetime, result: str):
     """Проверка получения оставшегося времени"""
-    assert get_left_time(first, second) == result
+    assert get_interval(first, second) == result
 
 
 testdata = [
@@ -60,6 +60,21 @@ def test_parse_datetime(input_time: str, result: datetime.datetime | None, now: 
     """Проверка парсинга введенного времени"""
     parsed_datetime = parse_datetime(input_time, now=now)
     assert parsed_datetime == result
+
+
+testdata = [
+    ('01:30', datetime.timedelta(hours=1, minutes=30)),
+    ('20:35', datetime.timedelta(hours=20, minutes=35)),
+    ('01', datetime.timedelta(minutes=1)),
+    ('30', datetime.timedelta(minutes=30)),
+    ('01asdf30', None),
+]
+
+
+@pytest.mark.parametrize('raw_duration,result', testdata)
+def test_parse_duration(raw_duration: str, result: datetime.timedelta | None):
+    """Проверка парсинга продолжительности"""
+    assert parse_duration(raw_duration) == result
 
 
 def test_get_localtime():

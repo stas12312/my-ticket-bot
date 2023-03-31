@@ -16,3 +16,4 @@ class Event:
     link: str | None = None
     user: User | None = None
     uuid: UUID | None = None
+    end_time: datetime.datetime | None = None

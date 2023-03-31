@@ -6,6 +6,7 @@ class EventForm(StatesGroup):
     city_id = State()
     location_id = State()
     event_time = State()
+    event_duration = State()
     event_link = State()
     link = State()
     event_name = State()

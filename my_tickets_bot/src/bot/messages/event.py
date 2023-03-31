@@ -8,7 +8,7 @@ from bot.emoji import get_clock_emoji
 from bot.messages.location import get_address
 from bot.utils import get_func_for_file
 from models import Event
-from services.event_time import get_beatify_datetime, get_left_time
+from services.event_time import get_beatify_datetime, get_interval
 from services.repositories import Repo
 from .utils import quote, make_message_by_rows
 from ..keyboards.event import get_actions_for_event
@@ -78,7 +78,10 @@ def make_event_message(
 
     rows.append(f'{get_clock_emoji(event.time)} {bold(get_beatify_datetime(event.time))}')
 
-    if (left_time := get_left_time(now, event.time)) and with_left_time:
+    if (end_time := get_interval(event.time, event.end_time)) and with_left_time:
+        rows.append(f'⏱ {quote(end_time)}')
+
+    if (left_time := get_interval(now, event.time)) and with_left_time:
         rows.append(f'⏳ Через {italic(quote(left_time))}')
 
     if with_command:

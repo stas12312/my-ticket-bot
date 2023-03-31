@@ -2,7 +2,7 @@
 
 
 def plural(
-        number: str,
+        number: int,
         *args,
 ) -> str:
     """Выбор окончания для числа"""

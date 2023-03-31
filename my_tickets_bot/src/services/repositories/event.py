@@ -26,12 +26,19 @@ class EventRepo:
             location_id: int,
             link: str | None = None,
             event_id: int | None = None,
+            end_time: datetime.datetime | None = None,
     ) -> Event:
         """Сохранения события"""
         if event_id is None:
-            record = await self._conn.fetchrow(q.CREATE_EVENT, user_id, name, event_time, link, location_id)
+            record = await self._conn.fetchrow(
+                q.CREATE_EVENT,
+                user_id, name, event_time, link, location_id, end_time,
+            )
         else:
-            record = await self._conn.fetchrow(q.UPDATE_EVENT, event_id, user_id, name, event_time, link, location_id)
+            record = await self._conn.fetchrow(
+                q.UPDATE_EVENT,
+                event_id, user_id, name, event_time, link, location_id, end_time,
+            )
         return _convert_record_to_event(record)
 
     async def list(
@@ -80,13 +87,18 @@ def _convert_record_to_event(
 ) -> Event:
     """Конвертация рекорда в событие"""
 
-    if (event_time := record.get('event_time')) and (city_timezone := record.get('city_timezone')):
-        event_time = localize_datetime(event_time, city_timezone)
+    event_time = record.get('event_time')
+    end_time = record.get('event_end_time')
+
+    if city_timezone := record.get('city_timezone'):
+        event_time = localize_datetime(event_time, city_timezone) if event_time else None
+        end_time = localize_datetime(end_time, city_timezone) if end_time else None
 
     return Event(
         event_id=record.get('event_id'),
         name=record.get('event_name'),
         time=event_time,
+        end_time=end_time,
         link=record.get('event_link'),
         uuid=record.get('uuid'),
         user=User(
