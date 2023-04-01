@@ -8,8 +8,8 @@ from aiogram.filters import Text
 from bot.buttons import MainMenu
 from bot.callbacks import EventCallback, EntityAction, PaginationCallback
 from bot.keyboards.event import get_actions_for_event, get_actions_for_edit_event, get_event_list_keyboard
-from bot.paginator import EventPaginator
 from bot.messages.event import send_event_card, make_event_message
+from bot.paginator import EventPaginator
 from services.profile import duration
 from services.repositories import Repo
 
@@ -71,7 +71,8 @@ async def get_message_with_keyboard(
         repo: Repo,
 ) -> tuple[str, types.InlineKeyboardMarkup]:
     """Получение сообщения и клавиатуры для списка мероприятий"""
-    actual_time = datetime.datetime.now() - datetime.timedelta(hours=12)
+    # Будем показывать прошедшие мероприятия в течение дня
+    actual_time = datetime.datetime.now() - datetime.timedelta(hours=24)
 
     event_paginator = EventPaginator(
         repo=repo,
