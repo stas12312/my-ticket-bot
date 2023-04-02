@@ -32,7 +32,7 @@ async def start_scheduler(
     scheduler.start()
 
 
-async def main():
+async def run_bot():
     """Запуск бота"""
     poll = await asyncpg.create_pool(
         dsn=config.get_dsn(),
@@ -58,4 +58,4 @@ async def main():
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    app = loop.run_until_complete(main())
+    app = loop.run_until_complete(run_bot())
