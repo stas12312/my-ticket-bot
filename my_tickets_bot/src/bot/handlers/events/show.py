@@ -8,8 +8,9 @@ from aiogram.filters import Text
 from bot.buttons import MainMenu
 from bot.callbacks import EventCallback, EntityAction, PaginationCallback
 from bot.keyboards.event import get_actions_for_event, get_actions_for_edit_event, get_event_list_keyboard
-from bot.messages.event import send_event_card, make_event_message
+from bot.messages.event import send_event_card, make_event_message, get_event_calendar_url
 from bot.paginator import EventPaginator
+from services.config import Config
 from services.profile import duration
 from services.repositories import Repo
 
@@ -27,13 +28,16 @@ async def show_edits_handler(
 async def show_event_handler(
         query: types.CallbackQuery,
         callback_data: EventCallback,
+        config: Config,
         repo: Repo,
 ):
     """Отображение события"""
     event_id = callback_data.event_id
     event = await repo.event.get(query.from_user.id, event_id)
     tickets = await repo.ticket.list_for_event(query.from_user.id, event_id)
-    keyboard = get_actions_for_event(event, tickets)
+
+    calendar_url = get_event_calendar_url(config.host, event.uuid)
+    keyboard = get_actions_for_event(event, tickets, calendar_url)
     event_message = make_event_message(event)
     await query.message.edit_text(
         text=event_message,
@@ -105,11 +109,12 @@ async def get_message_with_keyboard(
 async def event_card_handler(
         message: types.Message,
         bot: Bot,
+        config: Config,
         repo: Repo,
 ):
     """Получение карточки билета"""
     event_id = int(message.text.split('_')[1])
-    await send_event_card(bot, message.from_user.id, event_id, repo)
+    await send_event_card(bot, message.from_user.id, event_id, repo, config)
     await message.delete()
 
 

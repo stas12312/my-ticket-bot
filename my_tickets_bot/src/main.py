@@ -8,7 +8,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bot.commands import BOT_COMMANDS
 from bot.handlers import main_router
-from bot.middlewares import DbMiddleware, S3Middleware
+from bot.middlewares import DbMiddleware, ConfigMiddleware
 from bot.utils import send_message_for_users
 from services.config import load_config
 from services.notifications import send_notifications, send_day_notifications
@@ -39,13 +39,13 @@ async def run_bot():
     )
 
     db_middleware = DbMiddleware(poll)
-    s3_middleware = S3Middleware(config)
+    config_middleware = ConfigMiddleware(config)
 
     dispatcher = Dispatcher()
     dispatcher.include_router(main_router)
 
     dispatcher.update.outer_middleware.register(db_middleware)
-    dispatcher.update.outer_middleware.register(s3_middleware)
+    dispatcher.update.outer_middleware.register(config_middleware)
 
     logger.info('Запуск бота')
     bot = Bot(config.bot_token, parse_mode='MarkdownV2')
