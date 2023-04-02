@@ -8,6 +8,7 @@ from bot.emoji import get_clock_emoji
 from bot.messages.location import get_address
 from bot.utils import get_func_for_file
 from models import Event
+from services.config import Config
 from services.event_time import get_beatify_datetime, get_interval
 from services.repositories import Repo
 from .utils import quote, make_message_by_rows
@@ -19,6 +20,7 @@ async def send_event_card(
         user_id: int,
         event_id: int,
         repo: Repo,
+        config: Config,
         title: str | None = None,
         with_preview: bool = False,
 ):
@@ -28,9 +30,9 @@ async def send_event_card(
         return
 
     tickets = await repo.ticket.list_for_event(user_id, event_id)
-
+    calendar_url = get_event_calendar_url(config.host, event.uuid)
     event_message = make_event_message(event, title)
-    keyboard = get_actions_for_event(event, tickets)
+    keyboard = get_actions_for_event(event, tickets, calendar_url)
 
     if len(tickets) == 1 and with_preview:
         ticket = tickets[0]
@@ -103,3 +105,12 @@ def make_message_for_calendar(
         rows.append(f'🔗 {event.link}')
 
     return make_message_by_rows(rows)
+
+
+def get_event_calendar_url(
+        host: str,
+        event_uuid: str,
+) -> str:
+    """Получение URL-адреса события для добавления в календарь"""
+
+    return f'{host}/events/{event_uuid}/calendar-ics'

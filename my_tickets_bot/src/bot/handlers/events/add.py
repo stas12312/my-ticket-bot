@@ -14,11 +14,9 @@ from bot.keyboards.utils import get_keyboard_by_values
 from bot.messages.location import get_address
 from bot.messages.templates import DATETIME_EXAMPLES, DURATION_EXAMPLES
 from bot.utils import save_ticket
-from models import Event
-from services.calendar import get_calendar_for_event, CONTENT_TYPE
+from bot.messages.event import get_event_calendar_url
 from services.config import Config
 from services.event_time import parse_datetime, get_localtime, parse_duration
-from services.object_storage import upload_file, get_filename, get_object_url
 from services.repositories import Repo
 
 
@@ -194,7 +192,6 @@ async def processing_file(
         state: FSMContext,
         repo: Repo,
         config: Config,
-        s3_client,
 ):
     """Обработка файла"""
     is_pass = message.text == Action.PASS
@@ -218,35 +215,13 @@ async def processing_file(
             repo=repo,
         )
     await state.clear()
-    filename = await upload_calendar(message.from_user.id, event, config, s3_client)
 
-    file_url = await get_object_url(filename, config)
+    calendar_url = get_event_calendar_url(config.host, event.uuid)
     await message.answer(
         'Вы можете добавить мероприятие в календарь',
-        reply_markup=get_keyboard_for_link(file_url)
+        reply_markup=get_keyboard_for_link(calendar_url)
     )
     await message.answer('✅ Мероприятие добавлено', reply_markup=get_menu_keyboard())
-
-
-async def upload_calendar(
-        user_id,
-        event: Event,
-        config: Config,
-        s3_client,
-) -> str:
-    """Загрузка файла события календаря в хранилище"""
-    filename = get_filename(config, user_id, str(event.uuid))
-
-    calendar_file = get_calendar_for_event(event)
-    await upload_file(
-        s3_client,
-        f'{event.name}.ics',
-        filename,
-        config.bucket,
-        calendar_file,
-        CONTENT_TYPE,
-    )
-    return filename
 
 
 router = Router()

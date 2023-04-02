@@ -13,6 +13,7 @@ from .common import get_url_button
 def get_actions_for_event(
         event: Event,
         tickets: list[Ticket],
+        calendar_url: str | None = None
 ) -> InlineKeyboardMarkup:
     """Получение клавиатуры для события"""
     builder = InlineKeyboardBuilder()
@@ -34,6 +35,11 @@ def get_actions_for_event(
             callback_data=EventCallback(action=EntityAction.EDIT, event_id=event.event_id).pack(),
         ),
     )
+
+    if calendar_url:
+        builder.row(
+            get_url_button(calendar_url, EventButton.ADD_IN_CALENDAR)
+        )
 
     builder.row(
         InlineKeyboardButton(
@@ -147,6 +153,6 @@ def get_keyboard_for_link(
     """Получение клавиатуры для получения ссылки на календарь"""
     builder = InlineKeyboardBuilder()
 
-    url_button = get_url_button(url, '🗓 Добавить в календарь')
+    url_button = get_url_button(url, EventButton.ADD_IN_CALENDAR)
     builder.add(url_button)
     return builder.as_markup()

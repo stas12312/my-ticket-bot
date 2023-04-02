@@ -35,7 +35,7 @@ class Action(StrEnum):
 class Event(StrEnum):
     """Кнопки для мероприятий"""
     ADD_TICKET = '➕ Билет'
-
+    ADD_IN_CALENDAR = '🗓 Добавить в календарь'
 
 class Pagination(StrEnum):
     """Кнопки для пагинации"""
