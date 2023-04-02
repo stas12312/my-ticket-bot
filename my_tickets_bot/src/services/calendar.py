@@ -21,8 +21,7 @@ def generate_icalendar_content(
 
     c_event = CEvent()
     c_event.add('dtstart', event.time)
-    # Пока что по умолчанию ставим 1 час
-    c_event.add('dtend', event.time + timedelta(hours=1))
+    c_event.add('dtend', event.end_time if event.end_time else event.time + timedelta(hours=1))
     c_event.add('dtstamp', datetime.utcnow())
     c_event.add('summary', f'{event.name}')
     c_event.add('location', vText(location.name))
