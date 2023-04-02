@@ -66,12 +66,19 @@ class EventRepo:
 
     async def get(
             self,
-            user_id: int,
+            user_id: int | None,
             event_id: int,
     ) -> Event | None:
         """Получение события по идентификатору"""
         events = await self.list(user_id, [event_id])
         return events[0] if events else None
+
+    async def get_id_by_uuid(
+            self,
+            event_uuid: str
+    ) -> int | None:
+        """Получение идентификатора события по UUID"""
+        return await self._conn.fetchval(q.GET_ID_BY_UUID, event_uuid)
 
     async def delete(
             self,

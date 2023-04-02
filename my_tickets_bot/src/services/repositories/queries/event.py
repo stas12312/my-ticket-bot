@@ -76,6 +76,12 @@ GET_COUNT = """
             END     
 """
 
+GET_ID_BY_UUID = """
+    SELECT id
+    FROM event
+    WHERE event."UUID" = $1
+"""
+
 DELETE_EVENT = """
     DELETE FROM event
     WHERE
