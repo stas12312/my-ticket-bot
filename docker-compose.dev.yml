@@ -36,6 +36,9 @@ services:
       - ${API_IP}:8000
     env_file:
       - .env
+    volumes:
+      - ./my_tickets_bot/src:/app/src
+      - ./my_tickets_bot/migrations:/app/migrations
     depends_on:
       postgres:
         condition: service_healthy
