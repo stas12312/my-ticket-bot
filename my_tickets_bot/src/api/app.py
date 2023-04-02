@@ -1,3 +1,5 @@
+from urllib import parse
+
 from asyncpg import Connection
 from fastapi import FastAPI, Depends
 from starlette.responses import Response
@@ -31,7 +33,7 @@ async def get_calendar_event(event_uuid: str, repo: Repo = Depends(get_repositor
     event_id = await repo.event.get_id_by_uuid(event_uuid)
     event = await repo.event.get(None, event_id)
     calendar = generate_icalendar_content(event)
-    filename = f'{event.name}.ics'
+    filename = parse.quote_plus(f'{event.name}.ics')
     headers = {
         'Content-Type': 'text/calendar',
         'Content-Disposition': f'attachment; filename="{filename}"'
