@@ -42,10 +42,6 @@ def get_actions_for_event(
         )
 
     builder.row(
-        InlineKeyboardButton(
-            text=Action.DELETE,
-            callback_data=EventCallback(action=EntityAction.DELETE, event_id=event.event_id).pack(),
-        ),
         CLOSE_BUTTON,
     )
 
@@ -97,6 +93,13 @@ def get_actions_for_edit_event(
             text=EventButton.ADD_TICKET,
             callback_data=TicketCallback(action=EntityAction.ADD, event_id=event_id).pack(),
         )
+    )
+
+    builder.row(
+        InlineKeyboardButton(
+            text=Action.DELETE,
+            callback_data=EventCallback(action=EntityAction.DELETE, event_id=event_id).pack(),
+        ),
     )
 
     builder.row(
