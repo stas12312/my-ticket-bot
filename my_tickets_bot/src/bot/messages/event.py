@@ -20,7 +20,7 @@ async def send_event_card(
         user_id: int,
         event_id: int,
         repo: Repo,
-        config: Config,
+        config: Config | None = None,
         title: str | None = None,
         with_preview: bool = False,
 ):
@@ -30,7 +30,7 @@ async def send_event_card(
         return
 
     tickets = await repo.ticket.list_for_event(user_id, event_id)
-    calendar_url = get_event_calendar_url(config.host, event.uuid)
+    calendar_url = get_event_calendar_url(config.host, event.uuid) if config else None
     event_message = make_event_message(event, title)
     keyboard = get_actions_for_event(event, tickets, calendar_url)
 

@@ -27,9 +27,9 @@ async def coming_events_mailing(
     for event in events:
         logger.info('Отправка уведомления user_id=%s event_id=%s', event.user.user_id, event.event_id)
         try:
-            await send_event_card(bot, event.user.user_id, event.event_id, repo, EVENTS_MAILING_TITLE)
+            await send_event_card(bot, event.user.user_id, event.event_id, repo, title=EVENTS_MAILING_TITLE)
         except TelegramForbiddenError:
-            logger.info('Ошибка при отправке уведомления user_id=%s', event.user.user_id)
+            logger.error('Ошибка при отправке уведомления user_id=%s', event.user.user_id)
 
 
 async def next_day_events_mailing(
