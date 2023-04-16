@@ -20,11 +20,11 @@ DATE_FORMATS = [
     '%d.%m.%y',
 ]
 
-DATETIME_REGEX = re.compile(r'^([1-3]?[0-9]) (\w*) ([0-2][0-9]:[0-9][0-9])')
-DATE_REGEX = re.compile(r'^([1-3]?[0-9]) (\w*)')
+DATETIME_REGEX = re.compile(r'^([1-3]?[0-9]) ?(\w*) ([0-2][0-9]:[0-9][0-9])')
+DATE_REGEX = re.compile(r'^([1-3]?[0-9]) ?(\w*)')
 INTERVAL_REGEX = re.compile(r'^(\d*):(\d*)|^(\d*)$')
 
-MONTH_TO_NAME = [
+MONTH_TO_NAME_FOR_TEXT = [
     'Января',
     'Февраля',
     'Марта',
@@ -39,7 +39,22 @@ MONTH_TO_NAME = [
     'Декабря',
 ]
 
-MONTH_NAME_TO_NUMBER = {name: number for number, name in enumerate(MONTH_TO_NAME, start=1)}
+MONTH_TO_NAME = [
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+    'Июль',
+    'Август',
+    'Сентябрь',
+    'Октябрь',
+    'Ноябрь',
+    'Декабрь',
+]
+
+MONTH_NAME_TO_NUMBER = {name: number for number, name in enumerate(MONTH_TO_NAME_FOR_TEXT, start=1)}
 
 DAY_TO_NAME = [
     'Пн',
@@ -115,7 +130,7 @@ def get_beatify_datetime(
         datetime_: datetime.datetime,
 ) -> str:
     """Получение строки для даты и времени"""
-    month_name = MONTH_TO_NAME[datetime_.month - 1]
+    month_name = MONTH_TO_NAME_FOR_TEXT[datetime_.month - 1]
     day_name = DAY_TO_NAME[datetime_.weekday()]
     return f'{datetime_.day} {month_name} в {datetime_.hour}:{datetime_.minute:02d} ({day_name})'
 
