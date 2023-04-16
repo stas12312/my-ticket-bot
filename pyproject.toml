@@ -17,6 +17,8 @@ tzdata = "^2022.7"
 icalendar = "^5.0.4"
 fastapi = { version = "^0.95.0", extras = ["all"] }
 uvicorn = { version = "0.21.1", extras = ["standart"] }
+lxml = "^4.9.2"
+beautifulsoup4 = "^4.12.2"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.16.0"
