@@ -10,8 +10,10 @@ from bot.commands import BOT_COMMANDS
 from bot.handlers import main_router
 from bot.middlewares import DbMiddleware, ConfigMiddleware
 from bot.utils import send_message_for_users
+from parsers import PARSERS
 from services.config import load_config
-from services.notifications import send_notifications, send_day_notifications
+from services.notifications import send_notifications, send_day_notifications, send_new_events_notifications
+from services.poster.poster import Poster
 
 config = load_config()
 
@@ -29,6 +31,7 @@ async def start_scheduler(
     scheduler = AsyncIOScheduler()
     scheduler.add_job(send_notifications, 'cron', minute='*', args=(bot, poll))
     scheduler.add_job(send_day_notifications, 'cron', hour='*', args=(bot, poll))
+    scheduler.add_job(send_new_events_notifications, 'cron', hour='*', args=(bot, poll))
     scheduler.start()
 
 
@@ -37,6 +40,9 @@ async def run_bot():
     poll = await asyncpg.create_pool(
         dsn=config.get_dsn(),
     )
+    # Регистрируем парсеры
+    poster = Poster(poll=poll, parsers=PARSERS)
+    await poster.register_parsers()
 
     db_middleware = DbMiddleware(poll)
     config_middleware = ConfigMiddleware(config)
