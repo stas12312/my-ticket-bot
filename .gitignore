@@ -131,3 +131,6 @@ dmypy.json
 .pyre/
 
 .idea/
+
+# Script for debug
+debug.py
