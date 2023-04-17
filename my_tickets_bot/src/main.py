@@ -40,8 +40,10 @@ async def run_bot():
     poll = await asyncpg.create_pool(
         dsn=config.get_dsn(),
     )
+    bot = Bot(config.bot_token, parse_mode='MarkdownV2')
+
     # Регистрируем парсеры
-    poster = Poster(poll=poll, parsers=PARSERS)
+    poster = Poster(poll=poll, parsers=PARSERS, bot=bot)
     await poster.register_parsers()
 
     db_middleware = DbMiddleware(poll)
@@ -54,7 +56,6 @@ async def run_bot():
     dispatcher.update.outer_middleware.register(config_middleware)
 
     logger.info('Запуск бота')
-    bot = Bot(config.bot_token, parse_mode='MarkdownV2')
 
     await start_scheduler(bot, poll)
     await bot.set_my_commands(BOT_COMMANDS)
