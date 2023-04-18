@@ -26,7 +26,7 @@ async def send_new_events_notifications(
         pool: asyncpg.Pool,
 ):
     """Отправка уведомлений """
-    poster = Poster(pool, PARSERS)
+    poster = Poster(pool, PARSERS, bot)
     parsers_events = await poster.get_parsers_events(datetime.datetime.now(pytz.utc))
     async with pool.acquire() as conn:
         await send_by_parsers(conn, bot, parsers_events)
