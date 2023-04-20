@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+import logging
 
 import aiogram
 import asyncpg
@@ -12,6 +13,9 @@ from parsers import PARSERS
 from services.event_time import get_beatify_datetime
 from services.poster import Event
 from services.poster.poster import Poster, ParserResult
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 @dataclasses.dataclass
@@ -41,6 +45,7 @@ async def send_by_parsers(
     for parser_events in parsers_with_events:
         url = parser_events.parser.config.url
         users = await get_user_ids_by_location_url(conn, url)
+        logger.info('Пользователи для парсера %s: %s', parser_events.parser.name, str(users))
         await send_for_users(bot, users, parser_events.events)
 
 
