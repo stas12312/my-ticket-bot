@@ -12,6 +12,9 @@ from services.poster.sql import REGISTER_PARSER, GET_PARSERS_BY_DATETIME
 from services.poster.utils import get_db_events, save_events, calc_new_events
 from services.profile import duration
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 @dataclasses.dataclass
 class ParserResult:
@@ -73,11 +76,12 @@ class Poster:
         for parser in parsers:
             try:
                 parse_result = await self._get_new_events_for_parser(conn, parser)
+                logger.info('Найдено событий [%i] для парсера %s', len(parse_result.events), parser.name)
                 if parse_result.events:
                     result.append(parse_result)
             except Exception as exp:
-                logging.error('Не удалось получить события для %s %s', parser.name, exp)
-                logging.error(traceback.format_exc())
+                logger.error('Не удалось получить события для %s %s', parser.name, exp)
+                logger.error(traceback.format_exc())
 
         return result
 
