@@ -78,7 +78,7 @@ jobs:
             docker pull ghcr.io/${{ github.repository }}:latest
             
             # Move to project folder
-            cd my-tickets-bot
+            cd ${{secrets.PROJECT_PATH}}
             
             # Restart docker-compose
             docker-compose up -d
