@@ -135,7 +135,7 @@ async def get_event_list_keyboard(
 
     builder.row(
         InlineKeyboardButton(
-            text=EventButton.PAST if list_mode == EventListMode.PLANNED else EventButton.PLANNED,
+            text=EventButton.PAST if list_mode == EventListMode.PAST else EventButton.PLANNED,
             callback_data=PaginationCallback(
                 object_name='EVENT',
                 page=0,
