@@ -65,7 +65,7 @@ def make_message(
             f'{get_clock_emoji(event.datetime)} {bold(get_beatify_datetime(event.datetime))}'
         ])
 
-    return '\n'.join(rows)
+    return '\n\n'.join(rows)
 
 
 async def send_for_users(
