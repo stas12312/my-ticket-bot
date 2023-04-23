@@ -60,7 +60,9 @@ GET_EVENTS = """
                 WHEN $3 IS FALSE THEN event.time < $4
                 ELSE TRUE
             END        
-    ORDER BY event.time
+    ORDER BY 
+        (CASE WHEN $7 IS TRUE THEN event.time END),
+        event.time DESC
     LIMIT $5 OFFSET $6
 """
 

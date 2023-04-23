@@ -1,5 +1,6 @@
 """Пагинация"""
 import datetime
+
 from math import ceil
 
 from models import Event
@@ -64,4 +65,5 @@ class EventPaginator:
             actual_time=self.actual_datetime,
             offset=self.page * self.size,
             limit=self.size,
+            asc=self.is_actual,
         )

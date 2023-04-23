@@ -7,7 +7,8 @@ from aiogram.filters import Text
 
 from bot.buttons import MainMenu
 from bot.callbacks import EventCallback, EntityAction, PaginationCallback
-from bot.keyboards.event import get_actions_for_event, get_actions_for_edit_event, get_event_list_keyboard
+from bot.keyboards.event import get_actions_for_event, get_actions_for_edit_event, get_event_list_keyboard, \
+    EventListMode
 from bot.messages.event import send_event_card, make_event_message, get_event_calendar_url
 from bot.paginator import EventPaginator
 from services.config import Config
@@ -51,20 +52,21 @@ async def my_events_handler(
         repo: Repo,
 ):
     """Отображения событий пользователя"""
-    msg, keyboard = await get_message_with_keyboard(message.from_user.id, 0, repo)
+    msg, keyboard = await get_message_with_keyboard(message.from_user.id, 0, EventListMode.PLANNED, repo)
     await message.answer(msg, disable_web_page_preview=True, reply_markup=keyboard)
 
 
 async def my_events_with_page_handler(
         query: types.CallbackQuery,
-        callback_data: EventPaginator,
+        callback_data: PaginationCallback,
         repo: Repo,
 ):
     """Обработка переключения страницы"""
     await query.answer()
     if callback_data.page is None:
         return
-    msg, keyboard = await get_message_with_keyboard(query.from_user.id, callback_data.page, repo)
+    mode = EventListMode(callback_data.mode)
+    msg, keyboard = await get_message_with_keyboard(query.from_user.id, callback_data.page, mode, repo)
     await query.message.edit_text(msg, disable_web_page_preview=True, reply_markup=keyboard)
 
 
@@ -72,6 +74,7 @@ async def my_events_with_page_handler(
 async def get_message_with_keyboard(
         user_id: int,
         page: int,
+        mode: EventListMode,
         repo: Repo,
 ) -> tuple[str, types.InlineKeyboardMarkup]:
     """Получение сообщения и клавиатуры для списка мероприятий"""
@@ -81,7 +84,7 @@ async def get_message_with_keyboard(
     event_paginator = EventPaginator(
         repo=repo,
         user_id=user_id,
-        is_actual=True,
+        is_actual=mode == EventListMode.PLANNED,
         actual_datetime=actual_time,
         number=page,
         size=5,
@@ -99,7 +102,7 @@ async def get_message_with_keyboard(
         in events
     ]
 
-    keyboard = await get_event_list_keyboard(event_paginator) if await event_paginator.get_page_count() > 1 else None
+    keyboard = await get_event_list_keyboard(event_paginator, mode)
 
     msg = '\n\n'.join(events_message) or 'У вас нет мероприятий'
 

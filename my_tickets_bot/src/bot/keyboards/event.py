@@ -1,3 +1,5 @@
+import enum
+
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -8,6 +10,12 @@ from bot.keyboards.utils import CLOSE_BUTTON
 from bot.paginator import EventPaginator
 from models import Event, Ticket
 from .common import get_url_button
+
+
+class EventListMode(enum.Enum):
+    """Режим отображения списка мероприятий"""
+    PLANNED = enum.auto()
+    PAST = enum.auto()
 
 
 def get_actions_for_event(
@@ -117,6 +125,7 @@ def get_actions_for_edit_event(
 
 async def get_event_list_keyboard(
         event_paginator: EventPaginator,
+        list_mode: EventListMode = EventListMode.PLANNED,
 ) -> InlineKeyboardMarkup:
     """Получение клавиатуры для списка мероприятий"""
     builder = InlineKeyboardBuilder()
@@ -126,26 +135,40 @@ async def get_event_list_keyboard(
 
     builder.row(
         InlineKeyboardButton(
-            text=Pagination.PREV if prev_page is not None else ' ',
+            text=EventButton.PAST if list_mode == EventListMode.PLANNED else EventButton.PLANNED,
             callback_data=PaginationCallback(
                 object_name='EVENT',
-                page=prev_page,
-            ).pack(),
-        ),
-        InlineKeyboardButton(
-            text=f'{event_paginator.page + 1} / {await event_paginator.get_page_count()}',
-            callback_data=PaginationCallback(
-                object_name='EVENT',
-            ).pack(),
-        ),
-        InlineKeyboardButton(
-            text=Pagination.NEXT if next_page is not None else ' ',
-            callback_data=PaginationCallback(
-                object_name='EVENT',
-                page=next_page,
-            ).pack(),
-        ),
+                page=0,
+                mode=EventListMode.PAST.value if list_mode == EventListMode.PLANNED else EventListMode.PLANNED.value
+            ).pack()
+        )
     )
+
+    if await event_paginator.get_page_count() > 1:
+        builder.row(
+            InlineKeyboardButton(
+                text=Pagination.PREV if prev_page is not None else ' ',
+                callback_data=PaginationCallback(
+                    object_name='EVENT',
+                    page=prev_page,
+                    mode=list_mode.value,
+                ).pack(),
+            ),
+            InlineKeyboardButton(
+                text=f'{event_paginator.page + 1} / {await event_paginator.get_page_count()}',
+                callback_data=PaginationCallback(
+                    object_name='EVENT',
+                ).pack(),
+            ),
+            InlineKeyboardButton(
+                text=Pagination.NEXT if next_page is not None else ' ',
+                callback_data=PaginationCallback(
+                    object_name='EVENT',
+                    page=next_page,
+                    mode=list_mode.value,
+                ).pack(),
+            ),
+        )
 
     return builder.as_markup()
 
