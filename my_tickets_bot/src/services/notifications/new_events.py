@@ -62,10 +62,10 @@ def make_message(
         event_link = link(event.name, event.url)
         rows.extend([
             f'✨ *{event_link}*',
-            f'{get_clock_emoji(event.datetime)} {bold(get_beatify_datetime(event.datetime))}'
+            f'{get_clock_emoji(event.datetime)} {bold(get_beatify_datetime(event.datetime))}\n'
         ])
 
-    return '\n\n'.join(rows)
+    return '\n'.join(rows)
 
 
 async def send_for_users(
