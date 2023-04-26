@@ -155,7 +155,7 @@ async def get_event_list_keyboard(
                 ).pack(),
             ),
             InlineKeyboardButton(
-                text=f'{event_paginator.page + 1} / {await event_paginator.get_page_count()}',
+                text=f'{event_paginator.number + 1} / {await event_paginator.get_page_count()}',
                 callback_data=PaginationCallback(
                     object_name='EVENT',
                 ).pack(),
