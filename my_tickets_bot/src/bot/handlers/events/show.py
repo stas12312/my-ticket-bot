@@ -90,7 +90,7 @@ async def get_message_with_keyboard(
         size=5,
     )
 
-    events = await event_paginator.get_events()
+    events = await event_paginator.get_data()
     events_message = [
         make_event_message(
             event=event,
