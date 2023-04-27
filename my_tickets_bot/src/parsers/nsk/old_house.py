@@ -65,6 +65,11 @@ def get_month_by_shift(
         shift: int
 ) -> datetime.date:
     """Получение месяца по сдвигу от текущей даты"""
-    now = JsonParser.get_now()
+    now = get_now()
 
     return now + relativedelta(months=shift)
+
+
+def get_now() -> datetime.datetime:
+    """Получение текущего времени"""
+    return datetime.datetime.utcnow()
