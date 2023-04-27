@@ -1,8 +1,11 @@
 from unittest.mock import AsyncMock
 
+import pytest
+
 from parsers.nsk import GlobusParser
 
 
+@pytest.mark.asyncio
 async def test_globus_parser():
     """Проверка парсера для театра Глобус"""
     with open('files/globus.html', encoding='UTF-8') as file:

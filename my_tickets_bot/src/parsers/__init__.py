@@ -1,11 +1,5 @@
-from .nsk import (
-    OldHouseParser,
-    RedTorchParser,
-    GlobusParser,
-)
+from . import nsk
 
 PARSERS = [
-    OldHouseParser(),
-    RedTorchParser(),
-    GlobusParser(),
+    *nsk.parsers,
 ]

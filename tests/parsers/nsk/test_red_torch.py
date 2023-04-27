@@ -1,9 +1,12 @@
 import datetime
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 from parsers.nsk import RedTorchParser
 
 
+@pytest.mark.asyncio
 async def test_red_torch_parser():
     """Проверка парсера для театра Красный факел"""
     with open('files/red-torch.html', encoding='UTF-8') as file:
@@ -11,6 +14,7 @@ async def test_red_torch_parser():
 
     parser = RedTorchParser()
     parser.get_data_from_url = AsyncMock(return_value=html)
+    parser.get_now = MagicMock(return_value=datetime.datetime(2023, 1, 1))
     events = await parser.get_events()
     assert len(events) == 4
 
