@@ -18,7 +18,7 @@ class RedTorchParser(HTMLBaseParser):
         for block in block_by_date:
             date_div = block.find('div', {'class': 'playbill-list-new__item-date'})
             raw_date = date_div.text.strip().split('·')[0]
-            date = parse_date(raw_date, self.get_now(shift=1))
+            date = parse_date(raw_date, datetime.datetime.utcnow())
 
             elements = block.findAll('div', {'class': 'playbill-list-new__item-content'})
             events.extend([self._element_to_event(element, date) for element in elements])
