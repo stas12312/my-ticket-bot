@@ -12,5 +12,5 @@ class HTMLBaseParser(WebParser, abc.ABC):
             self,
             request_data: RequestData,
     ) -> BeautifulSoup:
-        body = await self.get_data_from_url(request_data.url)
+        body = await self.get_data_from_url(request_data.url, request_data.params)
         return BeautifulSoup(body, 'lxml')
