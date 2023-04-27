@@ -1,5 +1,7 @@
 import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 from parsers.nsk import OldHouseParser
 from parsers.nsk.old_house import QUERY_TEMPLATE
@@ -20,11 +22,12 @@ def get_data(url: str, params: dict, headers: dict) -> str:
     return '{"cont": ""}'
 
 
-@patch('parsers.nsk.old_house.get_now', MagicMock(return_value=datetime.datetime(2023, 4, 14, 0, 0)))
+@pytest.mark.asyncio
 async def test_old_house_parser():
     """Проверка парсера для театра Старый Дом"""
     parser = OldHouseParser()
     parser.get_data_from_url = AsyncMock(side_effect=get_data)
+    parser.get_now = MagicMock(return_value=datetime.datetime(2023, 4, 1, 0, 0))
 
     events = await parser.get_events()
     assert len(events) == 4

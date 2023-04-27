@@ -1,3 +1,11 @@
 from .globus import GlobusParser
-from .red_torch import RedTorchParser
 from .old_house import OldHouseParser
+from .podzemka import PodzemkaNskParser
+from .red_torch import RedTorchParser
+
+parsers = (
+    GlobusParser(),
+    RedTorchParser(),
+    OldHouseParser(),
+    PodzemkaNskParser(),
+)
