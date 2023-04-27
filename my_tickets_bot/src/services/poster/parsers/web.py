@@ -1,8 +1,10 @@
 import abc
 import dataclasses
+import datetime
 from typing import Any
 
 from aiogram.client.session import aiohttp
+from dateutil.relativedelta import relativedelta
 
 from .base import BaseParser
 from .. import Event
@@ -34,6 +36,9 @@ class Config:
 class WebParser(BaseParser, abc.ABC):
     """Стратегия для парсинга сайтов"""
 
+    def __init__(self):
+        self.need_next_page = True
+
     async def get_events(self) -> list[Event]:
         return await self.get_all_elements()
 
@@ -49,6 +54,8 @@ class WebParser(BaseParser, abc.ABC):
             if not page_items:
                 break
             items.extend(page_items)
+            if not self.need_next_page:
+                break
             number += 1
         return items
 
@@ -119,3 +126,11 @@ class WebParser(BaseParser, abc.ABC):
     def name(self) -> str:
         """Название парсера"""
         return self.__class__.__name__
+
+    @staticmethod
+    def get_now(shift: int = 0) -> datetime.datetime:
+        """Получение текущей даты для определения полной даты и времени"""
+        now = datetime.datetime.utcnow() - relativedelta(days=1)
+        if shift:
+            return now - relativedelta(days=1)
+        return now
