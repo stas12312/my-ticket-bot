@@ -1,7 +1,8 @@
+from services.poster.parsers import WebParser
 from . import nsk
 from . import spb
 
-PARSERS = [
+PARSERS: list[WebParser] = [
     *nsk.parsers,
     *spb.parsers,
 ]
