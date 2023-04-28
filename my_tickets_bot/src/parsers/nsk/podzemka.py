@@ -6,12 +6,15 @@ from services.event_time import MONTH_TO_NAME_FOR_TEXT, set_year
 from services.poster import Event
 from services.poster.parsers import HTMLBaseParser, RequestData
 from services.poster.parsers.web import Config, Page
+from asyncio import sleep
 
 
 class PodzemkaNskParser(HTMLBaseParser):
     """Парсер для Подземки"""
 
     def _get_elements(self, page: Page) -> list[Event]:
+        # Делаем задержку, чтобы уменьшить частоту запросов
+        sleep(1)
         data: BeautifulSoup = page.data
         items_container = data.find('ul', {'class': 'index__tab--active'})
         items = items_container.findAll('li', {'class': 'index__item'})
