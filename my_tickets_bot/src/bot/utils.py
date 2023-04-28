@@ -1,5 +1,6 @@
 """Вспомогательные функции"""
 import logging
+import traceback
 from collections.abc import Callable
 from enum import IntEnum
 
@@ -11,6 +12,8 @@ from models.file import File as TicketFile
 from services.repositories import Repo
 
 MAX_LENGTH = 4096
+
+logger = logging.getLogger(__name__)
 
 
 class FileType(IntEnum):
@@ -66,9 +69,10 @@ async def safe_send_message(
                 **kwargs,
             )
     except exceptions.TelegramForbiddenError:
-        logging.warning('User %s blocked bot', user_id)
-    except exceptions.TelegramBadRequest:
-        logging.error('Telegram bad request')
+        logger.warning('User %s blocked bot', user_id)
+    except exceptions.TelegramBadRequest as exc:
+        logger.error('Telegram bad request %s', str(exc))
+        logger.error(traceback.format_exc())
 
 
 async def get_func_for_file(
