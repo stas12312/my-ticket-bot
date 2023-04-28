@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from unittest.mock import AsyncMock
 
 import pytest
@@ -8,7 +10,8 @@ from parsers.nsk import GlobusParser
 @pytest.mark.asyncio
 async def test_globus_parser():
     """Проверка парсера для театра Глобус"""
-    with open('files/globus.html', encoding='UTF-8') as file:
+    path = Path(os.path.dirname(os.path.realpath(__file__)), 'files/globus.html')
+    with path.open(encoding='UTF-8') as file:
         html = file.read()
 
     parser = GlobusParser()

@@ -1,4 +1,6 @@
 import datetime
+import os
+from pathlib import Path
 from unittest.mock import MagicMock, AsyncMock
 
 import pytest
@@ -11,11 +13,13 @@ def get_data(url: str, params: dict, headers: dict | None = None) -> str:
     """Получение страницы"""
 
     if params['PAGEN_1'] == 1:
-        with open('files/podzemka-1.html', encoding='UTF-8') as file:
+        path = Path(os.path.dirname(os.path.realpath(__file__)), 'files/podzemka-1.html')
+        with path.open(encoding='UTF-8') as file:
             return file.read()
 
     if params['PAGEN_1'] == 2:
-        with open('files/podzemka-2.html', encoding='UTF-8') as file:
+        path = Path(os.path.dirname(os.path.realpath(__file__)), 'files/podzemka-2.html')
+        with path.open(encoding='UTF-8') as file:
             return file.read()
 
     return ''

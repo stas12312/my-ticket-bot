@@ -1,4 +1,6 @@
 import datetime
+import os
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -12,11 +14,13 @@ def get_data(url: str, params: dict, headers: dict) -> str:
     """Получение страницы"""
 
     if params['z'] == QUERY_TEMPLATE.format(month='Апрель', year=2023):
-        with open('files/old-house-1.json', encoding='UTF-8') as file:
+        path = Path(os.path.dirname(os.path.realpath(__file__)), 'files/old-house-1.json')
+        with path.open(encoding='UTF-8') as file:
             return file.read()
 
     if params['z'] == QUERY_TEMPLATE.format(month='Май', year=2023):
-        with open('files/old-house-2.json', encoding='UTF-8') as file:
+        path = Path(os.path.dirname(os.path.realpath(__file__)), 'files/old-house-2.json')
+        with path.open(encoding='UTF-8') as file:
             return file.read()
 
     return '{"cont": ""}'

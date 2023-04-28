@@ -1,4 +1,6 @@
 import datetime
+import os
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -9,7 +11,8 @@ from parsers.nsk import RedTorchParser
 @pytest.mark.asyncio
 async def test_red_torch_parser():
     """Проверка парсера для театра Красный факел"""
-    with open('files/red-torch.html', encoding='UTF-8') as file:
+    path = Path(os.path.dirname(os.path.realpath(__file__)), 'files/red-torch.html')
+    with path.open(encoding='UTF-8') as file:
         html = file.read()
 
     parser = RedTorchParser()
