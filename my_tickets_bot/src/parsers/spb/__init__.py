@@ -1,5 +1,5 @@
 from .malyshchitsky import MalyshchitskyParserSpb
 
 parsers = [
-    MalyshchitskyParserSpb,
+    MalyshchitskyParserSpb(),
 ]
