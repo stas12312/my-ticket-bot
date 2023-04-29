@@ -1,4 +1,5 @@
 import datetime
+from asyncio import sleep
 
 from bs4 import BeautifulSoup, Tag
 
@@ -6,7 +7,6 @@ from services.event_time import MONTH_TO_NAME_FOR_TEXT, set_year
 from services.poster import Event
 from services.poster.parsers import HTMLBaseParser, RequestData
 from services.poster.parsers.web import Config, Page
-from asyncio import sleep
 
 
 class PodzemkaNskParser(HTMLBaseParser):

@@ -8,6 +8,7 @@ import pytz
 from aiogram.utils.markdown import link, bold
 
 from bot.emoji import get_clock_emoji
+from bot.messages.utils import quote
 from bot.utils import safe_send_message
 from parsers import PARSERS
 from services.event_time import get_beatify_datetime
@@ -54,7 +55,7 @@ def make_message(
         events: list[Event],
 ) -> str:
     """Формирование сообщения для уведомления"""
-    title = f'Новые мероприятия в {location_name}'
+    title = f'Новые мероприятия в {quote(location_name)}'
     rows = [
         title,
     ]
