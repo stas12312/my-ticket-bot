@@ -36,7 +36,7 @@ class PodzemkaNskParser(HTMLBaseParser):
             datetime=get_datetime_from_element(raw_element),
         )
 
-    def _get_page_params(self, number: int) -> RequestData | None:
+    async def _get_page_params(self, number: int) -> RequestData | None:
         return RequestData(
             params={'PAGEN_1': number + 1},
             url=self.build_url(self.config.url)

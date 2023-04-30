@@ -10,7 +10,7 @@ from services.poster.parsers.web import Page, Config
 class GlobusParser(HTMLBaseParser):
     """Парсер для театра ГЛОБУС"""
 
-    def _get_page_params(self, number: int) -> RequestData | None:
+    async def _get_page_params(self, number: int) -> RequestData | None:
         if number > 0:
             return None
         return RequestData(

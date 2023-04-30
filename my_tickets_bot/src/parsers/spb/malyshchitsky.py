@@ -33,7 +33,7 @@ class MalyshchitskyParserSpb(HTMLBaseParser):
             url=self.build_url(self.config.url, url, with_slash=False),
         )
 
-    def _get_page_params(self, number: int) -> RequestData | None:
+    async def _get_page_params(self, number: int) -> RequestData | None:
         # Без пагинации
         if number > 0:
             return None
