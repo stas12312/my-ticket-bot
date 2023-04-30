@@ -94,8 +94,9 @@ class Poster:
         """Получение новых мероприятий для парсера"""
         db_events = await get_db_events(conn, parser)
         events = await parser.get_events()
-        new_events = calc_new_events(db_events, events)
-        await save_events(conn, parser, events)
+        sorted_events = sorted(events, key=lambda e: e.datetime)
+        new_events = calc_new_events(db_events, sorted_events)
+        await save_events(conn, parser, sorted_events)
 
         return ParserResult(
             parser=parser,
