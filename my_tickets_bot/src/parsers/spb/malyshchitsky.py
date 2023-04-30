@@ -13,7 +13,7 @@ class MalyshchitskyParserSpb(HTMLBaseParser):
 
     def _get_elements(self, page: Page) -> list[Event]:
         data: BeautifulSoup = page.data
-        items = data.findAll('div', {'class': 't396__artboard'})[3:-3]
+        items = data.findAll('div', {'class': 't396__artboard'})[2:-3]
         return [self._item_to_element(item) for item in items]
 
     def _item_to_element(self, raw_item: Tag) -> Event:
