@@ -46,7 +46,7 @@ class RedTorchParser(HTMLBaseParser):
             timezone='Asia/Novosibirsk',
         )
 
-    def _get_page_params(self, number: int) -> RequestData | None:
+    async def _get_page_params(self, number: int) -> RequestData | None:
         if number > 0:
             return None
 

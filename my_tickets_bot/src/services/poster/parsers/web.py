@@ -38,8 +38,10 @@ class WebParser(BaseParser, abc.ABC):
 
     def __init__(self):
         self.need_next_page = True
+        self._cache = {}
 
     async def get_events(self) -> list[Event]:
+        self.reset_cache()
         return await self.get_all_elements()
 
     async def get_all_elements(self) -> list[Event]:
@@ -64,7 +66,7 @@ class WebParser(BaseParser, abc.ABC):
             number: int,
     ) -> Page | None:
         """Получение страницы"""
-        request_data = self._get_page_params(number)
+        request_data = await self._get_page_params(number)
         if not request_data:
             return None
 
@@ -79,7 +81,7 @@ class WebParser(BaseParser, abc.ABC):
         """Получение элементов"""
 
     @abc.abstractmethod
-    def _get_page_params(
+    async def _get_page_params(
             self,
             number: int,
     ) -> RequestData | None:
@@ -134,3 +136,7 @@ class WebParser(BaseParser, abc.ABC):
         if shift:
             return now - relativedelta(days=1)
         return now
+
+    def reset_cache(self) -> None:
+        """Сброс кэша"""
+        self._cache = {}

@@ -14,7 +14,7 @@ QUERY_TEMPLATE = '{month}<sub>{year}</sub>'
 class OldHouseParser(JsonParser):
     """Парсер для старого дома"""
 
-    def _get_page_params(self, number: int) -> RequestData | None:
+    async def _get_page_params(self, number: int) -> RequestData | None:
         date = get_month_by_shift(number)
 
         url = self.build_url(self.config.url, 'assets/modules/calendar/ajax/rep_return.php')
