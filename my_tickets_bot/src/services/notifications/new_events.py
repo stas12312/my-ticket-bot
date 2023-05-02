@@ -97,7 +97,8 @@ GET_USERS_BY_LOCATION_URL = """
     JOIN city ON city.id = location.city_id
     JOIN "user" ON "user".id = city.user_id
     WHERE 
-        location.url = $1
+        -- Ищем по домену
+        lower(location.url) LIKE $1 || '%'
         AND location.is_deleted IS DISTINCT FROM TRUE
         AND city.is_deleted IS DISTINCT FROM TRUE
 """

@@ -16,6 +16,7 @@ ignore=
     2023_03_13223822_add_uuid_for_event.py,
     2023_04_01004002_add_end_time_for_event.py,
     2023_04_15001500_add_parser_table.py,
+    2023_05_02212003_alter_location_url_index.py,
 
 
 # Add files or directories matching the regex patterns to the ignore-list. The
