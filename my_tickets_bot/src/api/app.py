@@ -8,6 +8,7 @@ from services.calendar import generate_icalendar_content
 from services.config import load_config
 from services.repositories import Repo
 from .database import Database
+from .models import Parser
 
 config = load_config()
 app = FastAPI()
@@ -42,3 +43,10 @@ async def get_calendar_event(event_uuid: str, repo: Repo = Depends(get_repositor
         content=calendar.to_ical(),
         headers=headers,
     )
+
+
+@app.get('/parsers/')
+async def get_parser(repo: Repo = Depends(get_repository)) -> list[Parser]:
+    """Получение доступных парсеров"""
+    raw_parsers = await repo.parser.list()
+    return [Parser(**raw_parser) for raw_parser in raw_parsers]
