@@ -1,5 +1,5 @@
 import datetime
-from asyncio import sleep
+from time import sleep
 
 from bs4 import BeautifulSoup, Tag
 
@@ -14,7 +14,7 @@ class PodzemkaNskParser(HTMLBaseParser):
 
     def _get_elements(self, page: Page) -> list[Event]:
         # Делаем задержку, чтобы уменьшить частоту запросов
-        sleep(1)
+        sleep(0.5)
         data: BeautifulSoup = page.data
         items_container = data.find('ul', {'class': 'index__tab--active'})
         items = items_container.findAll('li', {'class': 'index__item'})
