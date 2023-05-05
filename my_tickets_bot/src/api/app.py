@@ -2,11 +2,13 @@ from urllib import parse
 
 from asyncpg import Connection
 from fastapi import FastAPI, Depends
+from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import Response
 
 from services.calendar import generate_icalendar_content
 from services.config import load_config
 from services.repositories import Repo
+from .consts import ORIGINS
 from .database import Database
 from .models import Parser
 
@@ -15,6 +17,14 @@ app = FastAPI()
 
 db = Database(load_config())
 CONTENT_TYPE = 'text/calendar'
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGINS,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 
 
 @app.on_event('startup')
@@ -45,7 +55,7 @@ async def get_calendar_event(event_uuid: str, repo: Repo = Depends(get_repositor
     )
 
 
-@app.get('/parsers/')
+@app.get('/api/parsers/')
 async def get_parser(repo: Repo = Depends(get_repository)) -> list[Parser]:
     """Получение доступных парсеров"""
     raw_parsers = await repo.parser.list()
