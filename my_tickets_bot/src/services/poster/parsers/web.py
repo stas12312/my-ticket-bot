@@ -1,12 +1,11 @@
 import abc
 import dataclasses
-import datetime
 from typing import Any
 
 from aiogram.client.session import aiohttp
-from dateutil.relativedelta import relativedelta
 
 from .base import BaseParser
+from .mixins import DateUtilsMixin
 from .. import Event
 
 
@@ -33,7 +32,7 @@ class Config:
     timezone: str
 
 
-class WebParser(BaseParser, abc.ABC):
+class WebParser(BaseParser, DateUtilsMixin, abc.ABC):
     """Стратегия для парсинга сайтов"""
 
     def __init__(self):
@@ -128,14 +127,6 @@ class WebParser(BaseParser, abc.ABC):
     def name(self) -> str:
         """Название парсера"""
         return self.__class__.__name__
-
-    @staticmethod
-    def get_now(shift: int = 0) -> datetime.datetime:
-        """Получение текущей даты для определения полной даты и времени"""
-        now = datetime.datetime.utcnow() - relativedelta(days=1)
-        if shift:
-            return now - relativedelta(days=1)
-        return now
 
     def reset_cache(self) -> None:
         """Сброс кэша"""
