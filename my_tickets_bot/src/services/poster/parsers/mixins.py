@@ -13,7 +13,7 @@ class DateUtilsMixin:
     def get_now(
             cls,
             shift: int = 0,
-            timezone: str = pytz.UTC,
+            timezone: str = 'UTC',
     ) -> datetime.datetime:
         """Получение текущей даты для определения полной даты и времени"""
         pytz_timezone = pytz.timezone(timezone)
@@ -39,7 +39,7 @@ class DateUtilsMixin:
             day: int,
             month: int,
             shift: int = 0,
-            timezone: str = pytz.UTC,
+            timezone: str = 'UTC',
     ) -> datetime.date:
         """Установка даты по дню и месяцу"""
         date = datetime.date(1, month, day)
