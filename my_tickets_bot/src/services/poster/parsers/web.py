@@ -3,6 +3,7 @@ import dataclasses
 from typing import Any
 
 from aiogram.client.session import aiohttp
+from aiohttp import hdrs
 
 from .base import BaseParser
 from .mixins import DateUtilsMixin
@@ -16,6 +17,7 @@ class RequestData:
     params: dict | None = None
     headers: dict | None = None
     metadata: dict | None = None
+    method: str = hdrs.METH_GET
 
 
 @dataclasses.dataclass
@@ -23,6 +25,7 @@ class Page:
     """Информация о странице"""
     data: Any
     metadata: dict[str, Any]
+    request_data: RequestData
 
 
 @dataclasses.dataclass
@@ -73,6 +76,7 @@ class WebParser(BaseParser, DateUtilsMixin, abc.ABC):
         return Page(
             data=data,
             metadata=request_data.metadata,
+            request_data=request_data,
         )
 
     @abc.abstractmethod
@@ -92,12 +96,13 @@ class WebParser(BaseParser, DateUtilsMixin, abc.ABC):
             url: str,
             params: dict | None = None,
             headers: dict | None = None,
+            method: str = hdrs.METH_GET,
     ) -> str:
         """Получение содержимого по URL"""
         async with aiohttp.ClientSession() as session:
             if headers:
                 session.headers.extend(headers)
-            async with session.get(url, params=params) as resp:
+            async with session.request(method, url, params=params) as resp:
                 return await resp.text()
 
     @classmethod
