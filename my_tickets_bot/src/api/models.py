@@ -10,3 +10,15 @@ class Parser(BaseModel):
     timestamp: datetime.datetime | None
     timezone: str
     url: str
+
+
+class Event(BaseModel):
+    """Модель события"""
+    name: str
+    url: str
+    datetime: str
+
+
+class ParserDetails(Parser):
+    """Модель парсера с расширенной информацией"""
+    events: list[Event] | None
