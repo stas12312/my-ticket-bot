@@ -30,7 +30,7 @@ def make_location_message(
     url_name = link(location.name, location.url)
 
     rows = [
-        f'🏛 _{url_name}_\n',
+        f'🏛 _{url_name}_',
         f'📍 {quote(location.city.name)}, {quote(location.address)}',
     ]
     return make_message_by_rows(rows)
