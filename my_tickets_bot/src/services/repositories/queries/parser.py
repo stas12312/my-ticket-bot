@@ -1,5 +1,6 @@
 LIST = """
     SELECT
+        id,
         name,
         url,
         jsonb_array_length(events) AS events_count,
@@ -10,6 +11,7 @@ LIST = """
 
 GET = """
     SELECT
+        id,
         name,
         url,
         jsonb_array_length(events) AS event_count,

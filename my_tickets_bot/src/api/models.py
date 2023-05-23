@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class Parser(BaseModel):
     """Модель парсера для API"""
+    id: int
     name: str
     events_count: int | None
     timestamp: datetime.datetime | None
