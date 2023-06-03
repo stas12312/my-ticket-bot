@@ -1,6 +1,6 @@
 from aiogram import Router
 
-from . import cities, locations, events
+from . import cities, locations, events, poster
 from .common import common_handlers
 from .settings import settings_router
 from .ticket import tickets_handler
@@ -14,3 +14,4 @@ main_router.include_router(events.router)
 main_router.include_router(cities.router)
 main_router.include_router(locations.router)
 main_router.include_router(tickets_handler)
+main_router.include_router(poster.router)

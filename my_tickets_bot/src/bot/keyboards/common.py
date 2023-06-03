@@ -10,6 +10,7 @@ def get_menu_keyboard() -> ReplyKeyboardMarkup:
 
     builder.row(KeyboardButton(text=MainMenu.MY_EVENTS), KeyboardButton(text=MainMenu.ADD_EVENT))
     builder.row(KeyboardButton(text=MainMenu.SETTINGS))
+    builder.row(KeyboardButton(text=MainMenu.POSTER))
 
     return builder.as_markup(resize_keyboard=True)
 

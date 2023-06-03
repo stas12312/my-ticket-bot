@@ -1,4 +1,3 @@
-"""Пагинация"""
 import datetime
 
 from models import Event
