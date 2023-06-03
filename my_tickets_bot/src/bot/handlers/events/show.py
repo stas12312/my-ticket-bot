@@ -10,7 +10,7 @@ from bot.callbacks import EventCallback, EntityAction, PaginationCallback
 from bot.keyboards.event import get_actions_for_event, get_actions_for_edit_event, get_event_list_keyboard, \
     EventListMode
 from bot.messages.event import send_event_card, make_event_message, get_event_calendar_url
-from bot.paginator import EventPaginator
+from bot.paginators.event import EventPaginator
 from services.config import Config
 from services.profile import duration
 from services.repositories import Repo

@@ -7,7 +7,7 @@ from bot.buttons import Action, Event as EventButton, Settings, Pagination
 from bot.callbacks import TicketCallback, EntityAction, EventCallback, EditEventCallback, EditEventField, \
     PaginationCallback
 from bot.keyboards.utils import CLOSE_BUTTON
-from bot.paginator import EventPaginator
+from ..paginators.event import EventPaginator
 from models import Event, Ticket
 from .common import get_url_button
 

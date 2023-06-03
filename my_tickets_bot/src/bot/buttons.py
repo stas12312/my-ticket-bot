@@ -7,6 +7,7 @@ class MainMenu(StrEnum):
     MY_EVENTS = '✨ Мои мероприятия'
     ADD_EVENT = '➕ Добавить'
     SETTINGS = '⚙ Настройки'
+    POSTER = '🗓 Афиша'
 
 
 class Settings(StrEnum):
@@ -30,6 +31,7 @@ class Action(StrEnum):
     ADD = '➕ Добавить'
     PASS = '▶️ Пропустить'
     EDIT = '✏ Редактировать'
+    BACK = '◀️ Назад'
 
 
 class Event(StrEnum):
