@@ -45,7 +45,7 @@ jobs:
       - name: Pushing Image to Github Container Registry
         uses: docker/build-push-action@v2
         with:
-          context: ./my-tickets-bot/bot
+          context: ./my_tickets_bot/bot
           version: latest
           file: ./Dockerfile
           push: true
@@ -87,7 +87,7 @@ jobs:
       - name: Pushing Image to Github Container Registry
         uses: docker/build-push-action@v2
         with:
-          context: ./my-tickets-bot/backend
+          context: ./my_tickets_bot/backend
           version: latest
           file: ./Dockerfile
           push: true
