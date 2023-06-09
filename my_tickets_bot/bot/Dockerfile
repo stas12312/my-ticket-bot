@@ -17,7 +17,7 @@ COPY poetry.lock pyproject.toml /app/
 RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
 
 # Копируем код и миграции
-COPY my_tickets_bot /app
+COPY . /app
 
 COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
