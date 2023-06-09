@@ -16,12 +16,12 @@ services:
       timeout: 5s
       retries: 5
   bot:
-    image: ghcr.io/stas12312/my-tickets-bot/bot:latest
+    image: ghcr.io/stas12312/my-tickets-bot:latest
     container_name: my-tickets-bot
     env_file:
       - .env
     depends_on:
-      postgres:
+     postgres:
         condition: service_healthy
   api:
     image: ghcr.io/stas12312/my-tickets-bot:latest
@@ -32,11 +32,8 @@ services:
     env_file:
       - .env
     depends_on:
-      postgres:
+     postgres:
         condition: service_healthy
-  backend:
-    image: ghcr.io/stas12312/my-tickets-bot/backend:latest
-    container_name: my-tickets-backend
 volumes:
   postgres_data:
     driver: local
