@@ -47,7 +47,7 @@ jobs:
         with:
           context: ./my_tickets_bot/bot
           version: latest
-          file: ./Dockerfile
+          file: ./my_tickets_bot/bot/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/bot:latest
           cache-from: type=gha
@@ -89,7 +89,7 @@ jobs:
         with:
           context: ./my_tickets_bot/backend
           version: latest
-          file: ./Dockerfile
+          file: ./my_tickets_bot/backend/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/backend:latest
           cache-from: type=gha
