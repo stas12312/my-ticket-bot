@@ -18,6 +18,7 @@ func (h *Handler) Calendar(c *gin.Context) {
 
 	event, err := h.EventService.Get(c, eventUUID)
 	if err != nil {
+		log.Println(err.Error())
 		err := apperrors.NewNotFound("event", eventUUID)
 		c.JSON(err.Status(), gin.H{
 			"error": err,
@@ -33,7 +34,8 @@ func (h *Handler) Calendar(c *gin.Context) {
 	c.Writer.WriteHeader(http.StatusOK)
 	_, err = c.Writer.WriteString(body)
 	if err != nil {
-		log.Fatal("Ошибка формирования ответа")
+		log.Println(err.Error())
+		log.Println("Ошибка формирования ответа")
 	}
 }
 
