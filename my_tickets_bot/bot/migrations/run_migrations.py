@@ -35,4 +35,5 @@ if __name__ == '__main__':
     current_path = os.path.dirname(os.path.abspath(__file__))
     migrations_path = Path(current_path) / Path('my-tickets-bot')
     print(current_path)
+
     run_migrations(migrations_path.as_posix(), get_connection_url())
