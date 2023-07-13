@@ -116,8 +116,8 @@ jobs:
             # Login to Github Container Registry
             docker login https://ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.CR_PAT }}
 
-            # Pull the Docker Image 
-            docker pull ghcr.io/${{ github.repository }}:latest
+            # Pull the Docker Images
+            docker-compose pull
             
             # Move to project folder
             cd ${{secrets.PROJECT_PATH}}
