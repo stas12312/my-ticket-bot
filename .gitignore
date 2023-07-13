@@ -134,3 +134,4 @@ dmypy.json
 
 # Script for debug
 debug.py
+/my_tickets_bot/backend/src/pkg

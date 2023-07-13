@@ -7,9 +7,9 @@ COPY go.sum .
 
 RUN go mod download
 
-COPY /src/ .
+COPY /src/ ./src/
 
-RUN go build -o ./run .
+RUN go build -o ./run ./src
 
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
