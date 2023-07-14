@@ -42,9 +42,12 @@ func (h *Handler) Calendar(c *gin.Context) {
 func CreateCalendarForEvent(event *model.Event) string {
 	e := calendar.NewEvent()
 	e.AddDTStart(event.Time)
-	if !event.EndTime.IsZero() {
-		e.AddDTEnd(event.EndTime)
+
+	endTime := event.EndTime
+	if endTime.IsZero() {
+		endTime = event.Time.Add(time.Hour)
 	}
+	e.AddDTEnd(event.EndTime)
 	e.AddDTStamp(time.Now())
 	e.AddSummary(event.Name)
 	e.AddLocation(event.Location.Name)
