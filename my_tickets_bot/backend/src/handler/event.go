@@ -44,10 +44,10 @@ func CreateCalendarForEvent(event *model.Event) string {
 	e.AddDTStart(event.Time)
 
 	endTime := event.EndTime
-	if endTime.IsZero() {
+	if endTime.Year() == 1 {
 		endTime = event.Time.Add(time.Hour)
 	}
-	e.AddDTEnd(event.EndTime)
+	e.AddDTEnd(endTime)
 	e.AddDTStamp(time.Now())
 	e.AddSummary(event.Name)
 	e.AddLocation(event.Location.Name)
