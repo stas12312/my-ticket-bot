@@ -37,7 +37,8 @@ class Action(StrEnum):
 class Event(StrEnum):
     """Кнопки для мероприятий"""
     ADD_TICKET = '➕ Билет'
-    ADD_IN_CALENDAR = '🗓 Добавить в календарь'
+    ADD_IN_CALENDAR = '📅 В календарь'
+    ADD_IN_GOOGLE_CALENDAR = '📅 В Google'
     PLANNED = '📆 Планируемые'
     PAST = '🗃 Прошедшие'
 
