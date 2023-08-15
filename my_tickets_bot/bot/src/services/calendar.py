@@ -1,41 +1,47 @@
 """Работа с событием в календаре"""
-import io
-from datetime import timedelta, datetime
+from datetime import timedelta
 
-from icalendar import Calendar, Event as CEvent, vText
-
-from bot.messages.event import make_message_for_calendar
 from models import Event
 
 CONTENT_TYPE = 'text/calendar'
 
+URL_TEMPLATE = 'https://calendar.google.com/calendar/render?{params}'
+TIME_FORMAT = '%Y%m%dT%H%M%SZ'
 
-def generate_icalendar_content(
+
+def get_url_for_google_calendar(
         event: Event,
-) -> Calendar:
-    """Формирование события для календаря"""
-    location = event.location
-    calendar = Calendar()
-    calendar.add('prodid', '-//stas12312//MyTicketsBot//RU')
-    calendar.add('version', '2.0')
+) -> str:
+    """Формирование URL для Google календаря"""
+    params = {
+        'action': 'TEMPLATE',
+        'text': event.name,
+        'details': make_description(event),
+        'dates': make_dates(event),
+        'location': event.location.name,
+    }
 
-    c_event = CEvent()
-    c_event.add('dtstart', event.time)
-    c_event.add('dtend', event.end_time if event.end_time else event.time + timedelta(hours=1))
-    c_event.add('dtstamp', datetime.utcnow())
-    c_event.add('summary', f'{event.name}')
-    c_event.add('location', vText(location.name))
-
-    c_event.add('description ', vText(make_message_for_calendar(event)))
-
-    calendar.add_component(c_event)
-
-    return calendar
+    url_params = '&'.join(f'{name}={value}' for name, value in params.items())
+    return URL_TEMPLATE.format(params=url_params)
 
 
-def get_calendar_for_event(
+def make_dates(
         event: Event,
-) -> io.BytesIO:
-    """Формирование файла календаря"""
-    calendar = generate_icalendar_content(event)
-    return io.BytesIO(calendar.to_ical())
+) -> str:
+    """Формирование строки даты"""
+    end_time = event.end_time if event.end_time else event.time + timedelta(hours=1)
+
+    return f'{event.time.strftime(TIME_FORMAT)}/{end_time.strftime(TIME_FORMAT)}'
+
+
+def make_description(
+        event: Event,
+) -> str:
+    """Формирование описания"""
+    rows = [
+        f'📍 {event.location.city.name}, {event.location.name}'
+    ]
+    if event.link:
+        rows.append(f'🔗 {event.link}')
+
+    return '\n'.join(rows)

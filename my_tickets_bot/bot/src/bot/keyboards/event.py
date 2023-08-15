@@ -7,9 +7,10 @@ from bot.buttons import Action, Event as EventButton, Settings, Pagination
 from bot.callbacks import TicketCallback, EntityAction, EventCallback, EditEventCallback, EditEventField, \
     PaginationCallback
 from bot.keyboards.utils import CLOSE_BUTTON
-from ..paginators.event import EventPaginator
 from models import Event, Ticket
+from services.calendar import get_url_for_google_calendar
 from .common import get_url_button
+from ..paginators.event import EventPaginator
 
 
 class EventListMode(enum.Enum):
@@ -45,8 +46,11 @@ def get_actions_for_event(
     )
 
     if calendar_url:
+        google_calendar_url = get_url_for_google_calendar(event)
+
         builder.row(
-            get_url_button(calendar_url, EventButton.ADD_IN_CALENDAR)
+            get_url_button(calendar_url, EventButton.ADD_IN_CALENDAR),
+            get_url_button(google_calendar_url, EventButton.ADD_IN_GOOGLE_CALENDAR),
         )
 
     builder.row(

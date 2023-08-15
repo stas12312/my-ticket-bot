@@ -24,7 +24,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./my_tickets_bot/bot:/app/bot
+      - ./my_tickets_bot/bot/src:/app/src
       - ./my_tickets_bot/bot/migrations:/app/migrations
     depends_on:
       postgres:
