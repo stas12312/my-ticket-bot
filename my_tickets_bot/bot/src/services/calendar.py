@@ -1,5 +1,6 @@
 """Работа с событием в календаре"""
 from datetime import timedelta
+from urllib import parse
 
 from models import Event
 
@@ -15,10 +16,10 @@ def get_url_for_google_calendar(
     """Формирование URL для Google календаря"""
     params = {
         'action': 'TEMPLATE',
-        'text': event.name,
-        'details': make_description(event),
+        'text': parse.quote_plus(event.name),
+        'details': parse.quote_plus(make_description(event)),
         'dates': make_dates(event),
-        'location': event.location.name,
+        'location': parse.quote_plus(event.location.name),
     }
 
     url_params = '&'.join(f'{name}={value}' for name, value in params.items())
