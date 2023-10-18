@@ -60,14 +60,14 @@ func CreateCalendarForEvent(event *model.Event) string {
 }
 
 func MakeDescription(event *model.Event) string {
-	var b strings.Builder
-	b.WriteString("📍 " + MakeAddress(&event.Location))
+	rows := make([]string, 0)
+	rows = append(rows, "📍 "+MakeAddress(&event.Location))
 
 	if event.Link != "" {
-		b.WriteString("🔗 " + event.Link)
+		rows = append(rows, "🔗 "+event.Link)
 	}
 
-	return b.String()
+	return strings.Join(rows, "\n")
 }
 
 func MakeAddress(location *model.Location) string {
